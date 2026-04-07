@@ -1,4 +1,4 @@
-package defect;
+package stocke;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -8,16 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class DefectController
+ * Servlet implementation class StockController
  */
-@WebServlet("/DefectController")
-public class DefectController extends HttpServlet {
+@WebServlet("/StockController")
+public class StockController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    public DefectController() {
+    public StockController() {
         // TODO Auto-generated constructor stub
     }
 

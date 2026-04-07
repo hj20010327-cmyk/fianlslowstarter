@@ -1,3 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -29,19 +34,26 @@
                 <h2>회원가입</h2>
                 <p>기본 정보를 입력해 계정을 신청하세요.</p>
             </div>
-            <form class="auth-form">
+            <form class="auth-form" method="post" action="">
                 <div class="auth-split">
                     <div class="auth-row"><label>이름</label><input class="auth-input" type="text" placeholder="이름 입력" />
                     </div>
-                    <div class="auth-row"><label>사번</label><input class="auth-input" type="text" placeholder="사번 입력" />
+                    <div class="auth-row"><label>휴대폰 번호</label><input class="auth-input" type="text" placeholder="-제외" />
                     </div>
                 </div>
                 <div class="auth-split">
-                    <div class="auth-row"><label>아이디</label><input class="auth-input" type="text"
-                            placeholder="아이디 입력" /></div>
                     <div class="auth-row"><label>부서</label><input class="auth-input" type="text" placeholder="부서 입력" />
                     </div>
+                    <div class="auth-row"><label>직책</label>
+                    <select class="auth-input">
+                    	<option>작업자</option>
+                    	<option>관리자</option>
+                    	<option>슈퍼바이저</option>
+                    </select>
+                    </div>
                 </div>
+                    <div class="auth-row"><label>아이디</label><input class="auth-input" type="text"
+                            placeholder="아이디 입력" /></div>
                 <div class="auth-split">
                     <div class="auth-row"><label>비밀번호</label><input class="auth-input" type="password"
                             placeholder="비밀번호 입력" /></div>
@@ -50,8 +62,7 @@
                 </div>
                 <div class="auth-row"><label>이메일</label><input class="auth-input" type="email" placeholder="이메일 입력" />
                 </div>
-                <div class="auth-note">회원가입 후 관리자 승인 절차를 거쳐 로그인할 수 있도록 구성한 샘플 화면입니다.</div><button class="auth-btn"
-                    type="button">가입 신청</button>
+                <input class="auth-btn" type="submit" value="가입 신청"></button>
                 <div class="auth-bottom">이미 계정이 있나요? <a href="./login.html">로그인으로 이동</a></div>
             </form>
         </section>

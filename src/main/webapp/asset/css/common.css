@@ -706,11 +706,15 @@ td {
 .auth-btn {
   width: 100%;
   height: 50px;
+  border: 0;
   border-radius: 12px;
   background: var(--point);
   color: #fff;
   font-weight: 700;
   font-size: 15px;
+}
+.auth-btn:hover {
+  cursor: pointer;
 }
 
 .auth-subbtn {

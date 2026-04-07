@@ -11,6 +11,7 @@ public class CommoncodeDTO {
 	private String code_desc;
 	private int status;
 	private Date created_at;
+	private Date updated_at;
 	private String user_key;
 	private String user_key2;
 	
@@ -67,6 +68,12 @@ public class CommoncodeDTO {
 	}
 	public void setCreated_at(Date created_at) {
 		this.created_at = created_at;
+	}
+	public Date getUpdated_at() {
+		return updated_at;
+	}
+	public void setUpdated_at(Date updated_at) {
+		this.updated_at = updated_at;
 	}
 	public String getUser_key() {
 		return user_key;

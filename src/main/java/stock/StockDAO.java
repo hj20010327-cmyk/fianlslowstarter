@@ -9,13 +9,13 @@ import java.util.List;
 
 public class StockDAO {
 
-    // 배운 단어: DriverManager를 이용한 DB 연결 메서드
+    
     public Connection getConnection() {
         Connection conn = null;
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver"); 
             String url = "jdbc:oracle:thin:@localhost:1521:xe"; 
-            conn = DriverManager.getConnection(url, "comp", "1234"); // 아이디 comp, 비번 1234 적용
+            conn = DriverManager.getConnection(url, "comp", "1234"); 
         } catch (Exception e) {
             e.printStackTrace();
         }

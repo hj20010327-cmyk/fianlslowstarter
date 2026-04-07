@@ -1,0 +1,21 @@
+.auth-note {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #f7faff;
+    border: 1px solid #d9e7ff;
+    color: #3b5e9a;
+    font-size: 13px;
+    line-height: 1.6
+}
+
+.auth-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px
+}
+
+@media (max-width:768px) {
+    .auth-split {
+        grid-template-columns: 1fr
+    }
+}

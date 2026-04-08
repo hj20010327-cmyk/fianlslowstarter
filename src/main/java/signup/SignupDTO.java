@@ -1,19 +1,32 @@
 package signup;
 
+import java.sql.Date;
+
 public class SignupDTO {
 
+	private String user_key;
 	private String user_id;
 	private String user_pw;
 	private String user_name;
-	private int phone;
-	private String email;
+	private String user_role;
+	private String user_phone;
+	private String user_email;
+	private char status;
+	private Date created_at;
+	
 	
 	@Override
 	public String toString() {
-		return "SignupDTO [user_id=" + user_id + ", user_pw=" + user_pw + ", user_name=" + user_name + ", phone="
-				+ phone + ", email=" + email + "]";
+		return "SignupDTO [user_key=" + user_key + ", user_id=" + user_id + ", user_pw=" + user_pw + ", user_name="
+				+ user_name + ", user_role=" + user_role + ", user_phone=" + user_phone + ", user_email=" + user_email
+				+ ", status=" + status + ", created_at=" + created_at + "]";
 	}
-	
+	public String getUser_key() {
+		return user_key;
+	}
+	public void setUser_key(String user_key) {
+		this.user_key = user_key;
+	}
 	public String getUser_id() {
 		return user_id;
 	}
@@ -32,18 +45,37 @@ public class SignupDTO {
 	public void setUser_name(String user_name) {
 		this.user_name = user_name;
 	}
-	public int getPhone() {
-		return phone;
+	public String getUser_role() {
+		return user_role;
 	}
-	public void setPhone(int phone) {
-		this.phone = phone;
+	public void setUser_role(String user_role) {
+		this.user_role = user_role;
 	}
-	public String getEmail() {
-		return email;
+	public String getUser_phone() {
+		return user_phone;
 	}
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUser_phone(String user_phone) {
+		this.user_phone = user_phone;
 	}
+	public String getUser_email() {
+		return user_email;
+	}
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
+	}
+	public char getStatus() {
+		return status;
+	}
+	public void setStatus(char status) {
+		this.status = status;
+	}
+	public Date getCreated_at() {
+		return created_at;
+	}
+	public void setCreated_at(Date created_at) {
+		this.created_at = created_at;
+	}
+
 	
 	
 }

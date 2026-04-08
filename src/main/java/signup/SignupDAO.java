@@ -27,7 +27,7 @@ public class SignupDAO {
 			conn = dataFactory.getConnection();
 			// 2. SQL 준비
 			String query = "insert into tb_user values"
-					+ " (seq_user.nextval, ?, ?, ?, ?, ?, ?, 'Y', sysdate"; // 변수 방식
+					+ " (seq_user.nextval, ?, ?, ?, ?, ?, ?, 'Y', sysdate)"; // 변수 방식
 			ps = conn.prepareStatement(query);
 			ps.setString(1, dto.getUser_id());
 			ps.setString(2, dto.getUser_pw());

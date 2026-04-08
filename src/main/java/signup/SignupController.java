@@ -18,33 +18,36 @@ public class SignupController extends HttpServlet {
 		
 		String name = request.getParameter("name");
 		String role = request.getParameter("role");
-		String[] phonenum = request.getParameterValues("phone");
+		String phone1 = request.getParameter("phone1");
+		String phone2 = request.getParameter("phone2");
+		String phone3 = request.getParameter("phone3");
 		String id = request.getParameter("id");
 		String pw = request.getParameter("pw");
 		String email = request.getParameter("email");
 		
-		int phone1 = Integer.parseInt(phonenum[0]);
-		int phone2 = Integer.parseInt(phonenum[1]);
-		int phone3 = Integer.parseInt(phonenum[2]);
-		
-		SignupDTO dto = new SignupDTO();
-		dto.setUser_name(name);
-		dto.setUser_role(role);
-		dto.setUser_phone(phone1+"-"+phone2+"-"+phone3);
-		dto.setUser_id(id);
-		dto.setUser_pw(pw);
-		dto.setUser_email(email);
+		System.out.println(id);
 		
 		SignupService service = new SignupService();
-		int result = service.signup(dto);
 		int check = service.idcheck(id);
 		
+		
 		if(check == 0) {			
-			response.sendRedirect("signup.html?name="+name+
+			response.sendRedirect("signup.jsp?name="+name+
 					"&role="+role
+					+"phone2="+phone2
+					+"phone3="+phone3
 					+"&id="+id
 					+"&email="+email);
 		} else if(check == 1) {
+			SignupDTO dto = new SignupDTO();
+			dto.setUser_name(name);
+			dto.setUser_role(role);
+			dto.setUser_phone(phone1+"-"+phone2+"-"+phone3);
+			dto.setUser_id(id);
+			dto.setUser_pw(pw);
+			dto.setUser_email(email);
+			
+			int result = service.signup(dto);
 			response.sendRedirect("login.html");
 		}
 		

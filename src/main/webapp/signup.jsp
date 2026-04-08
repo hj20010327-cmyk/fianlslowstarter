@@ -46,7 +46,7 @@
                 <div class="auth-split">
                     <div class="auth-row">
                         <label for="name">이름</label>
-                        <input id="name" name="name" class="auth-input" type="text" placeholder="이름 입력" />
+                        <input id="name" name="name" class="auth-input" type="text" placeholder="이름 입력" value="${name }"/>
                     </div>
 
                     <div class="auth-row">
@@ -77,6 +77,7 @@
                             maxlength="4"
                             inputmode="numeric"
                             placeholder="1234"
+                            value="${phone2 }"
                         />
 
                         <span class="phone-dash">-</span>
@@ -89,13 +90,14 @@
                             maxlength="4"
                             inputmode="numeric"
                             placeholder="5678"
+                            value="${phone3 }"
                         />
                     </div>
                 </div>
 
                 <div class="auth-row">
                     <label for="userId">아이디</label>
-                    <input id="userId" name="id" class="auth-input" type="text" placeholder="아이디 입력" />
+                    <input id="userId" name="id" class="auth-input" type="text" placeholder="아이디 입력" value="${id}" />
                 </div>
 
                 <div class="auth-split">
@@ -112,7 +114,7 @@
 
                 <div class="auth-row">
                     <label for="email">이메일</label>
-                    <input id="email" name="email" class="auth-input" type="email" placeholder="이메일 입력" />
+                    <input id="email" name="email" class="auth-input" type="email" placeholder="이메일 입력" value="${email }"/>
                 </div>
 
                 <input class="auth-btn" type="submit" value="가입 신청" />

@@ -1,38 +1,85 @@
 package machine;
 
+import java.sql.Date;
+
 public class MachineDTO {
-	  	private String systemKey;       // 설비번호
-	    private int systemCode;       // 설비코드
-	    private String systemName;    // 설비 이름
-	    private String systemStatus;  // 설비 상태 run check stop
-		public String getSystemKey() {
-			return systemKey;
-		}
-		public void setSystemKey(String systemKey) {
-			this.systemKey = systemKey;
-		}
-		public int getSystemCode() {
-			return systemCode;
-		}
-		public void setSystemCode(int systemCode) {
-			this.systemCode = systemCode;
-		}
-		public String getSystemName() {
-			return systemName;
-		}
-		public void setSystemName(String systemName) {
-			this.systemName = systemName;
-		}
-		public String getSystemStatus() {
-			return systemStatus;
-		}
-		public void setSystemStatus(String systemStatus) {
-			this.systemStatus = systemStatus;
-		}
-		@Override
-		public String toString() {
-			return "MachineDTO [systemKey=" + systemKey + ", systemCode=" + systemCode + ", systemName=" + systemName
-					+ ", systemStatus=" + systemStatus + "]";
-		}
+	private int machineKey;
+	private String machineCode;
+	private String machineName;
+	private int processKey;
+	private String machineStatus;
+	private Date buyDate;
+	private Date lastCheckDate;
+	private String remark;
+	private String status;
+	private Date createdAt;
+	public int getMachineKey() {
+		return machineKey;
+	}
+	public void setMachineKey(int machineKey) {
+		this.machineKey = machineKey;
+	}
+	public String getMachineCode() {
+		return machineCode;
+	}
+	public void setMachineCode(String machineCode) {
+		this.machineCode = machineCode;
+	}
+	public String getMachineName() {
+		return machineName;
+	}
+	public void setMachineName(String machineName) {
+		this.machineName = machineName;
+	}
+	public int getProcessKey() {
+		return processKey;
+	}
+	public void setProcessKey(int processKey) {
+		this.processKey = processKey;
+	}
+	public String getMachineStatus() {
+		return machineStatus;
+	}
+	public void setMachineStatus(String machineStatus) {
+		this.machineStatus = machineStatus;
+	}
+	public Date getBuyDate() {
+		return buyDate;
+	}
+	public void setBuyDate(Date buyDate) {
+		this.buyDate = buyDate;
+	}
+	public Date getLastCheckDate() {
+		return lastCheckDate;
+	}
+	public void setLastCheckDate(Date lastCheckDate) {
+		this.lastCheckDate = lastCheckDate;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+	@Override
+	public String toString() {
+		return "MachineDTO [machineKey=" + machineKey + ", machineCode=" + machineCode + ", machineName=" + machineName
+				+ ", processKey=" + processKey + ", machineStatus=" + machineStatus + ", buyDate=" + buyDate
+				+ ", lastCheckDate=" + lastCheckDate + ", remark=" + remark + ", status=" + status + ", createdAt="
+				+ createdAt + "]";
+	}
+	
 	
 }

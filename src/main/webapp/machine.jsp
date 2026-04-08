@@ -114,10 +114,11 @@
 
 							<c:forEach var="m" items="${list}">
 								<tr>
-									<td>${m.systemKey}</td>
-									<td>${m.systemCode}</td>
-									<td>${m.systemName}</td>
-									<td>${m.systemStatus}</td>
+									<td>${m.machineKey}</td>
+									<td>${m.machineName}</td>
+									<td>${m.machineCode}</td>
+									<td>${m.machineStatus}</td>
+									<td>${m.processKey}</td>
 								</tr>
 							</c:forEach>
 						</table>

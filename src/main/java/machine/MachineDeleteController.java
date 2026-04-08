@@ -22,13 +22,13 @@ public class MachineDeleteController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		String systemkey = (request.getParameter("systemkey"));
+		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
 		
-		MachineDTO machinedto = new MachineDTO();
-		machinedto.setSystemKey(systemkey);
+		MachineDTO dto = new MachineDTO();
+		dto.setMachineKey(machineKey);
 
         MachineService 	machineService = new MachineService();
-        machineService.getdeletemachine(machinedto);
+        machineService.getdeletemachine(dto);
 
 //        response.sendRedirect("");
 	

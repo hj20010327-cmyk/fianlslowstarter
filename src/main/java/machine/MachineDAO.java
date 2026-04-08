@@ -41,16 +41,30 @@ public class MachineDAO {
 			// 결과 활용
 			while (rs.next()) { // 다음거 없으면 반복 끝!
 
-				String system_key = rs.getString("system_key");
-				int system_code = rs.getInt("system_code");
-				String system_name = rs.getString("system_name");
-				String system_status = rs.getString("system_status");
-				MachineDTO machineDTO = new MachineDTO();
-				machineDTO.setSystemKey(system_key);
-				machineDTO.setSystemCode(system_code);
-				machineDTO.setSystemName(system_name);
-				machineDTO.setSystemStatus(system_status);
-				list.add(machineDTO);
+				int machineKey = rs.getInt("machine_key");
+				String machineCode = rs.getString("machine_code");
+				String machineName = rs.getString("machine_name");
+				int processKey = rs.getInt("process_key");
+				String machineStatus = rs.getString("machine_status");
+				Date buyDate = rs.getDate("buy_date");
+				Date lastCheckDate = rs.getDate("last_check_date");
+				String remark = rs.getString("remark");
+				String status = rs.getString("status");
+				Date createdAt = rs.getDate("created_at");
+
+				MachineDTO dto = new MachineDTO();
+				dto.setMachineKey(machineKey);
+				dto.setMachineCode(machineCode);
+				dto.setMachineName(machineName);
+				dto.setProcessKey(processKey);
+				dto.setMachineStatus(machineStatus);
+				dto.setBuyDate(buyDate);
+				dto.setLastCheckDate(lastCheckDate);
+				dto.setRemark(remark);
+				dto.setStatus(status);
+				dto.setCreatedAt(createdAt);
+
+				list.add(dto);
 
 			}
 
@@ -103,14 +117,21 @@ public class MachineDAO {
 
 			// 2. SQL 준비
 //					String query = "select * from todo where todo_id="+ todo_id; 
-			String query = "INSERT INTO tb_machine(system_key, system_code, system_name, system_status) ";
-			query += "VALUES('CODE' || LPAD(seq_code.NEXTVAL, 4, '0'), ?, ?, ?)";
+			String query = "INSERT INTO tb_machine(" +
+		               "machine_key, machine_code, machine_name, process_key, machine_status, " +
+		               "buy_date, last_check_date, remark, status, created_at) " +
+		               "VALUES(seq_machine.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, 'Y', SYSDATE)";
 
 			ps = conn.prepareStatement(query);
-
-			ps.setInt(1, machineDTO.getSystemCode());
-			ps.setString(2, machineDTO.getSystemName());
-			ps.setString(3, machineDTO.getSystemStatus());
+			
+//			MachineDTO dto = new MachineDTO();
+			ps.setString(1,  machineDTO.getMachineCode());
+			ps.setString(2,  machineDTO.getMachineName());
+			ps.setInt(3,  machineDTO.getProcessKey());
+			ps.setString(4,  machineDTO.getMachineStatus());
+			ps.setDate(5,  machineDTO.getBuyDate());
+			ps.setDate(6,  machineDTO.getLastCheckDate());
+			ps.setString(7,  machineDTO.getRemark());
 
 			// 3. 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -168,14 +189,25 @@ public class MachineDAO {
 
 			// 2. SQL 준비
 //					String query = "select * from todo where todo_id="+ todo_id; 
-			String query = " update tb_machine";
-			query += " set system_code = ? , system_name = ? , system_status = ?";
-			query += " where system_key = ?";
+			String query = "UPDATE tb_machine SET " +
+		               "machine_code = ?, " +
+		               "machine_name = ?, " +
+		               "process_key = ?, " +
+		               "machine_status = ?, " +
+		               "buy_date = ?, " +
+		               "last_check_date = ?, " +
+		               "remark = ? " +
+		               "WHERE machine_key = ?";
 			ps = conn.prepareStatement(query);
-			ps.setInt(1, machineDTO.getSystemCode());
-			ps.setString(2, machineDTO.getSystemName());
-			ps.setString(3, machineDTO.getSystemStatus());
-			ps.setString(4, machineDTO.getSystemKey());
+//			MachineDTO dto = new MachineDTO(); 이거 하면 안됨 
+			ps.setString(1, machineDTO.getMachineCode());
+			ps.setString(2, machineDTO.getMachineName());
+			ps.setInt(3, machineDTO.getProcessKey());
+			ps.setString(4, machineDTO.getMachineStatus());
+			ps.setDate(5, machineDTO.getBuyDate());
+			ps.setDate(6, machineDTO.getLastCheckDate());
+			ps.setString(7, machineDTO.getRemark());
+			ps.setInt(8, machineDTO.getMachineKey());
 
 			// 3. 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -233,9 +265,9 @@ public class MachineDAO {
 
 			// 2. SQL 준비
 			String query = " delete from tb_machine";
-			query += " where system_key = ?";
+			query += " where machine_key = ?";
 			ps = conn.prepareStatement(query);
-			ps.setString(1, machineDTO.getSystemKey());
+			ps.setInt(1, machineDTO.getMachineKey());
 
 			// 3. 실행 및 결과 확보
 			result = ps.executeUpdate();

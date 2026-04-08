@@ -7,35 +7,51 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class SignupController
- */
-@WebServlet("/SignupController")
+@WebServlet("/signup")
 public class SignupController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public SignupController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8;");
+		
+		String name = request.getParameter("name");
+		String role = request.getParameter("role");
+		String[] phonenum = request.getParameterValues("phone");
+		String id = request.getParameter("id");
+		String pw = request.getParameter("pw");
+		String email = request.getParameter("email");
+		
+		int phone1 = Integer.parseInt(phonenum[0]);
+		int phone2 = Integer.parseInt(phonenum[1]);
+		int phone3 = Integer.parseInt(phonenum[2]);
+		
+		SignupDTO dto = new SignupDTO();
+		dto.setUser_name(name);
+		dto.setUser_role(role);
+		dto.setUser_phone(phone1+"-"+phone2+"-"+phone3);
+		dto.setUser_id(id);
+		dto.setUser_pw(pw);
+		dto.setUser_email(email);
+		
+		SignupService service = new SignupService();
+		int result = service.signup(dto);
+		int check = service.idcheck(id);
+		
+		if(check == 0) {			
+			response.sendRedirect("signup.html?name="+name+
+					"&role="+role
+					+"&id="+id
+					+"&email="+email);
+		} else if(check == 1) {
+			response.sendRedirect("login.html");
+		}
+		
+		
+		
+		
+	
 	}
 
 }

@@ -10,12 +10,61 @@
 
 .auth-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
     gap: 14px
 }
+.phone-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.phone-select,
+.phone-input {
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.phone-select {
+  width: 90px;
+  padding: 0 12px;
+}
+
+.phone-input {
+  width: 120px;
+  padding: 0 12px;
+  text-align: center;
+}
+
+.phone-dash {
+  color: #6b7280;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.phone-select:focus,
+.phone-input:focus {
+  outline: none;
+  border-color: var(--point);
+}
+
 
 @media (max-width:768px) {
     .auth-split {
         grid-template-columns: 1fr
     }
+    .phone-group {
+    gap: 6px;
+  }
+
+  .phone-select {
+    width: 80px;
+  }
+
+  .phone-input {
+    width: 100px;
+  }
 }

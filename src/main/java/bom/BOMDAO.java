@@ -69,8 +69,7 @@ public class BOMDAO {
 					dto.setProduct_item_key(rs.getString("product_item_key"));
 					dto.setMaterial_item_key(rs.getString("material_item_key"));
 					
-					
-					
+							
 					dto.setQTY(rs.getInt("qty"));
 					
 					dto.setRemark(rs.getString("remark"));
@@ -87,24 +86,52 @@ public class BOMDAO {
 		return list;
 	}
 
-	// 리스트 목록 하나만 가져오기 (나중에 상세보기용 - 수정,삭제 포함)
-	public List<BOMDTO> selectOneBOM(int bom_key) {
-		
-		List<BOMDTO> list = new ArrayList<BOMDTO>();
-		
-		
+	// 리스트 목록 일부만 가져오기 (조회데이터용 , 수정용 목록은 다시 만들어야 할지도??)
+	public List selectdetailBOM(BOMDTO bomDTO) {
 
+		List<BOMDTO> list = new ArrayList();
+		
 		try (Connection conn = getConn();
-			PreparedStatement ps = new LoggableStatement(conn, "select * from tb_bom where bom_key = ? ");
+			PreparedStatement ps = new LoggableStatement(conn, " SELECT * FROM ("
+					+ "    SELECT ROWNUM AS rnum, b.*"
+					+ "    FROM ("
+					+ "        SELECT b.bom_key,"
+					+ "               (SELECT i.item_code FROM tb_item i WHERE i.item_key = b.product_item_key) AS product_item_code, "
+					+ "               (SELECT i.item_code FROM tb_item i WHERE i.item_key = b.material_item_key) AS material_item_code, "
+					+ "               b.qty, "
+					+ "               b.remark "
+					+ "        FROM tb_bom b "
+					+ "        WHERE  "
+					+ "            (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) LIKE '%' || ? || '%' "
+					+ "         OR (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) LIKE '%' || ? || '%' "
+					+ "        ORDER BY b.bom_key "
+					+ "    ) b "
+					+ "    WHERE ROWNUM <= ? "
+					+ ") "
+					+ " WHERE rnum >= ?");
 			) {
-			ps.setInt(1, bom_key);
+			ps.setInt(1, bomDTO.getKeycode());
+			ps.setString(2, bomDTO.getKeyword());
+			ps.setInt(3, bomDTO.getEnd());
+			ps.setInt(4, bomDTO.getStart());
 
 			try (ResultSet rs = ps.executeQuery();) {
 				while(rs.next()) {
-					int product_item_key = rs.getInt("product_item_key");
-					int material_item_key = rs.getInt("material_item_key");
-					int QTY = rs.getInt("QTY");
-					String remark = rs.getString("remark");
+					BOMDTO dto = new BOMDTO();
+
+					int bom_key = Integer.parseInt(rs.getString("bom_key"));
+					dto.setBom_key(bom_key);
+					
+					
+					dto.setProduct_item_key(rs.getString("product_item_key"));
+					dto.setMaterial_item_key(rs.getString("material_item_key"));
+					
+							
+					dto.setQTY(rs.getInt("qty"));
+					
+					dto.setRemark(rs.getString("remark"));
+
+					list.add(dto);
 				}
 			
 			}
@@ -126,21 +153,19 @@ public class BOMDAO {
 		) {
 			ps.setInt(1, bomDTO.getQTY());
 			ps.setString(2, bomDTO.getRemark());
-			
 
-			System.out.println(((LoggableStatement) ps).getQueryString());
+			System.out.println(((LoggableStatement)ps).getQueryString());
 
 			result = ps.executeUpdate();
 			System.out.println("insert 결과 : " + result);
 			
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 	
-	// 데이터 수정 
+	// 데이터 수정 - 0408 수정해야함 
 	public int updateBOM(BOMDTO bomDTO) {
 		
 		int result = -1 ;
@@ -166,7 +191,6 @@ public class BOMDAO {
 		}
 		return result;
 	}
-	
 	
 	// 데이터 삭제 
 	public int deleteBOM (BOMDTO bomDTO) {

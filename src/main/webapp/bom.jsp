@@ -100,42 +100,55 @@
                 <div class="section-title">
                     <h2>검색 조건</h2><span>기준 조건을 선택하세요</span>
                 </div>
-                <div class="search-row"><input class="input" type="text" placeholder="코드 또는 번호 입력" /><input
-                        class="input" type="text" placeholder="명칭 입력" /><select class="select">
+                <form method="get" action="BOM">
+                <div class="search-row">
+                <input class="input" type="text" name="keycode" placeholder="코드 또는 번호 입력" />
+                <input class="input" type="text" name="keyname" placeholder="명칭 입력" />
+                <select class="select">
                         <option>전체</option>
                         <option>사용</option>
                         <option>미사용</option>
-                    </select><button class="btn primary" type="button">조회</button></div>
+                    </select><button class="btn primary" type="submit">조회</button></div>
+                </form>
             </section>
             <section class="panel-grid">
+                <form method="post" action="BOM">
                 <div class="card">
                     <div class="section-title">
-                        <h2>BOM관리 목록</h2><span>샘플 데이터</span>
+                        <h2>BOM관리 목록</h2><span>
+                        <button class="btn modify" type="button" onclick="openModal('BOM 수정')">
+ 수정
+</button>
+                        <input type="submit" value="삭제" >
+                        <input type="hidden" name="cmd" value="delete"></span>
                     </div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
+                                	<th>선택</th>
                                     <th>BOM코드</th>
                                     <th>제품명</th>
                                     <th>품목명</th>
                                     <th>수량</th>
-                                    <th>비고</th>
                                 </tr>
                             </thead>
                             <tbody>
+                            		
                             <c:forEach var="bom" items="${map.list}">
                                 <tr>
+                              		<td><input type="checkbox" name="bom_key" value="${bom.bom_key}"></td>
                                     <td>${bom.bom_key}</td>
                                     <td>${bom.product_item_key}</td>
                                     <td>${bom.material_item_key}</td>
                                     <td>${bom.QTY}</td>
-                                    <td>${bom.remark}</td>
                                 </tr>
                                </c:forEach>
                                
                             </tbody>
                         </table>
+                        
+                        <div class="page" style="text-align:center;">
                         <%--
                            <% Map map = (Map)request.getAttribute("map");
                            
@@ -165,17 +178,19 @@
                             <c:set var="size" value="${map.size }" />
                             <c:set var="page" value="${map.page }" />
                             
-                            <c:set var="totalPage" value="${total/size}" />
+                            <c:set var="totalPage" value="${(total + size - 1) /size}" />
                             <c:set var="section" value="5" />
-                            <c:set var="end_section" value="${(page/section)*section}" />
+                            <c:set var="end_section" value="${totalPage}" />
                             <c:set var="start_section" value="${end_section - section + 1}" />
                             
                             <c:if test="${start_section < 1}">
   							  <c:set var="start_section" value="1" />
 							</c:if>
                             <c:if test="${end_section > totalPage}"> 
-                            	<c:set var="end_section" value="${totalPage}" />
+                            	<c:set var="end_section" value="${totalPage - 1}" />
                            	</c:if>
+                             
+                         
                              
                                
                             <c:forEach var="i" begin="${start_section}" end="${end_section}">
@@ -184,13 +199,17 @@
                                	<c:if test="${map.page eq i }">
                                	<strong>${i}</strong>
                                	</c:if>
-                               	<c:if test="${map.page != i} ">
+                               	<c:if test="${map.page != i}">
                                	${i}
                                	</c:if>
                                	</a>
                             </c:forEach>
+                            </div>
+                          
+                        
                     </div>
                 </div>
+                </form>
                 <div class="card">
                     <div class="section-title">
                         <h2>요약 / 상태</h2><span>오늘 기준</span>

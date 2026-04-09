@@ -13,13 +13,12 @@ public class BOMService {
 //	
 //	}
 	
-//	public BOMDTO getBOM(int bom_key) {
-//	
-//		BOMDAO bomDAO = new BOMDAO(); 
-//		BOMDTO bomDTO = bomDAO.selectOneBOM(int);
-//		return bomDTO;
-//	
-//	}
+	public List getBOM(BOMDTO dto) {
+	
+		BOMDAO bomDAO = new BOMDAO(); 
+		return bomDAO.selectdetailBOM(dto);
+	
+	}
 	
 	public int insert(BOMDTO dto) {
 		

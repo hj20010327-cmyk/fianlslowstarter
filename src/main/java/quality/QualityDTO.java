@@ -16,6 +16,11 @@ public class QualityDTO {
     private String user_key;       // USER_KEY (담당자)
     private Date created_at;       // CREATED_AT (등록 일시)
 
+    // =========================================================
+    // [추가 사항] 조인을 통해 가져온 품목명을 저장하기 위한 필드입니다.
+    // =========================================================
+    private String item_name;      // ITEM_NAME (예: 컴프레셔 A)
+
     // 기본 생성자
     public QualityDTO() {}
 
@@ -106,5 +111,16 @@ public class QualityDTO {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+   
+    //  품목명(item_name)을 위한 Getter와 Setter입니다.
+   
+    public String getItem_name() {
+        return item_name;
+    }
+
+    public void setItem_name(String item_name) {
+        this.item_name = item_name;
     }
 }

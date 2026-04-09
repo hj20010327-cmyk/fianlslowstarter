@@ -1,8 +1,11 @@
 package bom;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,15 +24,56 @@ public class BOMController extends HttpServlet {
 		System.out.println("/BOM doGet 실행");
 		
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
+		response.setContentType("text/html; charset=utf-8");
 		
-		String cmd = request.getParameter("cmd");
+		String Keycode = request.getParameter("keycode");
+		int keycode = Integer.parseInt(Keycode);
+		String keyword = request.getParameter("keyword");
 		
-		if(cmd.equals("list")) {
-			list(request, response);
-		} else if(cmd.equals("detail")) {
-			detail(request, response);
-		}
+		// 페이징 
+		int size = 5; 
+		int page = 1; 
+		
+		String sSize = request.getParameter("size");
+		String sPage = request.getParameter("page");
+		
+	    try {
+	        size = Integer.parseInt(sSize);
+	    } catch (Exception e) {}
+		
+	    try {
+	        page = Integer.parseInt(sPage);
+	    } catch (Exception e) {}
+		
+		
+		BOMDTO bomDTO = new BOMDTO(); 
+		bomDTO.setSize(size);
+		bomDTO.setPage(page);
+		bomDTO.setKeycode(keycode);
+		bomDTO.setKeyword(keyword);
+		
+		
+//		String cmd = request.getParameter("cmd");
+//		
+//		if(cmd.equals("list")) {
+//			list(request, response);
+//		} 
+//		else if(cmd.equals("detail")) {
+//			detail(request, response);
+//		}
+		
+		// 서비스 연결 
+		BOMService bomservice = new BOMService();
+		
+		Map<String, Object> map = bomservice.getPaging(bomDTO);
+		map.put("size", size);
+		map.put("page", page);
+		
+		request.setAttribute("map",map);
+		request.setAttribute("list",map.get("list"));
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
+		rd.forward(request, response);
 		
 	}
 
@@ -38,7 +82,7 @@ public class BOMController extends HttpServlet {
 		System.out.println("/BOM doPost 실행");
 		
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
+		response.setContentType("text/html; charset=utf-8");
 		
 		// form 요소에 반영 
 		String cmd = request.getParameter("cmd");
@@ -57,24 +101,24 @@ public class BOMController extends HttpServlet {
 		System.out.println("/BOM insert 실행");
 		
 		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
+		response.setContentType("text/html; charset=utf-8");
 		
 		// 파라미터 확보 
-		String bom_key = request.getParameter("bom_key");
-		String item_code = request.getParameter("item_code");
-		String itemCount = request.getParameter("item_count");
-		int item_count = Integer.parseInt(itemCount);
-		String Status = request.getParameter("status");
-		int status = Integer.parseInt(Status);
-		String code_id = request.getParameter("code_id");
+		String Bom_key = request.getParameter("bom_key");
+		int bom_key = Integer.parseInt(Bom_key);
+		String product_item_key = request.getParameter("product_item_key");
+		String material_item_key = request.getParameter("material_item_key");
+		String QTY = request.getParameter("QTY");
+		int qty = Integer.parseInt(QTY);
+		String remark = request.getParameter("remark");
 		
 		// DTO에 넣기 
 		BOMDTO bomDTO = new BOMDTO(); 
 		bomDTO.setBom_key(bom_key);
-		bomDTO.setItem_code(item_code);
-		bomDTO.setItem_count(item_count);
-		bomDTO.setStatus(status);
-		bomDTO.setCode_id(code_id);
+		bomDTO.setProduct_item_key(product_item_key);
+		bomDTO.setMaterial_item_key(material_item_key);
+		bomDTO.setQTY(qty);
+		bomDTO.setRemark(remark);
 		
 		// service로 DTO를 보냄 
 		BOMService bomservice = new BOMService(); 
@@ -91,25 +135,25 @@ public class BOMController extends HttpServlet {
 		System.out.println("/BOM update 실행");
 		
 		// 파라미터 확보 
-		String bom_key = request.getParameter("bom_key");
-		String item_code = request.getParameter("item_code");
-		String itemCount = request.getParameter("item_count");
-		int item_count = Integer.parseInt(itemCount);
-		String Status = request.getParameter("status");
-		int status = Integer.parseInt(Status);
-		String code_id = request.getParameter("code_id");
+		String Bom_key = request.getParameter("bom_key");
+		int bom_key = Integer.parseInt(Bom_key);
+		String product_item_key = request.getParameter("product_item_key");
+		String material_item_key = request.getParameter("material_item_key");
+		String QTY = request.getParameter("QTY");
+		int qty = Integer.parseInt(QTY);
+		String remark = request.getParameter("remark");
 		
 		try {
 			BOMDTO bomDTO = new BOMDTO();
 			
 			request.setCharacterEncoding("utf-8");
-			response.setContentType("text/html; charset=utf-8;");
+			response.setContentType("text/html; charset=utf-8");
 			
 			bomDTO.setBom_key(bom_key);
-			bomDTO.setItem_code(item_code);
-			bomDTO.setItem_count(item_count);
-			bomDTO.setStatus(status);
-			bomDTO.setCode_id(code_id);
+			bomDTO.setProduct_item_key(product_item_key);
+			bomDTO.setMaterial_item_key(material_item_key);
+			bomDTO.setQTY(qty);
+			bomDTO.setRemark(remark);
 			
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);
@@ -129,43 +173,36 @@ public class BOMController extends HttpServlet {
 		
 		try {
 			request.setCharacterEncoding("utf-8");
-			response.setContentType("text/html; charset=utf-8;");
+			response.setContentType("text/html; charset=utf-8");
+	
+			//int bom_key = Integer.parseInt(request.getParameter("bom_key"));
+			String[] keys=request.getParameterValues("bom_key");
+//			bomDTO.setBom_key(keys); // 확인 
+//			
 			
-			BOMDTO bomDTO = new BOMDTO(); 
-			String bom_key = request.getParameter("bom_key");
-			bomDTO.setBom_key(bom_key); // 확인 
+			BOMDTO dto = new BOMDTO();
 			
-			System.out.println("bom_key : " + bom_key);
-			
-			BOMService bomservice = new BOMService(); 
-			int result = bomservice.delete(bomDTO);
-			
-			response.sendRedirect("");
+			if(keys != null) {
+				BOMService bomservice = new BOMService();
+				
+				for(String key : keys) {
+					int bom_key = Integer.parseInt(key);
+					System.out.println("삭제할 key : " + bom_key);
+					
+					dto.setBom_key(bom_key);
+					
+					bomservice.delete(dto);
+				}
+			int result = bomservice.delete(dto);
+			}
+			response.sendRedirect("../slowstarter/BOM");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		System.out.println("/BOM list 실행");
-		
-		
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-			
-		// 서비스 연결 
-		BOMService bomservice = new BOMService();
-		
-		List<BOMDTO> list = bomservice.getList();
-		request.setAttribute("list",list);
-		
-		System.out.println(list.size());
-		
-		request.getRequestDispatcher("").forward(request, response);
-			
-	}
+	
 	
 	public void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -176,12 +213,15 @@ public class BOMController extends HttpServlet {
 			request.setCharacterEncoding("utf-8");
 			response.setContentType("text/html; charset=utf-8");
 			
-			String bom_key = request.getParameter("bom_key");
+			BOMDTO bomDTO = new BOMDTO();
+			
+			String Bom_key = request.getParameter("bom_key");
+			int bom_key = Integer.parseInt(Bom_key);
 			System.out.println("bom_key: " + bom_key);
 			
 			// bom_key 를 service 랑 DAO 보내기 
 			BOMService bomservice = new BOMService(); 
-			BOMDTO bomDTO = bomservice.getBOM(bom_key);
+			List list = bomservice.getBOM(bomDTO);
 			
 			request.setAttribute("bomDTO", bomDTO );
 			

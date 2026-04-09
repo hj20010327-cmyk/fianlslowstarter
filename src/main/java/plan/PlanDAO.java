@@ -25,7 +25,7 @@ public class PlanDAO {
             DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
             conn = dataFactory.getConnection();
 
-            String query = "SELECT * FROM tb_plan";
+            String query = "SELECT * FROM tb_plan where rownum<=4";
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
 
@@ -78,8 +78,7 @@ public class PlanDAO {
 	}
 
     public int insertPlan(PlanDTO dto) {
-        Connection conn = null;
-        PreparedStatement ps = null;
+        
         int result = -1;
 
         try {
@@ -138,8 +137,7 @@ public class PlanDAO {
 	}
 
     public int updatePlan(PlanDTO dto) {
-        Connection conn = null;
-        PreparedStatement ps = null;
+       
         int result = -1;
 
         try {
@@ -204,9 +202,8 @@ public class PlanDAO {
 
 	}
 
-    public int deletePlan(int planKey) {
-        Connection conn = null;
-        PreparedStatement ps = null;
+    public int deletePlan(int plankey) {
+        
         int result = -1;
 
         try {
@@ -216,7 +213,7 @@ public class PlanDAO {
 
             String query = "DELETE FROM tb_plan WHERE plan_key = ?";
             ps = conn.prepareStatement(query);
-            ps.setInt(1, planKey);
+            ps.setInt(1, plankey);
 
             result = ps.executeUpdate();
 

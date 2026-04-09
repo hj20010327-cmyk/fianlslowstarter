@@ -1,3 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -235,41 +241,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <c:forEach var="common" items="${list}">
                                 <tr>
-                                    <td>BOM</td>
-                                    <td>BOM-001</td>
-                                    <td>COMP-A100 조립 BOM</td>
-                                    <td>관리자</td>
-                                    <td>2026-03-30</td>
+                                    <td>${ common. }</td>
+                                    <td>${ common. }</td>
+                                    <td>${ common. }</td>
+                                    <td>${ common. }</td>
+                                    <td>${ common. }</td>
                                 </tr>
-                                <tr>
-                                    <td>공정</td>
-                                    <td>PROC-004</td>
-                                    <td>누설 검사 공정</td>
-                                    <td>관리자</td>
-                                    <td>2026-03-30</td>
-                                </tr>
-                                <tr>
-                                    <td>품목</td>
-                                    <td>ITEM-018</td>
-                                    <td>클러치 어셈블리</td>
-                                    <td>생산관리자</td>
-                                    <td>2026-03-29</td>
-                                </tr>
-                                <tr>
-                                    <td>완제품</td>
-                                    <td>PROD-006</td>
-                                    <td>COMP-H120</td>
-                                    <td>개발기술팀</td>
-                                    <td>2026-03-29</td>
-                                </tr>
-                                <tr>
-                                    <td>BOM</td>
-                                    <td>BOM-011</td>
-                                    <td>COMP-B210 부품 구성</td>
-                                    <td>관리자</td>
-                                    <td>2026-03-28</td>
-                                </tr>
+                               </c:forEach>
                             </tbody>
                         </table>
                     </div>

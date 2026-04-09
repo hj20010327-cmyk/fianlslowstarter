@@ -1,0 +1,9 @@
+diff a/src/main/webapp/asset/js/common.js b/src/main/webapp/asset/js/common.js	(rejected hunks)
+@@ -40,6 +40,7 @@
+          });
+      });
+  });
+++<<<<<<< Updated upstream
+ +document.addEventListener("DOMContentLoaded", function () {
+ +  const phone2 = document.getElementById("phone2");
+ +  const phone3 = document.getElementById("phone3");

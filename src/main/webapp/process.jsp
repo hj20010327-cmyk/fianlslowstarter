@@ -1,10 +1,16 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AUTO MES | BOM관리</title>
+    <title>AUTO MES | 공정관리</title>
     <script src="./asset/js/common.js" defer></script>
     <link rel="stylesheet" href="./asset/css/common.css" />
     <link rel="stylesheet" href="./asset/css/page.css" />
@@ -36,8 +42,8 @@
                 <div class="snb-title">기준관리</div>
                 <ul class="snb-menu">
                     <li><a href="./master.html">기준관리</a></li>
-                    <li class="active"><a href="./bom.html">BOM</a></li>
-                    <li><a href="./process.html">공정</a></li>
+                    <li><a href="./bom.html">BOM</a></li>
+                    <li class="active"><a href="./process.html">공정</a></li>
                 </ul>
             </div>
             
@@ -83,8 +89,8 @@
         <main class="content">
             <div class="page-head">
                 <div class="page-head-left">
-                    <h1>BOM관리</h1>
-                    <p>제품별 자재 구성과 소요량을 관리하는 페이지입니다.</p>
+                    <h1>공정관리</h1>
+                    <p>제품 제조 공정 흐름과 표준 작업정보를 관리합니다</p>
                 </div>
                 <div class="page-actions"><button class="btn" type="button">조회</button><button class="btn primary"
                         type="button">신규 등록</button></div>
@@ -103,48 +109,29 @@
             <section class="panel-grid">
                 <div class="card">
                     <div class="section-title">
-                        <h2>BOM관리 목록</h2><span>샘플 데이터</span>
+                        <h2>공정관리 목록</h2><span>샘플 데이터</span>
                     </div>
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>BOM코드</th>
-                                    <th>제품명</th>
-                                    <th>품목명</th>
-                                    <th>소요량</th>
-                                    <th>버전</th>
+                                    <th>공정코드</th>
+                                    <th>공정명</th>
+                                    <th>설비</th>
+                                    <th>표준시간</th>
+                                    <th>상태</th>
                                 </tr>
                             </thead>
                             <tbody>
+                            <c:forEach var="process" items="${list}">
                                 <tr>
-                                    <td>BOM-A100-V1</td>
-                                    <td>차량용 콤프레셔 A100</td>
-                                    <td>하우징</td>
-                                    <td>1</td>
-                                    <td>V1</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
                                 </tr>
-                                <tr>
-                                    <td>BOM-A100-V1</td>
-                                    <td>차량용 콤프레셔 A100</td>
-                                    <td>샤프트</td>
-                                    <td>1</td>
-                                    <td>V1</td>
-                                </tr>
-                                <tr>
-                                    <td>BOM-B210-V2</td>
-                                    <td>차량용 콤프레셔 B210</td>
-                                    <td>베어링</td>
-                                    <td>2</td>
-                                    <td>V2</td>
-                                </tr>
-                                <tr>
-                                    <td>BOM-E300-V1</td>
-                                    <td>전동 콤프레셔 E300</td>
-                                    <td>오일씰</td>
-                                    <td>1</td>
-                                    <td>V1</td>
-                                </tr>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </div>
@@ -155,19 +142,19 @@
                     </div>
                     <ul class="summary-list">
                         <li>
-                            <div><strong>최신 버전</strong>
-                                <p>B210 제품이 V2로 운영 중입니다.</p>
-                            </div><span class="badge ok">적용</span>
+                            <div><strong>병목 공정</strong>
+                                <p>조립 공정이 평균 3분 지연됩니다.</p>
+                            </div><span class="badge warn">주의</span>
                         </li>
                         <li>
-                            <div><strong>변경 요청</strong>
-                                <p>설계 변경 요청이 1건 있습니다.</p>
-                            </div><span class="badge warn">1건</span>
+                            <div><strong>표준시간 갱신</strong>
+                                <p>검사 공정 표준시간이 수정되었습니다.</p>
+                            </div><span class="badge ok">반영</span>
                         </li>
                         <li>
-                            <div><strong>미연결 품목</strong>
-                                <p>BOM 미연결 자재가 없습니다.</p>
-                            </div><span class="badge ok">정상</span>
+                            <div><strong>비사용 공정</strong>
+                                <p>비사용 공정 1건이 있습니다.</p>
+                            </div><span class="badge danger">1건</span>
                         </li>
                     </ul>
                 </div>

@@ -4,63 +4,76 @@ import java.sql.Date;
 
 public class CommoncodeDTO {
 	
-	private String code_key; 
-	private String code_group;
-	private String code; 
-	private String code_name;
-	private String code_desc;
-	private int status;
+	private int item_key; 
+	private String item_code;
+	private String item_name;
+	private String item_type;
+	private String spec;
+	private String unit;
+	private int price;
+	private int safe_qty;
+	private char status; 
 	private Date created_at;
-	private Date updated_at;
-	private String user_key;
-	private String user_key2;
-	
-	
-	
-	
-	
 	
 	
 	@Override
 	public String toString() {
-		return "CommoncodeDTO [code_key=" + code_key + ", code_group=" + code_group + ", code=" + code + ", code_name="
-				+ code_name + ", code_desc=" + code_desc + ", status=" + status + ", created_at=" + created_at
-				+ ", user_key=" + user_key + ", user_key2=" + user_key2 + "]";
+		return "CommoncodeDTO [item_key=" + item_key + ", item_code=" + item_code + ", item_name=" + item_name
+				+ ", item_type=" + item_type + ", spec=" + spec + ", unit=" + unit + ", price=" + price + ", safe_qty="
+				+ safe_qty + ", status=" + status + ", created_at=" + created_at + "]";
 	}
-	public String getCode_key() {
-		return code_key;
+	public int getItem_key() {
+		return item_key;
 	}
-	public void setCode_key(String code_key) {
-		this.code_key = code_key;
+	public void setItem_key(int item_key) {
+		this.item_key = item_key;
 	}
-	public String getCode_group() {
-		return code_group;
+	public String getItem_code() {
+		return item_code;
 	}
-	public void setCode_group(String code_group) {
-		this.code_group = code_group;
+	public void setItem_code(String item_code) {
+		this.item_code = item_code;
 	}
-	public String getCode() {
-		return code;
+	public String getItem_name() {
+		return item_name;
 	}
-	public void setCode(String code) {
-		this.code = code;
+	public void setItem_name(String item_name) {
+		this.item_name = item_name;
 	}
-	public String getCode_name() {
-		return code_name;
+	public String getItem_type() {
+		return item_type;
 	}
-	public void setCode_name(String code_name) {
-		this.code_name = code_name;
+	public void setItem_type(String item_type) {
+		this.item_type = item_type;
 	}
-	public String getCode_desc() {
-		return code_desc;
+	public String getSpec() {
+		return spec;
 	}
-	public void setCode_desc(String code_desc) {
-		this.code_desc = code_desc;
+	public void setSpec(String spec) {
+		this.spec = spec;
 	}
-	public int getStatus() {
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+	public int getPrice() {
+		return price;
+	}
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public int getSafe_qty() {
+		return safe_qty;
+	}
+	public void setSafe_qty(int safe_qty) {
+		this.safe_qty = safe_qty;
+	}
+	public char getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(char status) {
 		this.status = status;
 	}
 	public Date getCreated_at() {
@@ -69,26 +82,7 @@ public class CommoncodeDTO {
 	public void setCreated_at(Date created_at) {
 		this.created_at = created_at;
 	}
-	public Date getUpdated_at() {
-		return updated_at;
-	}
-	public void setUpdated_at(Date updated_at) {
-		this.updated_at = updated_at;
-	}
-	public String getUser_key() {
-		return user_key;
-	}
-	public void setUser_key(String user_key) {
-		this.user_key = user_key;
-	}
-	public String getUser_key2() {
-		return user_key2;
-	}
-	public void setUser_key2(String user_key2) {
-		this.user_key2 = user_key2;
-	}
-	
-	
+
 	
 
 }

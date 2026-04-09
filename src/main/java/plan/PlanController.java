@@ -2,6 +2,7 @@ package plan;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,19 +12,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import Commoncode.CommoncodeDTO;
 import Commoncode.CommoncodeService;
+import machine.MachineDTO;
+import machine.MachineService;
 
 @WebServlet("/plan")
 public class PlanController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
-
-	public PlanController() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		System.out.println("/plan do Get 실행");
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8;");
+		
+		PlanService service = new PlanService();
+		List<PlanDTO> list = service.getList();
+		
+		request.setAttribute("list", list);
+		
+		request.getRequestDispatcher("/plan.jsp").forward(request, response);
 		
 		
 	}
@@ -38,12 +45,12 @@ public class PlanController extends HttpServlet {
 
 		String cmd = request.getParameter("cmd");
 
-		if (cmd.equals("insert")) {
-			insert(request, response);
-		} else if (cmd.equals("update")) {
-			update(request, response);
-		} else if (cmd.equals("delete")) {
-			delete(request, response);
+		if ("insert".equals(cmd)) {
+		    insert(request, response);
+		} else if ("update".equals(cmd)) {
+		    update(request, response);
+		} else if ("delete".equals(cmd)) {
+		    delete(request, response);
 		}
 	}
 	protected void insert(HttpServletRequest request, HttpServletResponse response)
@@ -55,7 +62,7 @@ public class PlanController extends HttpServlet {
 		response.setContentType("text/html; charset=utf-8;");
 
 		// 파라메터 확보
-		int plan_key = Integer.parseInt(request.getParameter("plan_key"));
+//		int plan_key = Integer.parseInt(request.getParameter("plan_key"));
 		String plan_code = request.getParameter("plan_code");
 		int item_key = Integer.parseInt(request.getParameter("item_key")); 
 		Date plan_date = Date.valueOf(request.getParameter("plan_date")); // 계획 일 
@@ -63,18 +70,18 @@ public class PlanController extends HttpServlet {
 		int plan_qty = Integer.parseInt(request.getParameter("plan_qty")); //  계획 수량 
 		String status = request.getParameter("status");	// 상태 
 		int user_key = Integer.parseInt(request.getParameter("user_key"));
-		Date create_at = Date.valueOf(request.getParameter("create_at")); // 생성 일
+//		Date create_at = Date.valueOf(request.getParameter("create_at")); // 생성 일
 		int priority = Integer.parseInt(request.getParameter("priority")); // 우선순위
 		
 
 		// DTO에 담기
 		PlanDTO dto = new PlanDTO();
-		dto.setCreate_at(create_at);
+//		dto.setCreate_at(create_at);
 		dto.setDue_date(due_date);
 		dto.setItem_key(item_key);
 		dto.setPlan_code(plan_code);
 		dto.setPlan_date(plan_date);
-		dto.setPlan_key(plan_key);
+//		dto.setPlan_key(plan_key);
 		dto.setPriority(priority);
 		dto.setStatus(status);
 		dto.setUser_key(user_key);
@@ -83,8 +90,9 @@ public class PlanController extends HttpServlet {
 		
 		// service로 DTO를 보냄
 		PlanService planservice = new PlanService();
-//		int result = planservice.addplan(dto);
-//		System.out.println("result2 : " + result);
+		int result = planservice.addplan(dto);
+		System.out.println("result2 : " + result);
+		response.sendRedirect("plan");
 
 		
 	}
@@ -124,11 +132,11 @@ public class PlanController extends HttpServlet {
 
 			// service로 DTO를 보냄
 			PlanService planservice = new PlanService();
-//			int result = planservice.updateplan(dto);
-//			System.out.println("result2 : "+ result);
+			int result = planservice.updateplan(dto);
+			System.out.println("result2 : "+ result);
 
 		
-			response.sendRedirect("");
+			response.sendRedirect("plan");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -149,9 +157,9 @@ public class PlanController extends HttpServlet {
 			dto.setPlan_key(plan_key);
 			
 			PlanService planservice = new PlanService(); 
-//			int result = planservice.deletePlan(dto);
+			int result = planservice.deleteplan(plan_key);
 			
-			response.sendRedirect("");
+			response.sendRedirect("plan");
 			
 		} catch (Exception e) {
 			e.printStackTrace(); 

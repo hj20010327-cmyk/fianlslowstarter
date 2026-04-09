@@ -32,13 +32,29 @@ public class BOMDAO {
 	}
 
 	// 목록 전체 보기 리턴 리스트() - bom_key 가져오기
-	public List selectAllBOM() {
+	public List selectAllBOM(BOMDTO bomDTO) {
 
 		List<BOMDTO> list = new ArrayList();
 
 		try (Connection conn = getConn(); 
-			PreparedStatement ps = new LoggableStatement(conn, "select * from tb_bom");
+			PreparedStatement ps = new LoggableStatement(conn, "SELECT *\r\n"
+					+ "FROM ( SELECT ROWNUM AS rnum, b.*\r\n"
+					+ "    FROM ( SELECT b.bom_key,\r\n"
+					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) AS product_item_key,\r\n"
+					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) AS material_item_key, \r\n"
+					+ "               b.qty,\r\n"
+					+ "               b.remark\r\n"
+					+ "        FROM tb_bom b\r\n"
+					+ "        ORDER BY b.bom_key\r\n"
+					+ "    ) b\r\n"
+					+ "    WHERE ROWNUM <= ?\r\n"
+					+ ")\r\n"
+					+ "WHERE rnum >= ?");
+					
 			) {
+			ps.setInt(1, bomDTO.getEnd());
+			ps.setInt(2, bomDTO.getStart());
+			
 			System.out.println(((LoggableStatement) ps).getQueryString());
 
 			try (ResultSet rs = ps.executeQuery();) {
@@ -46,13 +62,17 @@ public class BOMDAO {
 				while (rs.next()) {
 					BOMDTO dto = new BOMDTO();
 
-					String bom_key = rs.getString("bom_key");
+					int bom_key = Integer.parseInt(rs.getString("bom_key"));
 					dto.setBom_key(bom_key);
-
-					dto.setItem_code(rs.getString("item_code"));
-					dto.setItem_count(rs.getInt("item_count"));
-					dto.setStatus(rs.getInt("status"));
-					dto.setCode_id(rs.getString("code_id"));
+					
+					
+					dto.setProduct_item_key(rs.getString("product_item_key"));
+					dto.setMaterial_item_key(rs.getString("material_item_key"));
+					
+							
+					dto.setQTY(rs.getInt("qty"));
+					
+					dto.setRemark(rs.getString("remark"));
 
 					list.add(dto);
 				}
@@ -66,60 +86,86 @@ public class BOMDAO {
 		return list;
 	}
 
-	// 리스트 목록 하나만 가져오기 (나중에 상세보기용 - 수정,삭제 포함)
-	public BOMDTO selectOneBOM(String bom_key) {
-		
-		BOMDTO dto = null;
+	// 리스트 목록 일부만 가져오기 (조회데이터용 , 수정용 목록은 다시 만들어야 할지도??)
+	public List selectdetailBOM(BOMDTO bomDTO) {
 
+		List<BOMDTO> list = new ArrayList();
+		
 		try (Connection conn = getConn();
-			PreparedStatement ps = new LoggableStatement(conn, "select * from tb_bom where bom_key = ? ");
+			PreparedStatement ps = new LoggableStatement(conn, " SELECT * FROM ("
+					+ "    SELECT ROWNUM AS rnum, b.*"
+					+ "    FROM ("
+					+ "        SELECT b.bom_key,"
+					+ "               (SELECT i.item_code FROM tb_item i WHERE i.item_key = b.product_item_key) AS product_item_code, "
+					+ "               (SELECT i.item_code FROM tb_item i WHERE i.item_key = b.material_item_key) AS material_item_code, "
+					+ "               b.qty, "
+					+ "               b.remark "
+					+ "        FROM tb_bom b "
+					+ "        WHERE  "
+					+ "            (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) LIKE '%' || ? || '%' "
+					+ "         OR (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) LIKE '%' || ? || '%' "
+					+ "        ORDER BY b.bom_key "
+					+ "    ) b "
+					+ "    WHERE ROWNUM <= ? "
+					+ ") "
+					+ " WHERE rnum >= ?");
 			) {
-			ps.setString(1, bom_key);
+			ps.setInt(1, bomDTO.getKeycode());
+			ps.setString(2, bomDTO.getKeyword());
+			ps.setInt(3, bomDTO.getEnd());
+			ps.setInt(4, bomDTO.getStart());
 
 			try (ResultSet rs = ps.executeQuery();) {
+				while(rs.next()) {
+					BOMDTO dto = new BOMDTO();
 
-				while (rs.next()) {
-					dto = new BOMDTO();
+					int bom_key = Integer.parseInt(rs.getString("bom_key"));
+					dto.setBom_key(bom_key);
 					
-					dto.setBom_key(rs.getString("bom_key"));
-					dto.setItem_code(rs.getString("item_code"));
-					dto.setItem_count(rs.getInt("item_count"));
-					dto.setStatus(rs.getInt("status"));
-					dto.setCode_id(rs.getString("code_id"));
+					
+					dto.setProduct_item_key(rs.getString("product_item_key"));
+					dto.setMaterial_item_key(rs.getString("material_item_key"));
+					
+							
+					dto.setQTY(rs.getInt("qty"));
+					
+					dto.setRemark(rs.getString("remark"));
+
+					list.add(dto);
 				}
+			
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return dto;
+		return list;
 	}
 
-	// 데이터 삽입
+	// 데이터 삽입  - 0408 다시 해야함 
 	public int insertBOM(BOMDTO bomDTO) {
 		
 		int result = -1;
 
 		try (Connection conn = getConn();
 			PreparedStatement ps = new LoggableStatement(conn,
-						" insert into tb_bom " + " values(('BOM'||lpad(seq_bom.nextval,4,'0'), null, ?, ?, null); ");
+						" insert into tb_bom " + " values(seq_bom.nextval, , , ?, ?); ");
 		) {
-			ps.setInt(1, bomDTO.getItem_count());
-			ps.setInt(2, bomDTO.getStatus());
+			ps.setInt(1, bomDTO.getQTY());
+			ps.setString(2, bomDTO.getRemark());
 
-			System.out.println(((LoggableStatement) ps).getQueryString());
+			System.out.println(((LoggableStatement)ps).getQueryString());
 
 			result = ps.executeUpdate();
 			System.out.println("insert 결과 : " + result);
 			
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 	
-	// 데이터 수정 
+	// 데이터 수정 - 0408 수정해야함 
 	public int updateBOM(BOMDTO bomDTO) {
 		
 		int result = -1 ;
@@ -133,10 +179,7 @@ public class BOMDAO {
 						+ " where bom_key = ? ");
 		) {
 			ps.setString(1, bomDTO.getItem_code());
-			ps.setInt(2, bomDTO.getItem_count());
-			ps.setInt(3, bomDTO.getStatus());
-			ps.setString(4, bomDTO.getCode_id());
-			ps.setString(5, bomDTO.getBom_key());
+			
 			
 			System.out.println(((LoggableStatement) ps).getQueryString());
 			
@@ -149,7 +192,6 @@ public class BOMDAO {
 		return result;
 	}
 	
-	
 	// 데이터 삭제 
 	public int deleteBOM (BOMDTO bomDTO) {
 		
@@ -159,7 +201,7 @@ public class BOMDAO {
 				PreparedStatement ps = new LoggableStatement( conn , " delete tb_bom " + " where bom_key = ?");
 				
 		){
-			ps.setString(1, bomDTO.getBom_key());
+			ps.setInt(1, bomDTO.getBom_key());
 			System.out.println(((LoggableStatement)ps).getQueryString());
 			
 			result = ps.executeUpdate();
@@ -169,6 +211,30 @@ public class BOMDAO {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	// 페이징 
+	
+	public int BOMTotal() {
+		
+		int totalCount=0;
+		
+		try( Connection conn = getConn(); 
+				PreparedStatement ps = new LoggableStatement(conn, "Select count(*) cnt From tb_bom");
+		){
+			System.out.println(((LoggableStatement)ps).getQueryString());
+			
+			try(ResultSet rs = ps.executeQuery();){
+				// 결과 활용
+				if(rs.next()) {
+					totalCount = rs.getInt("cnt");
+				}
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return totalCount;
 	}
 
 

@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,6 +15,7 @@
     <link rel="stylesheet" href="./asset/css/page.css" />
 
     <style>
+        /* [1] 페이지네이션 스타일 */
         .pagination {
             display: flex;
             justify-content: center;
@@ -22,6 +24,7 @@
             margin-bottom: 10px;
             gap: 8px;
         }
+
         .pagination a {
             padding: 10px 15px;
             border: 1px solid #dee2e6;
@@ -31,74 +34,189 @@
             font-size: 14px;
             transition: all 0.2s;
         }
+
         .pagination a.active {
             background-color: #0d6efd;
             color: white;
             border-color: #0d6efd;
             font-weight: bold;
         }
-        .pagination a:hover:not(.active) {
-            background-color: #e9ecef;
-            border-color: #adb5bd;
+
+        /* [2] 모달창 레이아웃 스타일 */
+        .modal { display: none; }
+
+        .modal.show {
+            display: flex;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.45); 
+            backdrop-filter: blur(6px);
+            z-index: 10000;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 520px;
+            max-width: 92%;
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
+            overflow: hidden;
+            border: none;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+
+        .modal-body { 
+            padding: 20px; 
+            max-height: 70vh; 
+            overflow-y: auto; 
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 16px 20px;
+            border-top: 1px solid #e2e8f0;
+            background: #f9fafb;
+        }
+
+        /* [3] 폼 그리드 스타일 */
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+        }
+
+        .form-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+        }
+
+        .form-group label { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: #475569; 
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-custom {
+            background-color: #ffffff;
+            color: #495057;
+            border: 1px solid #dee2e6;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
         }
     </style>
 
     <script>
-        function openModal(title) {
-            const modal = document.getElementById('commonModal');
-            if (modal) {
-                modal.style.display = 'flex'; 
-                if (title) {
-                    document.getElementById('modalTitle').innerText = title;
-                }
-            }
+        /* [A] 모달 제어 함수 */
+        function openModal(title = "신규 등록") {
+            document.getElementById("qualityForm").reset(); // 이전 입력값 초기화
+            document.getElementById("modalTitle").innerText = title;
+            document.getElementById("commonModal").classList.add("show");
         }
 
         function closeModal() {
-            const modal = document.getElementById('commonModal');
-            if (modal) modal.style.display = 'none';
+            document.getElementById("commonModal").classList.remove("show");
         }
 
+        /* [B] 비동기 데이터 저장 함수 (AJAX) */
+        function submitForm() {
+            const form = document.getElementById("qualityForm");
+            
+            // 유효성 체크 (빈값 확인)
+            if(!form.quality_key.value || !form.item_name.value || !form.inspect_qty.value) {
+                alert("모든 정보를 입력해주세요.");
+                return;
+            }
+
+            // 1. 폼 데이터 가공
+            const formData = new FormData(form);
+            const params = new URLSearchParams(formData);
+
+            // 2. 서버로 전송 (품질관리 등록 액션)
+            fetch("qualityInsert", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("성공적으로 저장되었습니다.");
+                    closeModal(); // 모달 닫기
+                    location.reload(); // 리스트 갱신을 위해 새로고침
+                } else {
+                    alert("저장에 실패했습니다. (Error: " + response.status + ")");
+                }
+            })
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("서버 통신 중 오류가 발생했습니다.");
+            });
+        }
+
+        /* [C] 조회 및 검색 함수 */
         function searchQuality(page) {
             const searchCode = document.getElementById('searchCode').value;
             const searchName = document.getElementById('searchName').value;
             const status = document.getElementById('searchStatus').value;
             const p = page || 1; 
-            let url = "qualityList?page=" + p;
-            url += "&searchCode=" + encodeURIComponent(searchCode);
-            url += "&searchName=" + encodeURIComponent(searchName);
-            url += "&status=" + status;
-            location.href = url;
+
+            location.href = "qualityList?page=" + p 
+                          + "&searchCode=" + encodeURIComponent(searchCode) 
+                          + "&searchName=" + encodeURIComponent(searchName) 
+                          + "&status=" + status;
         }
 
-        /* [수정] '선택' 글자 클릭 시 전체 체크박스 토글 기능 */
+        /* [D] 체크박스 및 삭제 제어 */
         let isAllChecked = false;
         function toggleAll() {
             isAllChecked = !isAllChecked;
             const chks = document.getElementsByName("chk");
-            for (let i = 0; i < chks.length; i++) {
-                chks[i].checked = isAllChecked;
+            for (let i = 0; i < chks.length; i++) { 
+                chks[i].checked = isAllChecked; 
             }
         }
 
         function deleteSelected() {
             const chks = document.getElementsByName("chk");
             let keys = [];
-            for (let i = 0; i < chks.length; i++) {
-                if (chks[i].checked) {
-                    keys.push(chks[i].value);
-                }
+            for (let i = 0; i < chks.length; i++) { 
+                if (chks[i].checked) { keys.push(chks[i].value); } 
             }
-            if (keys.length === 0) {
-                alert("삭제할 항목을 선택해주세요.");
-                return;
+            if (keys.length === 0) { 
+                alert("삭제할 항목을 선택해주세요."); 
+                return; 
             }
-            if (confirm("선택한 " + keys.length + "건을 삭제하시겠습니까?")) {
-                location.href = "qualityDelete?quality_key=" + keys.join(",");
+            if (confirm("선택한 항목을 삭제하시겠습니까?")) { 
+                location.href = "qualityDelete?quality_key=" + keys.join(","); 
             }
         }
     </script>
 </head>
+
 <body>
     <header class="header">
         <div class="header-left">
@@ -110,7 +228,6 @@
             <div class="header-chip">생산 1라인 가동중</div>
             <div class="header-chip">관리자</div>
         </div>
-        <button type="button" class="menu-toggle" id="menuToggle">☰</button>
     </header>
 
     <div class="layout">
@@ -151,9 +268,7 @@
                     <p>검사 결과와 불량 유형, 조치 현황을 관리합니다.</p>
                 </div>
                 <div class="page-actions">
-                   <button class="btn primary" type="button" onclick="openModal('BOM 신규 등록')">
-  신규 등록
-</button>
+                    <button class="btn primary" type="button" onclick="openModal('품질관리 신규 등록')">신규 등록</button>
                 </div>
             </div>
 
@@ -175,16 +290,17 @@
                 <div class="card">
                     <div class="section-title">
                         <h2>품질관리 목록</h2>
-                        <button class="btn" type="button" onclick="deleteSelected()">삭제</button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-custom" type="button">수정</button>
+                            <button class="btn-custom" type="button" onclick="deleteSelected()">삭제</button>
+                        </div>
                     </div>
-                    
+
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="width: 60px; text-align: center; cursor: pointer;" onclick="toggleAll()">
-                                        선택
-                                    </th>
+                                    <th style="width: 60px; text-align: center; cursor: pointer;" onclick="toggleAll()">선택</th>
                                     <th>검사번호</th>
                                     <th>품목명</th>
                                     <th>검사수량</th>
@@ -198,8 +314,8 @@
                                         <td style="text-align:center;">
                                             <input type="checkbox" name="chk" value="${m.quality_key}">
                                         </td>
-                                        <td>${m.quality_key}</td> 
-                                        <td>${m.item_name}</td> 
+                                        <td>${m.quality_key}</td>
+                                        <td>${m.item_name}</td>
                                         <td>${m.inspect_qty}</td>
                                         <td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
                                         <td>
@@ -219,8 +335,7 @@
                                 <a href="javascript:searchQuality(${p.startPage - 1})">이전</a>
                             </c:if>
                             <c:forEach var="i" begin="${p.startPage}" end="${p.endPage}">
-                                <a href="javascript:searchQuality(${i})" 
-                                   class="${p.curPage == i ? 'active' : ''}">${i}</a>
+                                <a href="javascript:searchQuality(${i})" class="${p.curPage == i ? 'active' : ''}">${i}</a>
                             </c:forEach>
                             <c:if test="${p.next}">
                                 <a href="javascript:searchQuality(${p.endPage + 1})">다음</a>
@@ -232,7 +347,7 @@
                 <div class="card">
                     <div class="section-title">
                         <h2>품질 상태 요약</h2>
-                        <span>실시간 요약 현황</span>
+                        <span style="font-size: 12px; color: #94a3b8;">실시간 요약 현황</span>
                     </div>
                     <ul class="summary-list">
                         <li style="margin-bottom: 20px;">
@@ -253,69 +368,49 @@
                 </div>
             </section>
         </main>
-         <!-- ===== 공통 모달 ===== -->
-<div id="commonModal" class="modal">
-  <div class="modal-box">
 
-    <!-- 헤더 -->
-    <div class="modal-header">
-      <h3 id="modalTitle">신규 등록</h3>
-      <button class="modal-close" onclick="closeModal()">×</button>
-    </div>
+        <div id="commonModal" class="modal">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3 id="modalTitle">품질관리 신규 등록</h3>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
 
-    <!-- 바디 -->
-    <div class="modal-body">
-      <div class="form-grid">
+                <div class="modal-body">
+                    <form id="qualityForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>검사번호</label>
+                                <input type="text" name="quality_key" placeholder="검사번호 입력">
+                            </div>
+                            <div class="form-group">
+                                <label>품목명</label>
+                                <input type="text" name="item_name" placeholder="품목명 입력">
+                            </div>
+                            <div class="form-group">
+                                <label>검사수량</label>
+                                <input type="number" name="inspect_qty" placeholder="0">
+                            </div>
+                            <div class="form-group">
+                                <label>검사상태</label>
+                                <select name="qc_status">
+                                    <option value="PASS">PASS (정상)</option>
+                                    <option value="FAIL">FAIL (불량)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-        <div class="form-group">
-          <label>코드</label>
-          <input type="text" class="input" placeholder="코드 입력" />
+                <div class="modal-footer">
+                    <button class="btn-custom" onclick="closeModal()">취소</button>
+                    <button class="btn primary" type="button" onclick="submitForm()" 
+                            style="background:#0d6efd; color:#fff; border:none;">
+                        저장하기
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-          <label>제품명</label>
-          <input type="text" class="input" placeholder="제품명 입력" />
-        </div>
-
-        <div class="form-group">
-          <label>품목명</label>
-          <input type="text" class="input" placeholder="품목명 입력" />
-        </div>
-
-        <div class="form-group">
-          <label>소요량</label>
-          <input type="number" class="input" placeholder="수량 입력" />
-        </div>
-
-        <div class="form-group">
-          <label>버전</label>
-          <input type="text" class="input" placeholder="예: V1" />
-        </div>
-
-        <div class="form-group">
-          <label>사용여부</label>
-          <select class="select">
-            <option>사용</option>
-            <option>미사용</option>
-          </select>
-        </div>
-
-        <div class="form-group" style="grid-column: span 2;">
-          <label>비고</label>
-          <textarea class="textarea" placeholder="설명 입력"></textarea>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 푸터 -->
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">취소</button>
-      <button class="btn primary">저장</button>
-    </div>
-
-  </div>
-</div>
     </div>
 </body>
 </html>

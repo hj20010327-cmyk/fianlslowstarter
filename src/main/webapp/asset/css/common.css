@@ -28,7 +28,7 @@ body {
 }
 
 body {
-  font-family: "Malgun Gothic", "맑은 고딕", sans-serif;
+  font-family: "Malgun Gothic", "留묒� 怨좊뵓", sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow: hidden;
@@ -225,13 +225,13 @@ td {
 }
 
 .snb-title::after {
-    content: "▾";
+    content: "�뼻";
     font-size: 12px;
     transition: transform 0.2s ease;
 }
 
 .snb-title::after {
-    content: "▾";
+    content: "�뼻";
     font-size: 12px;
     transition: transform 0.2s ease;
 }
@@ -949,4 +949,44 @@ td {
   .auth-subbtn {
     height: 46px;
   }
+}
+
+
+
+/* 헤더 */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+}
+
+/* 닫기 */
+.modal-close {
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--sub);
+}
+
+/* 바디 */
+.modal-body {
+  padding: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* 푸터 */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--line);
+  background: #f9fafb;
 }

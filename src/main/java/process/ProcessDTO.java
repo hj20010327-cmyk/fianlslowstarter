@@ -2,26 +2,37 @@ package process;
 
 public class ProcessDTO {
 	
-	private String process_key;
-	private int sequence_no; 
-	private String work_desc;
-	private String process_note;
-	private String code_id; 
-	private String system_key;
+	private int process_key;
+	private String process_code;
+	private String process_name;
+	private int sequence_no;
+	private String process_desc;
+	private char status;
 	
 	
 	@Override
 	public String toString() {
-		return "ProcessDTO [process_key=" + process_key + ", sequence_no=" + sequence_no + ", work_desc=" + work_desc
-				+ ", process_note=" + process_note + ", code_id=" + code_id + ", system_key=" + system_key + "]";
+		return "ProcessDTO [process_key=" + process_key + ", process_code=" + process_code + ", process_name="
+				+ process_name + ", sequence_no=" + sequence_no + ", process_desc=" + process_desc + ", status="
+				+ status + "]";
 	}
-	
-	
-	public String getProcess_key() {
+	public int getProcess_key() {
 		return process_key;
 	}
-	public void setProcess_key(String process_key) {
+	public void setProcess_key(int process_key) {
 		this.process_key = process_key;
+	}
+	public String getProcess_code() {
+		return process_code;
+	}
+	public void setProcess_code(String process_code) {
+		this.process_code = process_code;
+	}
+	public String getProcess_name() {
+		return process_name;
+	}
+	public void setProcess_name(String process_name) {
+		this.process_name = process_name;
 	}
 	public int getSequence_no() {
 		return sequence_no;
@@ -29,29 +40,22 @@ public class ProcessDTO {
 	public void setSequence_no(int sequence_no) {
 		this.sequence_no = sequence_no;
 	}
-	public String getWork_desc() {
-		return work_desc;
+	public String getProcess_desc() {
+		return process_desc;
 	}
-	public void setWork_desc(String work_desc) {
-		this.work_desc = work_desc;
+	public void setProcess_desc(String process_desc) {
+		this.process_desc = process_desc;
 	}
-	public String getProcess_note() {
-		return process_note;
+	public char getStatus() {
+		return status;
 	}
-	public void setProcess_note(String process_note) {
-		this.process_note = process_note;
+	public void setStatus(char status) {
+		this.status = status;
 	}
-	public String getCode_id() {
-		return code_id;
-	}
-	public void setCode_id(String code_id) {
-		this.code_id = code_id;
-	}
-	public String getSystem_key() {
-		return system_key;
-	}
-	public void setSystem_key(String system_key) {
-		this.system_key = system_key;
-	}
+	
+	
+	
+	
+	
 
 }

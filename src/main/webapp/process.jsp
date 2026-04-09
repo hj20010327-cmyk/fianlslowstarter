@@ -1,3 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -117,34 +123,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <c:forEach var="process" items="${list}">
                                 <tr>
-                                    <td>PROC-01</td>
-                                    <td>가공</td>
-                                    <td>CNC-01</td>
-                                    <td>15분</td>
-                                    <td>사용</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
+                                    <td>${ process. }</td>
                                 </tr>
-                                <tr>
-                                    <td>PROC-02</td>
-                                    <td>조립</td>
-                                    <td>ASSY-02</td>
-                                    <td>18분</td>
-                                    <td>사용</td>
-                                </tr>
-                                <tr>
-                                    <td>PROC-03</td>
-                                    <td>검사</td>
-                                    <td>QC-01</td>
-                                    <td>10분</td>
-                                    <td>사용</td>
-                                </tr>
-                                <tr>
-                                    <td>PROC-04</td>
-                                    <td>포장</td>
-                                    <td>PKG-01</td>
-                                    <td>8분</td>
-                                    <td>사용</td>
-                                </tr>
+                                </c:forEach>
                             </tbody>
                         </table>
                     </div>

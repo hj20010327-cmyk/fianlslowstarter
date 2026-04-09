@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
 document.addEventListener("DOMContentLoaded", function () {
   const phone2 = document.getElementById("phone2");
   const phone3 = document.getElementById("phone3");
@@ -66,3 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+
+function openModal(title = "신규 등록") {
+  document.getElementById("modalTitle").innerText = title;
+  document.getElementById("commonModal").classList.add("show");
+}
+
+function closeModal() {
+  document.getElementById("commonModal").classList.remove("show");
+}
+

@@ -46,7 +46,7 @@ public class MachineUpdateController extends HttpServlet {
 		int count = machineservice.getupdatemachine(dto);
 		System.out.println("업데이트 결과" + count);
 
-//		response.sendRedirect(systemstatus) 주소 적어야함 
+		response.sendRedirect("/machine");
 
 	}
 

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/machine")
-public class MachineController extends HttpServlet {
+public class MachineListController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 

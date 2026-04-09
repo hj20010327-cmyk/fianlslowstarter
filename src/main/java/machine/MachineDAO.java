@@ -30,7 +30,7 @@ public class MachineDAO {
 			conn = dataFactory.getConnection();
 
 			// SQL 준비
-			String query = "select * from tb_machine where rownum<=4";
+			String query = "select * from tb_machine where rownum<=20 order by machine_key";
 			ps = conn.prepareStatement(query);
 
 			// SQL 실행 및 결과 확보
@@ -116,7 +116,6 @@ public class MachineDAO {
 			conn = dataFactory.getConnection();
 
 			// 2. SQL 준비
-//					String query = "select * from todo where todo_id="+ todo_id; 
 			String query = "INSERT INTO tb_machine(" +
 		               "machine_key, machine_code, machine_name, process_key, machine_status, " +
 		               "buy_date, last_check_date, remark, status, created_at) " +
@@ -188,7 +187,6 @@ public class MachineDAO {
 			conn = dataFactory.getConnection();
 
 			// 2. SQL 준비
-//					String query = "select * from todo where todo_id="+ todo_id; 
 			String query = "UPDATE tb_machine SET " +
 		               "machine_code = ?, " +
 		               "machine_name = ?, " +
@@ -285,7 +283,6 @@ public class MachineDAO {
 					e.printStackTrace();
 				}
 			}
-
 			if (ps != null) {
 				try {
 					ps.close();
@@ -293,7 +290,6 @@ public class MachineDAO {
 					e.printStackTrace();
 				}
 			}
-
 			if (conn != null) {
 				try {
 					conn.close();

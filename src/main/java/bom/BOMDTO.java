@@ -16,6 +16,23 @@ public class BOMDTO {
 	int start = 0; 
 	int end; 
 	
+	int keycode;
+	String keyword;
+	
+	
+	public int getKeycode() {
+		return keycode;
+	}
+	public void setKeycode(int keycode) {
+		this.keycode = keycode;
+	}
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
 	public int getStart() {
 		return start;
 	}

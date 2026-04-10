@@ -21,16 +21,16 @@ public class BOMController extends HttpServlet {
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM doGet Ω««‡");
+		System.out.println("/BOM doGet Ïã§Ìñâ");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
-		String Keycode = request.getParameter("keycode");
-		int keycode = Integer.parseInt(Keycode);
-		String keyword = request.getParameter("keyword");
+		//String Keycode = request.getParameter("keycode");
+		//int keycode = Integer.parseInt(Keycode);
+		//String keyword = request.getParameter("keyword");
 		
-		// ∆‰¿Ã¬° 
+		//ÌéòÏù¥Ïßï¬° 
 		int size = 5; 
 		int page = 1; 
 		
@@ -49,8 +49,8 @@ public class BOMController extends HttpServlet {
 		BOMDTO bomDTO = new BOMDTO(); 
 		bomDTO.setSize(size);
 		bomDTO.setPage(page);
-		bomDTO.setKeycode(keycode);
-		bomDTO.setKeyword(keyword);
+		//bomDTO.setKeycode(keycode);
+		//bomDTO.setKeyword(keyword);
 		
 		
 //		String cmd = request.getParameter("cmd");
@@ -62,7 +62,7 @@ public class BOMController extends HttpServlet {
 //			detail(request, response);
 //		}
 		
-		// º≠∫ÒΩ∫ ø¨∞· 
+		// ÏÑúÎπÑÏä§ 
 		BOMService bomservice = new BOMService();
 		
 		Map<String, Object> map = bomservice.getPaging(bomDTO);
@@ -79,12 +79,12 @@ public class BOMController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM doPost Ω««‡");
+		System.out.println("/BOM doPost Ïã§Ìñâ");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
-		// form ø‰º“ø° π›øµ 
+		// form ÏöîÏÜå
 		String cmd = request.getParameter("cmd");
 		
 		if(cmd.equals("insert")) {
@@ -98,12 +98,12 @@ public class BOMController extends HttpServlet {
 	
 	protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM insert Ω««‡");
+		System.out.println("/BOM insert Ïã§Ìñâ");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
-		// ∆ƒ∂ÛπÃ≈Õ »Æ∫∏ 
+		// ÌååÎùºÎØ∏ÌÑ∞
 		String Bom_key = request.getParameter("bom_key");
 		int bom_key = Integer.parseInt(Bom_key);
 		String product_item_key = request.getParameter("product_item_key");
@@ -112,7 +112,7 @@ public class BOMController extends HttpServlet {
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
 		
-		// DTOø° ≥÷±‚ 
+		// DTOÏã§Ìñâ
 		BOMDTO bomDTO = new BOMDTO(); 
 		bomDTO.setBom_key(bom_key);
 		bomDTO.setProduct_item_key(product_item_key);
@@ -120,11 +120,11 @@ public class BOMController extends HttpServlet {
 		bomDTO.setQTY(qty);
 		bomDTO.setRemark(remark);
 		
-		// service∑Œ DTO∏¶ ∫∏≥ø 
+		// service& DTO
 		BOMService bomservice = new BOMService(); 
 		int result = bomservice.insert(bomDTO);
 		
-		System.out.println("insertµ» rows: " + result);
+		System.out.println("insertÎêú  rows: " + result);
 		
 		response.sendRedirect("");
 		
@@ -132,9 +132,9 @@ public class BOMController extends HttpServlet {
 	
 	protected void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM update Ω««‡");
+		System.out.println("/BOM update Ïã§Ìñâ");
 		
-		// ∆ƒ∂ÛπÃ≈Õ »Æ∫∏ 
+		// ÌååÎùºÎØ∏ÌÑ∞
 		String Bom_key = request.getParameter("bom_key");
 		int bom_key = Integer.parseInt(Bom_key);
 		String product_item_key = request.getParameter("product_item_key");
@@ -158,7 +158,7 @@ public class BOMController extends HttpServlet {
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);
 			
-			System.out.println("update ∞·∞˙ : " + result);
+			System.out.println("update Îêú Ïó¥ : " + result);
 			
 			response.sendRedirect("");
 			
@@ -169,7 +169,7 @@ public class BOMController extends HttpServlet {
 	
 	public void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM delete Ω««‡");
+		System.out.println("/BOM delete Ïã§Ìñâ");
 		
 		try {
 			request.setCharacterEncoding("utf-8");
@@ -177,7 +177,7 @@ public class BOMController extends HttpServlet {
 	
 			//int bom_key = Integer.parseInt(request.getParameter("bom_key"));
 			String[] keys=request.getParameterValues("bom_key");
-//			bomDTO.setBom_key(keys); // »Æ¿Œ 
+//			bomDTO.setBom_key(keys);  
 //			
 			
 			BOMDTO dto = new BOMDTO();
@@ -187,7 +187,7 @@ public class BOMController extends HttpServlet {
 				
 				for(String key : keys) {
 					int bom_key = Integer.parseInt(key);
-					System.out.println("ªË¡¶«“ key : " + bom_key);
+					System.out.println("bom_key " + bom_key);
 					
 					dto.setBom_key(bom_key);
 					
@@ -206,7 +206,7 @@ public class BOMController extends HttpServlet {
 	
 	public void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/BOM detail Ω««‡");
+		System.out.println("/BOM detail Ïã§Ìñâ");
 		
 		
 		try {
@@ -219,7 +219,7 @@ public class BOMController extends HttpServlet {
 			int bom_key = Integer.parseInt(Bom_key);
 			System.out.println("bom_key: " + bom_key);
 			
-			// bom_key ∏¶ service ∂˚ DAO ∫∏≥ª±‚ 
+			// bom_key 
 			BOMService bomservice = new BOMService(); 
 			List list = bomservice.getBOM(bomDTO);
 			

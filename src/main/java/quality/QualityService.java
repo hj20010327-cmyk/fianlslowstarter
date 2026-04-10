@@ -1,36 +1,23 @@
 package quality;
 
-import java.util.*;
+import java.util.List;
 
 public class QualityService {
-
     private QualityDAO dao = new QualityDAO();
 
-    // 페이징 리스트 조회
-    public List<QualityDTO> getSearchList(String searchCode, int startRow, int endRow) {
-    
-        return dao.selectQualityList(searchCode, startRow, endRow);
-        
+    public List<QualityDTO> getList() {
+        return dao.selectAll();
     }
 
-    // 페이징 정보 계산 (예전 로직 그대로)
-    public Map<String, Object> getPageInfo(int curPage, int size, String searchCode) {
-    
-        int total = dao.getTotalCount(searchCode);
-        int totalPage = (int) Math.ceil((double) total / size);
-        
-        int startPage = ((curPage - 1) / 5) * 5 + 1;
-        int endPage = startPage + 4;
-        
-        if (endPage > totalPage) endPage = totalPage;
+    public int getaddquality(QualityDTO dto) {
+        return dao.insertQuality(dto); // DAO의 메서드명과 일치
+    }
 
-        Map<String, Object> pageInfo = new HashMap<>();
-        
-        pageInfo.put("curPage", curPage);
-        pageInfo.put("totalPage", totalPage);
-        pageInfo.put("startPage", startPage);
-        pageInfo.put("endPage", endPage);
-        
-        return pageInfo;
+    public int getdeletequality(QualityDTO dto) {
+        return dao.deleteQuality(dto); // deletemachine -> deleteQuality로 수정
+    }
+
+    public int getupdatquality(QualityDTO dto) {
+        return dao.updateQuality(dto); // DAO의 메서드명과 일치
     }
 }

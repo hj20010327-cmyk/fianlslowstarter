@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
@@ -8,335 +7,175 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AUTO MES | 품질관리</title>
 
-    <script src="./asset/js/common.js" defer></script>
-    <link rel="stylesheet" href="./asset/css/common.css" />
-    <link rel="stylesheet" href="./asset/css/page.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/common.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/page.css" />
+    <script src="${pageContext.request.contextPath}/asset/js/common.js" defer></script>
 
     <style>
-        /* [스크롤바 추가 핵심 설정] */
-        .snb {
-            overflow-y: auto;   /* 내용이 길어지면 세로 스크롤바 자동 생성 */
-            max-height: 100vh;  /* 화면 높이를 넘지 않도록 제한 */
-        }
-
-        /* 페이지네이션 스타일 */
+        /* 가독성을 위한 레이아웃 보정 */
+        .snb { overflow-y: auto; max-height: 100vh; }
+        
         .pagination { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-top: 25px; 
-            margin-bottom: 10px; 
-            gap: 8px; 
+            display: flex; justify-content: center; 
+            margin-top: 20px; gap: 5px; 
         }
-
+        
         .pagination a { 
-            padding: 10px 15px; 
-            border: 1px solid #dee2e6; 
-            text-decoration: none; 
-            color: #495057; 
-            border-radius: 5px; 
-            font-size: 14px; 
+            padding: 8px 12px; border: 1px solid #ddd; 
+            text-decoration: none; color: #333; border-radius: 4px; 
         }
-
+        
         .pagination a.active { 
-            background-color: #0d6efd; 
-            color: white; 
-            border-color: #0d6efd; 
-            font-weight: bold; 
+            background-color: #0d6efd; color: white; 
         }
 
-        /* 모달 스타일 */
-        .modal { display: none; }
-
-        .modal.show { 
-            display: flex; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            justify-content: center; 
-            align-items: center; 
-            background: rgba(15, 23, 42, 0.45); 
-            backdrop-filter: blur(6px); 
-            z-index: 10000; 
+        /* 상태별 뱃지 스타일 */
+        .badge { 
+            padding: 4px 10px; 
+            border-radius: 50px; 
+            font-size: 12px; 
+            font-weight: 600; 
+            display: inline-block;
         }
+        .badge.ok { background-color: #e6f4ea; color: #1e8e3e; }      /* 합격 */
+        .badge.warning { background-color: #fef7e0; color: #f9ab00; } /* 재검 */
+        .badge.danger { background-color: #fce8e6; color: #d93025; }  /* 불합격 */
 
-        .modal-box { 
-            background: #ffffff; 
-            width: 520px; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
-            overflow: hidden; 
-        }
-
-        .menu-badge { 
-            background: #4a5568; 
-            color: #fff; 
-            padding: 0 6px; 
-            border-radius: 10px; 
-            font-size: 11px; 
-        }
+        /* 테이블 행 호버 효과 */
+        tbody tr:hover { background-color: #f8fafc; cursor: pointer; }
+        
+        /* 테이블 텍스트 정렬 보정 */
+        th, td { text-align: center !important; padding: 12px 8px; }
+        td:nth-child(3) { text-align: left !important; } /* 품목명은 왼쪽 정렬 */
     </style>
-
-    <script>
-        function handleRowClick(event, data) {
-            if (event.target.type === 'checkbox') {
-                if (event.target.checked) openModal('품질관리 상세 수정', data);
-                return;
-            }
-            openModal('품질관리 상세 수정', data);
-        }
-
-        function openModal(title = "신규 등록", data = null) {
-            const form = document.getElementById("qualityForm");
-            const submitBtn = document.getElementById("submitBtn");
-            form.reset(); 
-            document.getElementById("modalTitle").innerText = title;
-            if(data) {
-                form.quality_key.value = data.key;
-                form.quality_key.readOnly = true; 
-                form.quality_key.style.backgroundColor = "#f1f5f9";
-                form.item_name.value = data.name;
-                form.inspect_qty.value = data.qty;
-                submitBtn.innerText = "수정하기";
-            } else {
-                form.quality_key.readOnly = false;
-                form.quality_key.style.backgroundColor = "#ffffff";
-                submitBtn.innerText = "저장하기";
-            }
-            document.getElementById("commonModal").classList.add("show");
-        }
-
-        function closeModal() { document.getElementById("commonModal").classList.remove("show"); }
-
-        function submitForm() {
-            const form = document.getElementById("qualityForm");
-            if(!form.quality_key.value.trim()) { alert("검사번호를 입력해주세요."); return; }
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData);
-            fetch("${pageContext.request.contextPath}/qualityList", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: params
-            }).then(response => {
-                if (response.ok) { alert("처리되었습니다."); location.reload(); }
-                else { alert("처리에 실패했습니다."); }
-            });
-        }
-
-        function searchQuality(page) {
-            const searchCode = document.getElementById('searchCode').value;
-            const searchName = document.getElementById('searchName').value;
-            const status = document.getElementById('searchStatus').value;
-            location.href = "qualityList?page=" + (page || 1) + "&searchCode=" + encodeURIComponent(searchCode) + "&searchName=" + encodeURIComponent(searchName) + "&status=" + status;
-        }
-
-        function toggleAll() {
-            const chks = document.getElementsByName("chk");
-            const isAll = [...chks].every(c => c.checked);
-            chks.forEach(c => c.checked = !isAll);
-        }
-
-        function deleteSelected() {
-            const keys = [...document.getElementsByName("chk")].filter(c => c.checked).map(c => c.value);
-            if (keys.length === 0) return alert("삭제할 항목을 선택해주세요.");
-            if (confirm("삭제하시겠습니까?")) location.href = "qualityDelete?quality_key=" + keys.join(",");
-        }
-    </script>
 </head>
 
 <body>
-
     <header class="header">
         <div class="header-left">
-            <a href="./index.html" class="logo">
-                <span class="logo-mark">AM</span>
-                <span>AUTO MES</span>
-            </a>
+            <a href="#" class="logo"><span class="logo-mark">AM</span><span>AUTO MES</span></a>
             <div class="header-title">자동차 콤프레셔 제조 MES</div>
         </div>
-
         <div class="header-right">
             <div class="header-chip">2026-04-10</div>
-            <div class="header-chip">생산 1라인 가동중</div>
+            <div class="header-chip" style="color: #1e8e3e;">● 생산 1라인 가동중</div>
             <div class="header-chip">관리자</div>
         </div>
     </header>
 
     <div class="layout">
-        
-        <aside class="snb" id="snb">
-
+        <aside class="snb">
             <div class="snb-section">
-                <div class="snb-title"><span>MAIN</span></div>
+                <div class="snb-title">MAIN</div>
                 <ul class="snb-menu">
-                    <li><a href="dashboard">대시보드</a></li>
+                    <li><a href="#">대시보드</a></li>
                 </ul>
             </div>
-
-            <div class="snb-section">
-                <div class="snb-title"><span>기준관리</span></div>
-                <ul class="snb-menu">
-                    <li><a href="baseInfo">기준관리</a></li>
-                    <li><a href="bom">BOM</a></li>
-                    <li><a href="process">공정</a></li>
-                    <li><a href="facility">설비</a></li>
-                </ul>
-            </div>
-
-            <div class="snb-section">
-                <div class="snb-title"><span>생산관리</span></div>
-                <ul class="snb-menu">
-                    <li><a href="workOrder" style="display: flex; justify-content: space-between;">작업지시 <span class="menu-badge">4</span></a></li>
-                    <li><a href="prodPlan" style="display: flex; justify-content: space-between;">생산계획 <span class="menu-badge">2</span></a></li>
-                </ul>
-            </div>
-
-            <div class="snb-section">
-                <div class="snb-title"><span>재고관리</span></div>
-                <ul class="snb-menu">
-                    <li><a href="inventory">재고</a></li>
-                    <li><a href="product">완제품</a></li>
-                    <li><a href="material">자재</a></li>
-                </ul>
-            </div>
-
+            
             <div class="snb-section active">
-                <div class="snb-title"><span>품질관리</span></div>
+                <div class="snb-title">품질관리</div>
                 <ul class="snb-menu">
-                    <li class="active"><a href="qualityList">품질</a></li>
+                    <li class="active"><a href="#">품질 목록</a></li>
                 </ul>
             </div>
-
+            
             <div class="snb-section">
-                <div class="snb-title"><span>리포트</span></div>
+                <div class="snb-title">시스템</div>
                 <ul class="snb-menu">
-                    <li><a href="report">리포트</a></li>
-                    <li><a href="prodResult">생산실적</a></li>
+                    <li><a href="#">사용자관리</a></li>
+                    <li><a href="#">마이페이지</a></li>
                 </ul>
             </div>
-
-            <div class="snb-section">
-                <div class="snb-title"><span>시스템</span></div>
-                <ul class="snb-menu">
-                    <li><a href="board">게시판</a></li>
-                    <li><a href="userManage">사용자관리</a></li>
-                    <li><a href="myPage">마이페이지</a></li>
-                </ul>
-            </div>
-
         </aside>
 
         <main class="content">
-
             <div class="page-head">
                 <div class="page-head-left">
                     <h1>품질관리</h1>
-                    <p>검사 결과와 불량 유형, 조치 현황을 관리합니다.</p>
+                    <p>검사 결과와 불량 유형을 관리합니다.</p>
                 </div>
                 <div class="page-actions">
-                    <button class="btn primary" type="button" onclick="openModal('품질관리 신규 등록')">신규 등록</button>
+                    <button class="btn primary">품질 등록</button>
                 </div>
             </div>
 
             <section class="card">
-                <div class="section-title"><h2>검색 조건</h2></div>
                 <div class="search-row">
-                    <input class="input" type="text" id="searchCode" value="${searchCode}" placeholder="품목코드 및 검사번호 입력" />
-                    <input class="input" type="text" id="searchName" value="${searchName}" placeholder="명칭 입력" />
-                    <select class="select" id="searchStatus">
+                    <input type="text" class="input" placeholder="품목코드/검사번호" style="width: 300px;">
+                    <select class="select">
                         <option value="">전체 상태</option>
-                        <option value="PASS" ${param.status == 'PASS' ? 'selected' : ''}>PASS (정상)</option>
-                        <option value="FAIL" ${param.status == 'FAIL' ? 'selected' : ''}>FAIL (불량)</option>
+                        <option value="합격">합격</option>
+                        <option value="재검">재검</option>
+                        <option value="불합격">불합격</option>
                     </select>
-                    <button class="btn primary" onclick="searchQuality(1)">조회</button>
+                    <button class="btn primary">조회</button>
                 </div>
             </section>
 
             <section class="panel-grid">
-                
                 <div class="card">
                     <div class="section-title">
-                        <h2>품질관리 목록</h2>
-                        <button class="btn-custom" onclick="deleteSelected()">삭제</button>
+                        <h2>품질 목록</h2>
+                        <button class="btn danger" style="padding: 5px 15px; font-size: 13px;">삭제</button>
                     </div>
-
+                    
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th style="width: 60px; text-align: center; cursor: pointer;" onclick="toggleAll()">선택</th>
-                                    <th>검사번호</th><th>품목명</th><th>검사수량</th><th>검사일자</th><th>상태</th>
+                                    <th style="width: 50px;"><input type="checkbox"></th>
+                                    <th>검사번호</th>
+                                    <th>품목명</th>
+                                    <th>검사수량</th>
+                                    <th>상태</th>
+                                    <th>검사일자</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach var="m" items="${list}">
-                                    <tr onclick="handleRowClick(event, {key:'${m.quality_key}', name:'${m.item_name}', qty:'${m.inspect_qty}', status:'${m.qc_status}'})" style="cursor: pointer;">
-                                        <td style="text-align:center;"><input type="checkbox" name="chk" value="${m.quality_key}"></td>
-                                        <td>${m.quality_key}</td><td>${m.item_name}</td><td>${m.inspect_qty}</td>
-                                        <td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
-                                        <td><span class="badge ${m.qc_status == 'PASS' ? 'ok' : 'danger'}">${m.qc_status}</span></td>
+                                    <tr>
+                                        <td><input type="checkbox"></td>
+                                        <td style="font-weight: 500;">${m.quality_key}</td>
+                                        <td>${m.item_name}</td>
+                                        <td><fmt:formatNumber value="${m.inspect_qty}" pattern="#,###"/></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${m.qc_status == '합격'}">
+                                                    <span class="badge ok">합격</span>
+                                                </c:when>
+                                                <c:when test="${m.qc_status == '재검'}">
+                                                    <span class="badge warning">재검</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge danger">${m.qc_status}</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td style="color: #64748b;">
+                                            <fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/>
+                                        </td>
                                     </tr>
                                 </c:forEach>
+                                
+                                <c:if test="${empty list}">
+                                    <tr>
+                                        <td colspan="6" style="padding: 50px 0; color: #94a3b8;">조회된 데이터가 없습니다.</td>
+                                    </tr>
+                                </c:if>
                             </tbody>
                         </table>
                     </div>
 
-                    <c:if test="${not empty p}">
-                        <div class="pagination">
-                            <c:if test="${p.prev}"><a href="javascript:searchQuality(${p.startPage - 1})">이전</a></c:if>
-                            <c:forEach var="i" begin="${p.startPage}" end="${p.endPage}">
-                                <a href="javascript:searchQuality(${i})" class="${p.curPage == i ? 'active' : ''}">${i}</a>
-                            </c:forEach>
-                            <c:if test="${p.next}"><a href="javascript:searchQuality(${p.endPage + 1})">다음</a></c:if>
-                        </div>
-                    </c:if>
+                    <div class="pagination">
+                        <a href="#" class="active">1</a>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                    </div>
                 </div>
-
-                <div class="card">
-                    <div class="section-title"><h2>품질 상태 요약</h2></div>
-                    <ul class="summary-list">
-                        <li style="margin-bottom: 20px;">
-                            <div><strong>총 검사 건수</strong><p>현재 ${p.total}건 완료</p></div>
-                            <span class="badge ok">정상 가동</span>
-                        </li>
-                        <li>
-                            <div><strong>불량 발생(FAIL)</strong><p>조치 필요한 항목 존재</p></div>
-                            <span class="badge danger">긴급 점검</span>
-                        </li>
-                    </ul>
-                </div>
-
             </section>
         </main>
-
-        <div id="commonModal" class="modal">
-            <div class="modal-box">
-                <div class="modal-header">
-                    <h3 id="modalTitle">품질관리 신규 등록</h3>
-                    <button class="modal-close" onclick="closeModal()">×</button>
-                </div>
-                <div class="modal-body">
-                    <form id="qualityForm">
-                        <input type="hidden" name="prod_key" value="1">
-                        <input type="hidden" name="user_key" value="admin">
-                        <div class="form-grid">
-                            <div class="form-group"><label>검사번호</label><input type="text" name="quality_key"></div>
-                            <div class="form-group"><label>품목명</label><input type="text" name="item_name"></div>
-                            <div class="form-group"><label>검사수량</label><input type="number" name="inspect_qty" value="0"></div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn-custom" onclick="closeModal()">취소</button>
-                    <button id="submitBtn" class="btn primary" type="button" onclick="submitForm()" style="background:#0d6efd; color:#fff; border:none;">저장하기</button>
-                </div>
-            </div>
-        </div>
-
     </div>
-
 </body>
 </html>

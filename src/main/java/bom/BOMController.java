@@ -26,13 +26,13 @@ public class BOMController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8");
 		
-		//String Keycode = request.getParameter("keycode");
-		//int keycode = Integer.parseInt(Keycode);
-		//String keyword = request.getParameter("keyword");
+		String skeycode = request.getParameter("keycode");
+		String keyword = request.getParameter("keyword");
 		
 		//페이징¡ 
 		int size = 5; 
 		int page = 1; 
+		int keycode = 0; 
 		
 		String sSize = request.getParameter("size");
 		String sPage = request.getParameter("page");
@@ -44,13 +44,17 @@ public class BOMController extends HttpServlet {
 	    try {
 	        page = Integer.parseInt(sPage);
 	    } catch (Exception e) {}
+	    try {
+	    	keycode = Integer.parseInt(skeycode);
+	    } catch (Exception e) {}
+	  
 		
 		
 		BOMDTO bomDTO = new BOMDTO(); 
 		bomDTO.setSize(size);
 		bomDTO.setPage(page);
-		//bomDTO.setKeycode(keycode);
-		//bomDTO.setKeyword(keyword);
+		bomDTO.setKeycode(keycode);
+		bomDTO.setKeyword(keyword);
 		
 		
 //		String cmd = request.getParameter("cmd");
@@ -74,6 +78,8 @@ public class BOMController extends HttpServlet {
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
 		rd.forward(request, response);
+		
+	
 		
 	}
 
@@ -120,11 +126,11 @@ public class BOMController extends HttpServlet {
 		bomDTO.setQTY(qty);
 		bomDTO.setRemark(remark);
 		
-		// service& DTO
+		// service & DTO
 		BOMService bomservice = new BOMService(); 
 		int result = bomservice.insert(bomDTO);
 		
-		System.out.println("insert된  rows: " + result);
+		System.out.println("insert된 rows: " + result);
 		
 		response.sendRedirect("");
 		
@@ -158,7 +164,7 @@ public class BOMController extends HttpServlet {
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);
 			
-			System.out.println("update 된 열 : " + result);
+			System.out.println("update된 열 : " + result);
 			
 			response.sendRedirect("");
 			
@@ -187,7 +193,7 @@ public class BOMController extends HttpServlet {
 				
 				for(String key : keys) {
 					int bom_key = Integer.parseInt(key);
-					System.out.println("bom_key " + bom_key);
+					System.out.println("bom_key : " + bom_key);
 					
 					dto.setBom_key(bom_key);
 					
@@ -204,36 +210,36 @@ public class BOMController extends HttpServlet {
 	
 	
 	
-	public void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		System.out.println("/BOM detail 실행");
-		
-		
-		try {
-			request.setCharacterEncoding("utf-8");
-			response.setContentType("text/html; charset=utf-8");
-			
-			BOMDTO bomDTO = new BOMDTO();
-			
-			String Bom_key = request.getParameter("bom_key");
-			int bom_key = Integer.parseInt(Bom_key);
-			System.out.println("bom_key: " + bom_key);
-			
-			// bom_key 
-			BOMService bomservice = new BOMService(); 
-			List list = bomservice.getBOM(bomDTO);
-			
-			request.setAttribute("bomDTO", bomDTO );
-			
-			System.out.println(bomDTO);
-			
-			request.getRequestDispatcher("").forward(request, response);
-			
-		} catch(Exception e) {
-			e.printStackTrace(); 
-		}
-		
-		
-	}
+//	public void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		
+//		System.out.println("/BOM detail 실행");
+//		
+//		
+//		try {
+//			request.setCharacterEncoding("utf-8");
+//			response.setContentType("text/html; charset=utf-8");
+//			
+//			BOMDTO bomDTO = new BOMDTO();
+//			
+//			String Bom_key = request.getParameter("bom_key");
+//			int bom_key = Integer.parseInt(Bom_key);
+//			System.out.println("bom_key: " + bom_key);
+//			
+//			// bom_key 
+//			BOMService bomservice = new BOMService(); 
+//			List list = bomservice.getBOM(bomDTO);
+//			
+//			request.setAttribute("bomDTO", bomDTO );
+//			
+//			System.out.println(bomDTO);
+//			
+//			request.getRequestDispatcher("").forward(request, response);
+//			
+//		} catch(Exception e) {
+//			e.printStackTrace(); 
+//		}
+//		
+//		
+//	}
 
 }

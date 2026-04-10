@@ -103,7 +103,7 @@
                 <form method="get" action="BOM">
                 <div class="search-row">
                 <input class="input" type="text" name="keycode" placeholder="코드 또는 번호 입력" />
-                <input class="input" type="text" name="keyname" placeholder="명칭 입력" />
+                <input class="input" type="text" name="keyword" placeholder="명칭 입력" />
                 <select class="select">
                         <option>전체</option>
                         <option>사용</option>

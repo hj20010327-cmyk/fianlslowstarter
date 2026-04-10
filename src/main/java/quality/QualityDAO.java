@@ -2,174 +2,72 @@ package quality;
 
 import java.sql.*;
 import java.util.*;
-import javax.naming.*;
-import javax.sql.DataSource;
 
 public class QualityDAO {
-    private Connection getConn() {
-        try {
-            Context ctx = new InitialContext();
-            DataSource df = (DataSource)ctx.lookup("java:/comp/env/jdbc/oracle");
-            return df.getConnection();
-        } catch(Exception e) { e.printStackTrace(); return null; }
-    }
 
-    // 1. 전체 조회
-    public List<QualityDTO> selectAll() {
-        List<QualityDTO> list = new ArrayList<>();
-        String sql = "SELECT q.*, i.ITEM_NAME FROM TB_QUALITY q, TB_ITEM i WHERE q.ITEM_KEY = i.ITEM_KEY ORDER BY q.QUALITY_KEY ASC"; 
-        try(Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
-            while(rs.next()) {
-                QualityDTO dto = new QualityDTO();
-                dto.setQuality_key(rs.getString("QUALITY_KEY"));
-                dto.setProd_key(rs.getString("PROD_KEY"));
-                dto.setItem_key(rs.getString("ITEM_KEY"));
-                dto.setItem_name(rs.getString("ITEM_NAME")); 
-                dto.setInspect_date(rs.getTimestamp("INSPECT_DATE"));
-                dto.setInspect_qty(rs.getInt("INSPECT_QTY"));
-                dto.setGood_qty(rs.getInt("GOOD_QTY"));
-                dto.setDefect_qty(rs.getInt("DEFECT_QTY"));
-                dto.setDefect_reason(rs.getString("DEFECT_REASON"));
-                dto.setQc_status(rs.getString("QC_STATUS"));
-                dto.setUser_key(rs.getString("USER_KEY"));
-                dto.setCreated_at(rs.getTimestamp("CREATED_AT"));
-                list.add(dto);
-            }
-        } catch(Exception e) { e.printStackTrace(); }
-        return list;
-    }
+    private String url = "jdbc:oracle:thin:@localhost:1521:xe";
+    private String user = "mes_admin";
+    private String password = "password";
 
-    // 2. 신규 데이터 등록
-    public int insert(QualityDTO dto) {
-        String sql = "INSERT INTO TB_QUALITY (QUALITY_KEY, PROD_KEY, ITEM_KEY, INSPECT_DATE, INSPECT_QTY, "
-                   + "GOOD_QTY, DEFECT_QTY, DEFECT_REASON, QC_STATUS, USER_KEY, CREATED_AT) "
-                   + "VALUES (SEQ_QUALITY.NEXTVAL, ?, ?, SYSDATE, ?, ?, ?, ?, ?, ?, SYSDATE)";
-        try(Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, dto.getProd_key());
-            ps.setString(2, dto.getItem_key());
-            ps.setInt(3, dto.getInspect_qty());
-            ps.setInt(4, dto.getGood_qty());
-            ps.setInt(5, dto.getDefect_qty());
-            ps.setString(6, dto.getDefect_reason());
-            ps.setString(7, dto.getQc_status());
-            ps.setString(8, dto.getUser_key());
-            return ps.executeUpdate();
-        } catch(Exception e) { e.printStackTrace(); return 0; }
-    }
-
-    // 3. 삭제
-    public int delete(String quality_key) {
-        String sql = "DELETE FROM TB_QUALITY WHERE QUALITY_KEY = ?";
-        try(Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, quality_key);
-            return ps.executeUpdate();
-        } catch(Exception e) { e.printStackTrace(); return 0; }
-    }
-
-    // 4. 전체 데이터 개수 조회 (페이징용)
-    public int getTotalCount() {
+    // [개수 조회] 페이징을 위한 전체 카운트
+    public int getTotalCount(String searchCode) {
+    
         int count = 0;
-        String sql = "SELECT COUNT(*) FROM TB_QUALITY";
-        try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        String sql = "SELECT COUNT(*) FROM tb_quality WHERE quality_code LIKE ?";
+
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, "%" + (searchCode == null ? "" : searchCode) + "%");
+            
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) count = rs.getInt(1);
+            
         } catch (Exception e) { e.printStackTrace(); }
+        
         return count;
     }
 
-    // 5. 검색 및 페이징 조회 (수정된 메서드)
-    public List<QualityDTO> searchQualityList(String searchCode, String searchName, int startRow, int endRow) {
+    // [목록 조회] 페이징 + 검색 + 조인
+    public List<QualityDTO> selectQualityList(String searchCode, int startRow, int endRow) {
+    
         List<QualityDTO> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT * FROM ( ");
-        sql.append("  SELECT ROWNUM AS rnum, q.* FROM ( ");
-        sql.append("    SELECT t.quality_key, ");
-        sql.append("           (SELECT i.item_name FROM tb_item i WHERE i.item_key = t.item_key) AS item_name, ");
-        sql.append("           t.inspect_date, t.inspect_qty, t.qc_status, t.item_key ");
-        sql.append("    FROM tb_quality t ");
-        sql.append("    WHERE 1=1 "); 
-
-        // [수정] 번호 검색 시 LIKE 대신 '=' 사용 (정확한 번호 매칭)
-        if (searchCode != null && !searchCode.trim().isEmpty()) {
-            sql.append("    AND t.quality_key = ? "); 
-        }
         
-        // 품목명 검색은 부분 일치 유지 (사용자 편의)
-        if (searchName != null && !searchName.trim().isEmpty()) {
-            sql.append("    AND (SELECT i.item_name FROM tb_item i WHERE i.item_key = t.item_key) LIKE ? ");
-        }
+        String sql = "SELECT * FROM ( "
+                   + "  SELECT rownum rnum, a.* FROM ( "
+                   + "    SELECT q.*, i.item_name "
+                   + "    FROM tb_quality q "
+                   + "    JOIN tb_item i ON q.prod_key = i.item_key "
+                   + "    WHERE q.quality_code LIKE ? "
+                   + "    ORDER BY q.quality_key ASC "
+                   + "  ) a "
+                   + ") WHERE rnum BETWEEN ? AND ?";
 
-        sql.append("    ORDER BY TO_NUMBER(t.quality_key) ASC "); 
-        sql.append("  ) q WHERE ROWNUM <= ? ");
-        sql.append(") WHERE rnum >= ? ");
-
-        try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
-            int idx = 1;
+        try (Connection conn = DriverManager.getConnection(url, user, password);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            // [수정] 파라미터 세팅 시 % 제거 (정확한 값 비교)
-            if (searchCode != null && !searchCode.trim().isEmpty()) {
-                ps.setString(idx++, searchCode.trim());
-            }
-            if (searchName != null && !searchName.trim().isEmpty()) {
-                ps.setString(idx++, "%" + searchName + "%");
-            }
-            ps.setInt(idx++, endRow);
-            ps.setInt(idx++, startRow);
+            pstmt.setString(1, "%" + (searchCode == null ? "" : searchCode) + "%");
+            pstmt.setInt(2, startRow);
+            pstmt.setInt(3, endRow);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    QualityDTO dto = new QualityDTO();
-                    dto.setQuality_key(rs.getString("QUALITY_KEY"));
-                    dto.setItem_name(rs.getString("ITEM_NAME"));
-                    dto.setInspect_date(rs.getTimestamp("INSPECT_DATE"));
-                    dto.setInspect_qty(rs.getInt("INSPECT_QTY"));
-                    dto.setQc_status(rs.getString("QC_STATUS"));
-                    list.add(dto);
-                }
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                QualityDTO dto = new QualityDTO();
+                
+                dto.setQuality_key(rs.getString("quality_key"));
+                dto.setQuality_code(rs.getString("quality_code"));
+                dto.setInspect_qty(rs.getInt("inspect_qty"));
+                dto.setGood_qty(rs.getInt("good_qty"));
+                dto.setDefect_qty(rs.getInt("defect_qty"));
+                dto.setQc_status(rs.getString("qc_status"));
+                dto.setItem_name(rs.getString("item_name"));
+                
+                list.add(dto);
             }
+            
         } catch (Exception e) { e.printStackTrace(); }
+        
         return list;
-    }
-
-    // 6. 수정을 위한 데이터 단건 조회
-    public QualityDTO selectOne(String quality_key) {
-        QualityDTO dto = null;
-        String sql = "SELECT q.*, (SELECT i.item_name FROM tb_item i WHERE i.item_key = q.item_key) AS item_name "
-                   + "FROM tb_quality q WHERE q.quality_key = ?";
-        
-        try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, quality_key);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    dto = new QualityDTO();
-                    dto.setQuality_key(rs.getString("QUALITY_KEY"));
-                    dto.setProd_key(rs.getString("PROD_KEY"));
-                    dto.setItem_key(rs.getString("ITEM_KEY"));
-                    dto.setItem_name(rs.getString("ITEM_NAME"));
-                    dto.setInspect_date(rs.getTimestamp("INSPECT_DATE"));
-                    dto.setInspect_qty(rs.getInt("INSPECT_QTY"));
-                    dto.setGood_qty(rs.getInt("GOOD_QTY"));
-                    dto.setDefect_qty(rs.getInt("DEFECT_QTY"));
-                    dto.setDefect_reason(rs.getString("DEFECT_REASON"));
-                    dto.setQc_status(rs.getString("QC_STATUS"));
-                }
-            }
-        } catch (Exception e) { e.printStackTrace(); }
-        return dto;
-    }
-
-    // 7. 기존 데이터 수정 처리
-    public int update(QualityDTO dto) {
-        String sql = "UPDATE TB_QUALITY SET INSPECT_QTY=?, GOOD_QTY=?, DEFECT_QTY=?, "
-                   + "DEFECT_REASON=?, QC_STATUS=? WHERE QUALITY_KEY=?";
-        
-        try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, dto.getInspect_qty());
-            ps.setInt(2, dto.getGood_qty());
-            ps.setInt(3, dto.getDefect_qty());
-            ps.setString(4, dto.getDefect_reason());
-            ps.setString(5, dto.getQc_status());
-            ps.setString(6, dto.getQuality_key());
-            return ps.executeUpdate();
-        } catch (Exception e) { e.printStackTrace(); return 0; }
     }
 }

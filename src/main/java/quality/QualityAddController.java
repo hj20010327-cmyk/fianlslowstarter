@@ -12,14 +12,14 @@ public class QualityAddController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. гя╠ш ╠ЗаЭ ╧ФаЖ ╪Ёа╓
+        // 1. О©╫я╠О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
         request.setCharacterEncoding("UTF-8");
 
-        // 2. фд╤С╧лем ╪ЖаЩ (HTML inputюг name ╪с╪╨╟З юод║гь╬ъ гт)
+        // 2. О©╫д╤О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ (HTML inputО©╫О©╫ name О©╫с╪О©╫О©╫О©╫ О©╫О©╫д║О©╫ь╬О©╫ О©╫О©╫)
         String prod_key = request.getParameter("prod_key");
         String item_key = request.getParameter("item_key");
         
-        // ╪Щюз╥н ╨╞х╞гь╬ъ го╢б гй╣Е╣И (nullюлЁ╙ ╨С╟╙ ц╪е╘╟║ гй©Дгр ╪Ж южю╫)
+        // О©╫О©╫О©╫з╥О©╫ О©╫О©╫х╞О©╫ь╬О©╫ О©╫о╢О©╫ О©╫й╣О©╫О©╫ (nullО©╫лЁО©╫ О©╫О©╫ ц╪е╘О©╫О©╫ О©╫й©О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫)
         int inspect_qty = Integer.parseInt(request.getParameter("inspect_qty"));
         int good_qty = Integer.parseInt(request.getParameter("good_qty"));
         int defect_qty = Integer.parseInt(request.getParameter("defect_qty"));
@@ -28,7 +28,7 @@ public class QualityAddController extends HttpServlet {
         String qc_status = request.getParameter("qc_status");
         String user_key = request.getParameter("user_key");
 
-        // 3. DTO ╟╢ц╪ ╩Щ╪╨ ╧в ╣╔юлем ╪╪фц
+        // 3. DTO О©╫О©╫ц╪ О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫
         QualityDTO dto = new QualityDTO();
         dto.setProd_key(prod_key);
         dto.setItem_key(item_key);
@@ -39,16 +39,16 @@ public class QualityAddController extends HttpServlet {
         dto.setQc_status(qc_status);
         dto.setUser_key(user_key);
 
-        // 4. DAO╦╕ еКгя DB юЗюЕ
+        // 4. DAOО©╫О©╫ О©╫О©╫О©╫О©╫ DB О©╫О©╫О©╫О©╫
         QualityDAO dao = new QualityDAO();
         int result = dao.insert(dto);
 
-        // 5. ╟А╟З©║ ╣Ш╦╔ фДюлаЖ юл╣©
+        // 5. О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫ О©╫л╣О©╫
         if (result > 0) {
-            // ╪╨╟Ь ╫ц ╦Я╥о фДюлаЖ╥н юл╣©
+            // О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫л╣О©╫
             response.sendRedirect("list.do");
         } else {
-            // ╫гфп ╫ц юлюЭ фДюлаЖЁ╙ ©║╥╞ фДюлаЖ╥н юл╣©
+            // О©╫О©╫О©╫О©╫ О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫л╣О©╫
             response.sendRedirect("add_form.jsp?error=1");
         }
     }

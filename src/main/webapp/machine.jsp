@@ -75,9 +75,8 @@
 					<p>설비 상태 및 운영 정보를 관리합니다.</p>
 				</div>
 				<div class="page-actions">
-					<button class="btn primary" type="button" onclick="openModal('BOM 신규 등록')">
-  설비 등록
-</button>
+					<button class="btn primary" type="button"
+						onclick="openModal('BOM 신규 등록')">설비 등록</button>
 				</div>
 			</div>
 
@@ -106,7 +105,6 @@
 							<button type="submit" class="btn">삭제</button>
 						</div>
 						<div class="table-wrap">
-
 
 							<table>
 								<tr>
@@ -162,68 +160,67 @@
 				</div>
 			</section>
 		</main>
-		 <!-- ===== 공통 모달 ===== -->
-<div id="commonModal" class="modal">
-  <div class="modal-box">
+		<!-- ===== 공통 모달 ===== -->
+		<div id="commonModal" class="modal">
+			<div class="modal-box">
 
-    <!-- 헤더 -->
-    <div class="modal-header">
-      <h3 id="modalTitle">신규 등록</h3>
-      <button class="modal-close" onclick="closeModal()">×</button>
-    </div>
+				<!-- 헤더 -->
+				<div class="modal-header">
+					<h3 id="modalTitle">신규 등록</h3>
+					<button class="modal-close" onclick="closeModal()">×</button>
+				</div>
 
-    <!-- 바디 -->
-    <div class="modal-body">
-      <div class="form-grid">
+				<!-- 바디 -->
+				<div class="modal-body">
+					<div class="form-grid">
 
-        <div class="form-group">
-          <label>코드</label>
-          <input type="text" class="input" placeholder="코드 입력" />
-        </div>
+						<div class="form-group">
+							<label>코드</label> <input type="text" class="input"
+								placeholder="코드 입력" />
+						</div>
 
-        <div class="form-group">
-          <label>제품명</label>
-          <input type="text" class="input" placeholder="제품명 입력" />
-        </div>
+						<div class="form-group">
+							<label>제품명</label> <input type="text" class="input"
+								placeholder="제품명 입력" />
+						</div>
 
-        <div class="form-group">
-          <label>품목명</label>
-          <input type="text" class="input" placeholder="품목명 입력" />
-        </div>
+						<div class="form-group">
+							<label>품목명</label> <input type="text" class="input"
+								placeholder="품목명 입력" />
+						</div>
 
-        <div class="form-group">
-          <label>소요량</label>
-          <input type="number" class="input" placeholder="수량 입력" />
-        </div>
+						<div class="form-group">
+							<label>소요량</label> <input type="number" class="input"
+								placeholder="수량 입력" />
+						</div>
 
-        <div class="form-group">
-          <label>버전</label>
-          <input type="text" class="input" placeholder="예: V1" />
-        </div>
+						<div class="form-group">
+							<label>버전</label> <input type="text" class="input"
+								placeholder="예: V1" />
+						</div>
 
-        <div class="form-group">
-          <label>사용여부</label>
-          <select class="select">
-            <option>사용</option>
-            <option>미사용</option>
-          </select>
-        </div>
+						<div class="form-group">
+							<label>사용여부</label> <select class="select">
+								<option>사용</option>
+								<option>미사용</option>
+							</select>
+						</div>
 
-        <div class="form-group" style="grid-column: span 2;">
-          <label>비고</label>
-          <textarea class="textarea" placeholder="설명 입력"></textarea>
-        </div>
+						<div class="form-group" style="grid-column: span 2;">
+							<label>비고</label>
+							<textarea class="textarea" placeholder="설명 입력"></textarea>
+						</div>
 
-      </div>
-    </div>
+					</div>
+				</div>
 
-    <!-- 푸터 -->
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal()">취소</button>
-      <button class="btn primary">저장</button>
-    </div>
+				<!-- 푸터 -->
+				<div class="modal-footer">
+					<button class="btn" onclick="closeModal()">취소</button>
+					<button class="btn primary">저장</button>
+				</div>
 
-  </div>
-</div>
+			</div>
+		</div>
 </body>
 </html>

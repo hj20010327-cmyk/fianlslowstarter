@@ -91,7 +91,8 @@
 				</div>
 				<div class="page-actions">
 					<button class="btn">조회</button>
-					<button class="btn primary">신규 등록</button>
+					<button class="btn primary" type="button"
+						onclick="openModal('BOM 신규 등록')">신규 등록</button>
 				</div>
 			</div>
 			<section class="card">
@@ -110,34 +111,103 @@
 				</div>
 			</section>
 
-			<section class="card">
-				<div class="section-title">
-					<h2>생산계획 목록</h2>
-					<span></span>
-				</div>
-				<div class="table-wrap">
-					<table>
-						<tr>
-							<th>바꿔야함</th>
-							<th>바꿔야함</th>
-							<th>바꿔야함</th>
-							<th>바꿔야함</th>
-							<th>바꿔야함</th>
-						</tr>
+			<section class="panel-grid">
+				<div class="card">
+					<form action="plan" method="post">
+						<input type="hidden" name="cmd" value="delete">
 
-						<c:forEach var="m" items="${list}">
-							<tr>
-								<td>${m.priority}</td>
-								<td>${m.plan_key}</td>
-								<td>${m.plan_code}</td>
-								<td>${m.status}</td>
-								<td>${m.item_key}</td>
-							</tr>
-						</c:forEach>
-					</table>
+						<div class="section-title">
+							<h2>작업지시 목록</h2>
+							<button type="submit" name="cmd" value="delete" class="btn">삭제</button>
+						</div>
+						<div class="table-wrap">
+							<table>
+								<tr>
+									<th>선택</th>
+									<th>계획코드</th>
+									<th>품목</th>
+									<th>계획일</th>
+									<th>수량</th>
+									<th>상태</th>
+								</tr>
+								<c:forEach var="p" items="${list}">
+									<tr>
+										<td><input type="checkbox" name="plan_key"
+											value="${p.plan_key}"></td>
+										<td>${p.plan_code}</td>
+										<td>${p.item_key}</td>
+										<td>${p.plan_date}</td>
+										<td>${p.plan_qty}</td>
+										<td>${p.status}</td>
+									</tr>
+								</c:forEach>
+							</table>
+						</div>
+					</form>
 				</div>
-				
 			</section>
 		</main>
+			<!-- ===== 공통 모달 ===== -->
+		<div id="commonModal" class="modal">
+			<div class="modal-box">
+
+				<!-- 헤더 -->
+				<div class="modal-header">
+					<h3 id="modalTitle">신규 등록</h3>
+					<button class="modal-close" onclick="closeModal()">×</button>
+				</div>
+
+				<!-- 바디 -->
+				<div class="modal-body">
+					<div class="form-grid">
+
+						<div class="form-group">
+							<label>코드</label> <input type="text" class="input"
+								placeholder="코드 입력" />
+						</div>
+
+						<div class="form-group">
+							<label>제품명</label> <input type="text" class="input"
+								placeholder="제품명 입력" />
+						</div>
+
+						<div class="form-group">
+							<label>품목명</label> <input type="text" class="input"
+								placeholder="품목명 입력" />
+						</div>
+
+						<div class="form-group">
+							<label>소요량</label> <input type="number" class="input"
+								placeholder="수량 입력" />
+						</div>
+
+						<div class="form-group">
+							<label>버전</label> <input type="text" class="input"
+								placeholder="예: V1" />
+						</div>
+
+						<div class="form-group">
+							<label>사용여부</label> <select class="select">
+								<option>사용</option>
+								<option>미사용</option>
+							</select>
+						</div>
+
+						<div class="form-group" style="grid-column: span 2;">
+							<label>비고</label>
+							<textarea class="textarea" placeholder="설명 입력"></textarea>
+						</div>
+
+					</div>
+				</div>
+
+				<!-- 푸터 -->
+				<div class="modal-footer">
+					<button class="btn" onclick="closeModal()">취소</button>
+					<button class="btn primary">저장</button>
+				</div>
+
+			</div>
+		</div>
 </body>
 </html>

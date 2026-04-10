@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -22,9 +22,9 @@
             <div class="header-title">자동차 콤프레셔 제조 MES</div>
         </div>
         <div class="header-right">
-            <div class="header-chip">2026-03-30</div>
-            <div class="header-chip">생산 1라인 가동중</div>
-            <div class="header-chip">관리자</div>
+            <div class="header-chip date"></div>
+            <div class="header-chip">${dto.user_name}</div>
+            <div class="header-chip">${dto.user_role }</div>
         </div>
         <button type="button" class="menu-toggle" id="menuToggle">☰</button>
     </header>

@@ -112,7 +112,7 @@ public class SignupController extends HttpServlet {
 		int result = service.signup(dto);
 		
 		if (result > 0) {
-			response.sendRedirect("login.html");
+			response.sendRedirect("login.jsp");
 		} else {
 			request.setAttribute("error", "회원가입에 실패했습니다. 다시 시도해주세요");
 			request.getRequestDispatcher("signup.jsp").forward(request, response);

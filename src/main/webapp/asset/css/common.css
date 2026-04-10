@@ -959,16 +959,16 @@ td {
   height: 100%;
   justify-content: center;
   align-items: center;
-  background: rgba(15, 23, 42, 0.45); /* 🔥 더 고급스러운 톤 */
-  backdrop-filter: blur(6px);        /* 🔥 핵심 (요즘 UI 느낌) */
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(6px);       
 }
 
 .modal-box {
   background: #ffffff;
   width: 520px;
   max-width: 92%;
-  border-radius: 20px; /* 🔥 더 둥글게 */
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15); /* 🔥 깊이감 */
+  border-radius: 20px; 
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
   animation: modalFadeIn 0.25s ease;
   overflow: hidden;
 }

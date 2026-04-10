@@ -1,3 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -23,9 +28,9 @@
         </div>
 
         <div class="header-right">
-            <div class="header-chip">2026-03-30</div>
-            <div class="header-chip">생산 1라인 가동중</div>
-            <div class="header-chip">관리자</div>
+            <div class="header-chip date"></div>
+            <div class="header-chip">${dto.user_name}</div>
+            <div class="header-chip">${dto.user_role}</div>
         </div>
         <button type="button" class="menu-toggle" id="menuToggle">☰</button>
     </header>
@@ -80,7 +85,7 @@
             <div class="snb-section">
                 <div class="snb-title">시스템</div>
                 <ul class="snb-menu">
-                    <li><a href="./user.html">사용자관리</a></li>
+                    <li><a href="./user.jsp">사용자관리</a></li>
                     <li><a href="./mypage.html">마이페이지</a></li>
                 </ul>
             </div>

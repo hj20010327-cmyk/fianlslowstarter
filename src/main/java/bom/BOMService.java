@@ -13,12 +13,12 @@ public class BOMService {
 //	
 //	}
 	
-	public List getBOM(BOMDTO dto) {
-	
-		BOMDAO bomDAO = new BOMDAO(); 
-		return bomDAO.selectdetailBOM(dto);
-	
-	}
+//	public List getBOM(BOMDTO dto) {
+//	
+//		BOMDAO bomDAO = new BOMDAO(); 
+//		return bomDAO.selectdetailBOM(dto);
+//	
+//	}
 	
 	public int insert(BOMDTO dto) {
 		
@@ -53,9 +53,20 @@ public class BOMService {
 		dto.setEnd(end);
 		dto.setStart(start);
 		
-		List list = bomDAO.selectAllBOM(dto);
-		int totalCount = bomDAO.BOMTotal();
-	
+		List list;
+		int totalCount;
+
+		if(dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
+		    list = bomDAO.selectdetailBOM(dto);
+		    totalCount = bomDAO.SearchTotal(dto);
+		} else if(dto.getKeycode() != 0 ) {
+			list = bomDAO.selectdetailBOM(dto);
+			totalCount = bomDAO.SearchTotal(dto);
+		} else { list = bomDAO.selectAllBOM(dto);
+		    totalCount = bomDAO.BOMTotal();
+		}	
+		
+		
 		Map map = new HashMap(); 
 		map.put("list", list);
 		map.put("totalCount", totalCount);

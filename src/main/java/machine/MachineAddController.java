@@ -23,7 +23,7 @@ public class MachineAddController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("/todo/add doPost 실행");
+		System.out.println("/machine/add doPost 실행");
 		// 요청의 한글 깨짐 방지
 		request.setCharacterEncoding("utf-8");
 		// 응답의 한글 깨짐 방지
@@ -39,11 +39,12 @@ public class MachineAddController extends HttpServlet {
 		Date buyDate = Date.valueOf(request.getParameter("buyDate")); 
 		Date lastCheckDate = Date.valueOf(request.getParameter("lastCheckDate")); 
 		Date Create_at = Date.valueOf(request.getParameter("Create_at")); 
+		System.out.println("machineKey :" + machineKey);
 		
 
 		// DTO에 담기
 		  MachineDTO dto = new MachineDTO();
-		  	dto.setMachineKey(machineKey);
+//		  	dto.setMachineKey(machineKey);
 		    dto.setMachineCode(machineCode);
 		    dto.setMachineName(machineName);
 		    dto.setProcessKey(processKey);
@@ -51,12 +52,13 @@ public class MachineAddController extends HttpServlet {
 		    dto.setMachineStatus(machineStatus);
 		    dto.setBuyDate(buyDate);
 		    dto.setLastCheckDate(lastCheckDate);
-		    dto.setCreatedAt(Create_at);
+//		    dto.setCreatedAt(Create_at);
 
 		// service로 DTO를 보냄
 		MachineService machineService = new MachineService();
 		int result = machineService.getaddmachine(dto);
 		System.out.println("result : " + result);
+		response.sendRedirect("/machine");
 	}
 
 }

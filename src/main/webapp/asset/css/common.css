@@ -225,16 +225,11 @@ td {
 }
 
 .snb-title::after {
-    content: "�뼻";
-    font-size: 12px;
+    content: "▼";
+    font-size: 10px;
     transition: transform 0.2s ease;
 }
 
-.snb-title::after {
-    content: "�뼻";
-    font-size: 12px;
-    transition: transform 0.2s ease;
-}
 
 .snb-menu {
     overflow: hidden;

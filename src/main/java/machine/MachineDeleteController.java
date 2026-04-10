@@ -30,7 +30,7 @@ public class MachineDeleteController extends HttpServlet {
         MachineService 	machineService = new MachineService();
         machineService.getdeletemachine(dto);
 
-//        response.sendRedirect("");
+        response.sendRedirect("/machine");
 	
 	}
 

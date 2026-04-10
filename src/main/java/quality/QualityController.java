@@ -2,6 +2,7 @@ package quality;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map; // Map 사용을 위해 추가
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// 브라우저에서 /qualityList 주소로 들어오면 이 클래스가 실행됩니다.
 @WebServlet("/qualityList")
 public class QualityController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -21,20 +21,46 @@ public class QualityController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		// 2. 서비스 객체를 생성해서 데이터 목록을 가져옵니다.
-		QualityService qualityService = new QualityService();
-		List<QualityDTO> list = qualityService.getList();
-		System.out.println(list.size());
+		// [추가] JSP 검색창에서 보낸 값 읽어오기
+		String searchCode = request.getParameter("searchCode");
+		String searchName = request.getParameter("searchName");
 		
-		// 3. 가져온 목록을 JSP에서 쓸 수 있게 "list"라는 이름으로 담습니다.
+		/* [신규 추가] 2. 현재 페이지 번호 읽기 */
+		String pStr = request.getParameter("page");
+		int curPage = (pStr == null || pStr.isEmpty()) ? 1 : Integer.parseInt(pStr);
+		int size = 5; // 한 페이지에 보여줄 게시물 개수
+
+		// [수정] 페이징 범위 계산 (현재 페이지에 맞는 행 번호 계산)
+		int startRow = (curPage - 1) * size + 1;
+		int endRow = curPage * size;
+
+		// 3. 서비스 객체를 생성해서 데이터 목록을 가져옵니다.
+		QualityService qualityService = new QualityService();
+		
+		/* [기존 유지] 검색과 페이징이 가능한 메서드 호출 */
+		List<QualityDTO> list = qualityService.getSearchList(searchCode, searchName, startRow, endRow);
+		
+		/* [신규 추가] 4. 하단 페이지네이션 번호 계산 정보 가져오기 */
+		// 방금 Service에 추가한 Map<String, Object> 리턴 메서드 호출
+		Map<String, Object> pageInfo = qualityService.getPageInfo(curPage, size);
+		
+		System.out.println("조회된 목록 개수: " + list.size());
+		
+		// 5. 데이터를 JSP로 전달
 		request.setAttribute("list", list);
 		
-		// 4. 품질관리 메인 화면(JSP)으로 이동합니다.
+		/* [신규 추가] 하단 페이지 번호 출력용 데이터 전달 */
+		request.setAttribute("p", pageInfo); 
+		
+		// [기존 유지] 검색어 보존
+		request.setAttribute("searchCode", searchCode);
+		request.setAttribute("searchName", searchName);
+		
+		// 6. 품질관리 메인 화면(JSP)으로 이동합니다.
 		request.getRequestDispatcher("/quality.jsp").forward(request, response);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// 목록 조지는 보통 GET 방식을 쓰므로 doGet으로 넘깁니다.
 		doGet(request, response);
 	}
 }

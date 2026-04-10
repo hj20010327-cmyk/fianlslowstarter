@@ -14,7 +14,7 @@ public class QualityDAO {
         } catch(Exception e) { e.printStackTrace(); return null; }
     }
 
-    // 1. ÀüÃ¼ Á¶È¸
+    // 1. ì „ì²´ ì¡°íšŒ
     public List<QualityDTO> selectAll() {
         List<QualityDTO> list = new ArrayList<>();
         String sql = "SELECT q.*, i.ITEM_NAME FROM TB_QUALITY q, TB_ITEM i WHERE q.ITEM_KEY = i.ITEM_KEY ORDER BY q.QUALITY_KEY ASC"; 
@@ -39,7 +39,7 @@ public class QualityDAO {
         return list;
     }
 
-    // 2. µ¥ÀÌÅÍ »ğÀÔ
+    // 2. ì‹ ê·œ ë°ì´í„° ë“±ë¡
     public int insert(QualityDTO dto) {
         String sql = "INSERT INTO TB_QUALITY (QUALITY_KEY, PROD_KEY, ITEM_KEY, INSPECT_DATE, INSPECT_QTY, "
                    + "GOOD_QTY, DEFECT_QTY, DEFECT_REASON, QC_STATUS, USER_KEY, CREATED_AT) "
@@ -57,7 +57,7 @@ public class QualityDAO {
         } catch(Exception e) { e.printStackTrace(); return 0; }
     }
 
-    // 3. »èÁ¦
+    // 3. ì‚­ì œ
     public int delete(String quality_key) {
         String sql = "DELETE FROM TB_QUALITY WHERE QUALITY_KEY = ?";
         try(Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -66,7 +66,7 @@ public class QualityDAO {
         } catch(Exception e) { e.printStackTrace(); return 0; }
     }
 
-    // 4. ÀüÃ¼ °³¼ö Á¶È¸
+    // 4. ì „ì²´ ë°ì´í„° ê°œìˆ˜ ì¡°íšŒ (í˜ì´ì§•ìš©)
     public int getTotalCount() {
         int count = 0;
         String sql = "SELECT COUNT(*) FROM TB_QUALITY";
@@ -76,7 +76,7 @@ public class QualityDAO {
         return count;
     }
 
-    // 5. °Ë»ö ¹× ÆäÀÌÂ¡ Á¶È¸ (ÅëÇÕ ¸Ş¼­µå)
+    // 5. ê²€ìƒ‰ ë° í˜ì´ì§• ì¡°íšŒ (ìˆ˜ì •ëœ ë©”ì„œë“œ)
     public List<QualityDTO> searchQualityList(String searchCode, String searchName, int startRow, int endRow) {
         List<QualityDTO> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
@@ -88,22 +88,26 @@ public class QualityDAO {
         sql.append("    FROM tb_quality t ");
         sql.append("    WHERE 1=1 "); 
 
+        // [ìˆ˜ì •] ë²ˆí˜¸ ê²€ìƒ‰ ì‹œ LIKE ëŒ€ì‹  '=' ì‚¬ìš© (ì •í™•í•œ ë²ˆí˜¸ ë§¤ì¹­)
         if (searchCode != null && !searchCode.trim().isEmpty()) {
-            sql.append("    AND (t.quality_key LIKE ? OR t.item_key LIKE ?) ");
+            sql.append("    AND t.quality_key = ? "); 
         }
+        
+        // í’ˆëª©ëª… ê²€ìƒ‰ì€ ë¶€ë¶„ ì¼ì¹˜ ìœ ì§€ (ì‚¬ìš©ì í¸ì˜)
         if (searchName != null && !searchName.trim().isEmpty()) {
             sql.append("    AND (SELECT i.item_name FROM tb_item i WHERE i.item_key = t.item_key) LIKE ? ");
         }
 
-        sql.append("    ORDER BY TO_NUMBER(t.quality_key) ASC "); // ¼ıÀÚ Á¤·Ä °­Á¦
+        sql.append("    ORDER BY TO_NUMBER(t.quality_key) ASC "); 
         sql.append("  ) q WHERE ROWNUM <= ? ");
         sql.append(") WHERE rnum >= ? ");
 
         try (Connection conn = getConn(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             int idx = 1;
+            
+            // [ìˆ˜ì •] íŒŒë¼ë¯¸í„° ì„¸íŒ… ì‹œ % ì œê±° (ì •í™•í•œ ê°’ ë¹„êµ)
             if (searchCode != null && !searchCode.trim().isEmpty()) {
-                ps.setString(idx++, "%" + searchCode + "%");
-                ps.setString(idx++, "%" + searchCode + "%");
+                ps.setString(idx++, searchCode.trim());
             }
             if (searchName != null && !searchName.trim().isEmpty()) {
                 ps.setString(idx++, "%" + searchName + "%");
@@ -126,7 +130,7 @@ public class QualityDAO {
         return list;
     }
 
-    // [Ãß°¡] 6. ¼öÁ¤ ÆäÀÌÁö¿ë µ¥ÀÌÅÍ ´Ü°Ç Á¶È¸
+    // 6. ìˆ˜ì •ì„ ìœ„í•œ ë°ì´í„° ë‹¨ê±´ ì¡°íšŒ
     public QualityDTO selectOne(String quality_key) {
         QualityDTO dto = null;
         String sql = "SELECT q.*, (SELECT i.item_name FROM tb_item i WHERE i.item_key = q.item_key) AS item_name "
@@ -153,7 +157,7 @@ public class QualityDAO {
         return dto;
     }
 
-    // [Ãß°¡] 7. µ¥ÀÌÅÍ ¼öÁ¤ ½ÇÇà
+    // 7. ê¸°ì¡´ ë°ì´í„° ìˆ˜ì • ì²˜ë¦¬
     public int update(QualityDTO dto) {
         String sql = "UPDATE TB_QUALITY SET INSPECT_QTY=?, GOOD_QTY=?, DEFECT_QTY=?, "
                    + "DEFECT_REASON=?, QC_STATUS=? WHERE QUALITY_KEY=?";

@@ -23,13 +23,13 @@ public class MachineAddController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("/machine/add doPost ½ÇÇà");
-		// ¿äÃ»ÀÇ ÇÑ±Û ±úÁü ¹æÁö
+		System.out.println("/machine/add doPost ï¿½ï¿½ï¿½ï¿½");
+		// ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		request.setCharacterEncoding("utf-8");
-		// ÀÀ´äÀÇ ÇÑ±Û ±úÁü ¹æÁö
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		response.setContentType("text/html; charset=utf-8;");
 
-		// ÆÄ¶ó¸ÞÅÍ È®º¸
+		// ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
 		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
@@ -42,7 +42,7 @@ public class MachineAddController extends HttpServlet {
 		System.out.println("machineKey :" + machineKey);
 		
 
-		// DTO¿¡ ´ã±â
+		// DTOï¿½ï¿½ ï¿½ï¿½ï¿½
 		  MachineDTO dto = new MachineDTO();
 //		  	dto.setMachineKey(machineKey);
 		    dto.setMachineCode(machineCode);
@@ -54,11 +54,11 @@ public class MachineAddController extends HttpServlet {
 		    dto.setLastCheckDate(lastCheckDate);
 //		    dto.setCreatedAt(Create_at);
 
-		// service·Î DTO¸¦ º¸³¿
+		// serviceï¿½ï¿½ DTOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		MachineService machineService = new MachineService();
 		int result = machineService.getaddmachine(dto);
 		System.out.println("result : " + result);
-		response.sendRedirect("/machine");
+		response.sendRedirect("/machine.jsp");
 	}
 
 }

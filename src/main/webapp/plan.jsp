@@ -130,11 +130,11 @@
 							<table>
 								<tr>
 									<th>선택</th>
-									<th>계획코드</th>
-									<th>품목</th>
+									<th>계획Code</th>
+									<th>item_key</th>
 									<th>계획일</th>
 									<th>수량</th>
-									<th>상태</th>
+									<th>계획 상태</th>
 								</tr>
 								<c:forEach var="p" items="${list}">
 									<tr>

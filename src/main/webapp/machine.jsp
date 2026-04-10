@@ -162,11 +162,11 @@
 							<table>
 								<tr>
 									<th>선택</th>
-									<th>설비번호</th>
-									<th>설비명</th>
-									<th>코드</th>
-									<th>상태</th>
-									<th>공정</th>
+									<th>설비 번호</th>
+									<th>설비 명</th>
+									<th>설비 코드</th>
+									<th>설비 상태</th>
+									<th>공정 번호</th>
 								</tr>
 
 								<c:forEach var="m" items="${list}">

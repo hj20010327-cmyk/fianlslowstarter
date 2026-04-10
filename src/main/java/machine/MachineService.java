@@ -26,6 +26,14 @@ public class MachineService {
 		int a = machineDAO.deletemachine(machineDTO);
 		return a;
 	}
+	public List searchList(String name, String status) {
+	    MachineDAO dao = new MachineDAO();
+	    return dao.searchList(name, status);
+	}
+	public List selectPage(int startRow, int endRow) {
+	    MachineDAO dao = new MachineDAO();
+	    return dao.selectPage(startRow, endRow);
+	}
 	
 	
 }

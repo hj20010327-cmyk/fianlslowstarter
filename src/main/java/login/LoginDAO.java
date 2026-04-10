@@ -13,12 +13,13 @@ import javax.sql.DataSource;
 
 public class LoginDAO {
 
-	public List loginCheck() {
-		List<LoginDTO> list = new ArrayList<LoginDTO>();
+	public LoginDTO loginCheck(String id, String pw) {
 
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+
+		LoginDTO dto = null;
 
 		try {
 			Context ctx = new InitialContext();
@@ -28,22 +29,28 @@ public class LoginDAO {
 			// 1. DB 접속
 			conn = dataFactory.getConnection();
 			// 2. SQL 준비
-			String query = "select * from tb_user"; // 변수 방식
+			String query = "select * from tb_user" + " where user_id=?" + " and user_pw=?"; // 변수 방식
 			ps = conn.prepareStatement(query);
-			
+			ps.setString(1, id);
+			ps.setString(2, pw);
 
 			// 3. 실행 및 결과 확보
 			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				dto = new LoginDTO();
+				String user_name = rs.getString("user_name");
+				String user_role = rs.getString("user_role");
+				String user_phone = rs.getString("user_phone");
+				String user_email = rs.getString("user_email");
+				String status = rs.getString("status");
+				
 			
-			while (rs.next()) {
-				String user_id = rs.getString("user_id");
-				String user_pw = rs.getString("user_pw");
-				
-				LoginDTO dto = new LoginDTO();
-				dto.setUser_id(user_id);
-				dto.setUser_pw(user_pw);
-				
-				list.add(dto);
+				dto.setUser_name(user_name);
+				dto.setUser_role(user_role);
+				dto.setUser_phone(user_phone);
+				dto.setUser_email(user_email);
+				dto.setStatus(status);
 			}
 
 		} catch (Exception e) {
@@ -72,7 +79,7 @@ public class LoginDAO {
 			}
 		}
 
-		return list;
+		return dto;
 
 	}
 

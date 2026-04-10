@@ -6,9 +6,9 @@ public class LoginService {
 	
 	LoginDAO dao = new LoginDAO();
 	
-	public List CheckLogin() {
+	public LoginDTO checkLogin(String id, String pw) {
 		
-		return dao.loginCheck();
+		return dao.loginCheck(id, pw);
 		
 	}
 	

@@ -30,18 +30,14 @@ public class WorkOrderDAO {
 
 			while (rs.next()) {
 				WorkOrderDTO dto = new WorkOrderDTO();
-
 				dto.setWork_order_key(rs.getInt("work_order_key"));
+				dto.setOrder_user_key(rs.getInt("order_user_key"));
+				dto.setWork_user_key(rs.getInt("work_user_key"));
 				dto.setWork_order_code(rs.getString("work_order_code"));
-				dto.setPlan_key(rs.getInt("plan_key"));
-				dto.setItem_key(rs.getInt("item_key"));
-				dto.setProcess_key(rs.getInt("process_key"));
-				dto.setWork_date(rs.getDate("work_date"));
 				dto.setOrder_qty(rs.getInt("order_qty"));
-				dto.setOrder_status(rs.getString("order_status"));
-				dto.setUser_key(rs.getInt("user_key"));
+				dto.setWork_date(rs.getDate("work_date"));
 				dto.setCreated_at(rs.getDate("created_at"));
-				dto.setMachine_key(rs.getInt("machine_key"));
+				dto.setPlan_key(rs.getInt("plan_key"));
 
 				list.add(dto);
 			}
@@ -86,24 +82,21 @@ public class WorkOrderDAO {
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
 			conn = dataFactory.getConnection();
 
-			String query = "INSERT INTO tb_work_order (" +
-					"work_order_key, work_order_code, plan_key, item_key, process_key, " +
-					"work_date, order_qty, order_status, user_key, created_at, machine_key" +
-					") VALUES (" +
-					"seq_work_order.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?" +
-					")";
+			String query = "INSERT INTO tb_work_order ("
+					+ "work_order_key, order_user_key, work_user_key, work_order_code, "
+					+ "order_qty, work_date, created_at, plan_key"
+					+ ") VALUES ("
+					+ "seq_work_order.NEXTVAL, ?, ?, ?, ?, ?, SYSDATE, ?"
+					+ ")";
 
 			ps = conn.prepareStatement(query);
 
-			ps.setString(1, dto.getWork_order_code());
-			ps.setInt(2, dto.getPlan_key());
-			ps.setInt(3, dto.getItem_key());
-			ps.setInt(4, dto.getProcess_key());
+			ps.setInt(1, dto.getOrder_user_key());
+			ps.setInt(2, dto.getWork_user_key());
+			ps.setString(3, dto.getWork_order_code());
+			ps.setInt(4, dto.getOrder_qty());
 			ps.setDate(5, dto.getWork_date());
-			ps.setInt(6, dto.getOrder_qty());
-			ps.setString(7, dto.getOrder_status());
-			ps.setInt(8, dto.getUser_key());
-			ps.setInt(9, dto.getMachine_key());
+			ps.setInt(6, dto.getPlan_key());
 
 			result = ps.executeUpdate();
 
@@ -146,30 +139,24 @@ public class WorkOrderDAO {
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
 			conn = dataFactory.getConnection();
 
-			String query = "UPDATE tb_work_order SET " +
-					"work_order_code = ?, " +
-					"plan_key = ?, " +
-					"item_key = ?, " +
-					"process_key = ?, " +
-					"work_date = ?, " +
-					"order_qty = ?, " +
-					"order_status = ?, " +
-					"user_key = ?, " +
-					"machine_key = ? " +
-					"WHERE work_order_key = ?";
+			String query = "UPDATE tb_work_order SET "
+					+ "order_user_key = ?, "
+					+ "work_user_key = ?, "
+					+ "work_order_code = ?, "
+					+ "order_qty = ?, "
+					+ "work_date = ?, "
+					+ "plan_key = ? "
+					+ "WHERE work_order_key = ?";
 
 			ps = conn.prepareStatement(query);
 
-			ps.setString(1, dto.getWork_order_code());
-			ps.setInt(2, dto.getPlan_key());
-			ps.setInt(3, dto.getItem_key());
-			ps.setInt(4, dto.getProcess_key());
+			ps.setInt(1, dto.getOrder_user_key());
+			ps.setInt(2, dto.getWork_user_key());
+			ps.setString(3, dto.getWork_order_code());
+			ps.setInt(4, dto.getOrder_qty());
 			ps.setDate(5, dto.getWork_date());
-			ps.setInt(6, dto.getOrder_qty());
-			ps.setString(7, dto.getOrder_status());
-			ps.setInt(8, dto.getUser_key());
-			ps.setInt(9, dto.getMachine_key());
-			ps.setInt(10, dto.getWork_order_key());
+			ps.setInt(6, dto.getPlan_key());
+			ps.setInt(7, dto.getWork_order_key());
 
 			result = ps.executeUpdate();
 

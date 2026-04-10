@@ -16,75 +16,82 @@
 </head>
 
 <body>
-	<header class="header">
-		<div class="header-left">
-			<a href="./index.html" class="logo"><span class="logo-mark">AM</span><span>AUTO
-					MES</span></a>
-			<div class="header-title">자동차 콤프레셔 제조 MES</div>
-		</div>
-		<div class="header-right">
-			<div class="header-chip">2026-03-30</div>
-			<div class="header-chip">생산 1라인 가동중</div>
-			<div class="header-chip">관리자</div>
-		</div>
-		<button type="button" class="menu-toggle" id="menuToggle">☰</button>
-	</header>
-	<div class="layout">
-		<aside class="snb" id="snb">
-			<div class="snb-section">
-				<div class="snb-title">MAIN</div>
-				<ul class="snb-menu">
-					<li><a href="./index.html">대시보드</a></li>
-				</ul>
-			</div>
+	 <header class="header">
+        <div class="header-left">
+            
+            <a href="./index.jsp" class="logo">
+                <span class="logo-mark">AM</span>
+                <span>AUTO MES</span>
+            </a>
+            
+            <div class="header-title">자동차 콤프레셔 제조 MES</div>
+        </div>
 
-			<div class="snb-section">
-				<div class="snb-title">기준관리</div>
-				<ul class="snb-menu">
-					<li><a href="./master.html">기준관리</a></li>
-					<li><a href="./bom.html">BOM</a></li>
-					<li><a href="./process.html">공정</a></li>
-				</ul>
-			</div>
+        <div class="header-right">
+            <div class="header-chip">2026-03-30</div>
+            <div class="header-chip">생산 1라인 가동중</div>
+            <div class="header-chip">관리자</div>
+        </div>
+        <button type="button" class="menu-toggle" id="menuToggle">☰</button>
+    </header>
 
-			<div class="snb-section">
-				<div class="snb-title">생산관리</div>
-				<ul class="snb-menu">
-					<li class="active"><a href="./workorder.html">작업지시 <span
-							class="menu-badge">4</span></a></li>
-					<li><a href="./plan.html">생산계획 <span class="menu-badge">2</span></a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">재고관리</div>
-				<ul class="snb-menu">
-					<li><a href="./stock.html">재고</a></li>
-					<li><a href="./product.html">완제품</a></li>
-					<li><a href="./item.html">자재</a></li>
-				</ul>
-			</div>
+    <div class="layout">
+        <aside class="snb" id="snb">
+            <div class="snb-section">
+                <div class="snb-title">MAIN</div>
+                <ul class="snb-menu">
+                    <li class="active"><a href="./index.jsp">대시보드</a></li>
+                </ul>
+            </div>
 
-			<div class="snb-section">
-				<div class="snb-title">품질관리</div>
-				<ul class="snb-menu">
-					<li><a href="./quality.html">품질<span class="menu-badge">2</span></a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">리포트</div>
-				<ul class="snb-menu">
-					<li><a href="./report.html">리포트</a></li>
-					<li><a href="./production.html">생산실적</a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">시스템</div>
-				<ul class="snb-menu">
-					<li><a href="./user.html">사용자관리</a></li>
-					<li><a href="./mypage.html">마이페이지</a></li>
-				</ul>
-			</div>
-		</aside>
+            <div class="snb-section">
+                <div class="snb-title">기준관리</div>
+                <ul class="snb-menu">
+                    <li><a href="./master.jsp">기준관리</a></li>
+                    <li><a href="./bom.jsp">BOM</a></li>
+                    <li><a href="./process.jsp">공정</a></li>
+                    <li><a href="./machine.jsp">설비</a></li>
+                </ul>
+            </div>
+            
+            <div class="snb-section">
+                <div class="snb-title">생산관리</div>
+                <ul class="snb-menu">
+                    <li><a href="./workorder.jsp">작업지시 <span class="menu-badge"></span></a></li>
+                    <li><a href="./plan.jsp">생산계획 <span class="menu-badge"></span></a></li>
+                </ul>
+            </div>
+            <div class="snb-section">
+                <div class="snb-title">재고관리</div>
+                <ul class="snb-menu">
+                    <li><a href="./stock.jsp">재고</a></li>
+                    <li><a href="./product.jsp">완제품</a></li>
+                    <li><a href="./item.jsp">자재</a></li>
+                </ul>
+            </div>
+            
+            <div class="snb-section">
+                <div class="snb-title">품질관리</div>
+                <ul class="snb-menu">
+                    <li><a href="./quality.jsp">품질<span class="menu-badge">2</span></a></li>
+                </ul>
+            </div>
+            <div class="snb-section">
+                <div class="snb-title">리포트</div>
+                <ul class="snb-menu">
+                    <li><a href="./report.jsp">리포트</a></li>
+                    <li><a href="./production.jsp">생산실적</a></li>
+                </ul>
+            </div>
+            <div class="snb-section">
+                <div class="snb-title">시스템</div>
+                <ul class="snb-menu">
+                    <li><a href="./board.jsp">게시판</a></li>
+                    <li><a href="./user.jsp">사용자관리</a></li>
+                    <li><a href="./mypage.jsp">마이페이지</a></li>
+                </ul>
+            </div>
+        </aside>
 
 		<div class="snb-overlay" id="snbOverlay"></div>
 		<main class="content">

@@ -2,22 +2,31 @@ package workorder;
 import java.sql.Date;
 
 public class WorkOrderDTO {
-	private int work_order_key; // ÀÛ¾÷Áö½Ã Å° PK
-	private String work_order_code; // ÀÛ¾÷Áö½Ã ÄÚµå
-	private int plan_key; // »ı»ê°èÈ¹ Å° FK
-	private int item_key; 	// ¾ÆÀÌÅÛ Å° FK
-	private int process_key;	// FK
+	private int work_order_key; // ï¿½Û¾ï¿½ï¿½ï¿½ï¿½ï¿½ Å° PK
+	private int order_user_key; // FK
+	private int work_user_key; // FK
+	private String work_order_code; // ï¿½Û¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+	private int order_qty; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 	private Date work_date; //
-	private int order_qty; // Áö½Ã ¼ö·® 
-	private String order_status; // Áö½Ã »óÅÂ
-	private int user_key; // FK
-	private Date created_at; // »ı¼ºÀÏ 
-	private int machine_key; // ¼³ºñ Å° fk 
+	private Date created_at; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+	private int plan_key; // ï¿½ï¿½ï¿½ï¿½ï¿½È¹ Å° FK
 	public int getWork_order_key() {
 		return work_order_key;
 	}
 	public void setWork_order_key(int work_order_key) {
 		this.work_order_key = work_order_key;
+	}
+	public int getOrder_user_key() {
+		return order_user_key;
+	}
+	public void setOrder_user_key(int order_user_key) {
+		this.order_user_key = order_user_key;
+	}
+	public int getWork_user_key() {
+		return work_user_key;
+	}
+	public void setWork_user_key(int work_user_key) {
+		this.work_user_key = work_user_key;
 	}
 	public String getWork_order_code() {
 		return work_order_code;
@@ -25,23 +34,11 @@ public class WorkOrderDTO {
 	public void setWork_order_code(String work_order_code) {
 		this.work_order_code = work_order_code;
 	}
-	public int getPlan_key() {
-		return plan_key;
+	public int getOrder_qty() {
+		return order_qty;
 	}
-	public void setPlan_key(int plan_key) {
-		this.plan_key = plan_key;
-	}
-	public int getItem_key() {
-		return item_key;
-	}
-	public void setItem_key(int item_key) {
-		this.item_key = item_key;
-	}
-	public int getProcess_key() {
-		return process_key;
-	}
-	public void setProcess_key(int process_key) {
-		this.process_key = process_key;
+	public void setOrder_qty(int order_qty) {
+		this.order_qty = order_qty;
 	}
 	public Date getWork_date() {
 		return work_date;
@@ -49,43 +46,27 @@ public class WorkOrderDTO {
 	public void setWork_date(Date work_date) {
 		this.work_date = work_date;
 	}
-	public int getOrder_qty() {
-		return order_qty;
-	}
-	public void setOrder_qty(int order_qty) {
-		this.order_qty = order_qty;
-	}
-	public String getOrder_status() {
-		return order_status;
-	}
-	public void setOrder_status(String order_status) {
-		this.order_status = order_status;
-	}
-	public int getUser_key() {
-		return user_key;
-	}
-	public void setUser_key(int user_key) {
-		this.user_key = user_key;
-	}
 	public Date getCreated_at() {
 		return created_at;
 	}
 	public void setCreated_at(Date created_at) {
 		this.created_at = created_at;
 	}
-	public int getMachine_key() {
-		return machine_key;
+	public int getPlan_key() {
+		return plan_key;
 	}
-	public void setMachine_key(int machine_key) {
-		this.machine_key = machine_key;
+	public void setPlan_key(int plan_key) {
+		this.plan_key = plan_key;
 	}
 	@Override
 	public String toString() {
-		return "WorkOrderDTO [work_order_key=" + work_order_key + ", work_order_code=" + work_order_code + ", plan_key="
-				+ plan_key + ", item_key=" + item_key + ", process_key=" + process_key + ", work_date=" + work_date
-				+ ", order_qty=" + order_qty + ", order_status=" + order_status + ", user_key=" + user_key
-				+ ", created_at=" + created_at + ", machine_key=" + machine_key + "]";
+		return "WorkOrderDTO [work_order_key=" + work_order_key + ", order_user_key=" + order_user_key
+				+ ", work_user_key=" + work_user_key + ", work_order_code=" + work_order_code + ", order_qty="
+				+ order_qty + ", work_date=" + work_date + ", created_at=" + created_at + ", plan_key=" + plan_key
+				+ "]";
 	}
+	
+	
 	
 	
 	

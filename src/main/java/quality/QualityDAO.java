@@ -15,8 +15,8 @@ public class QualityDAO {
 	}
 
 
-	// 1. 전체 목록 조회 (JOIN 포함)
-	public List<QualityDTO> selectAll() {
+	// 1. 전체 목록 조회 (페이징 처리 및 JOIN 포함) - [수정됨]
+	public List<QualityDTO> selectAll(int start, int end) { // Service에서 계산된 start, end를 받습니다.
 		
 		List<QualityDTO> list = new ArrayList<QualityDTO>();
 		Connection conn = null;
@@ -26,11 +26,20 @@ public class QualityDAO {
 		try {
 			conn = getConnection();
 			
-			String sql = "SELECT q.*, i.item_name FROM tb_quality q "
-					   + "JOIN tb_item i ON q.prod_key = i.item_key "
-					   + "ORDER BY q.quality_key ASC";
+			// ROWNUM을 사용하여 필요한 범위(start ~ end)만큼 데이터를 자르는 쿼리입니다.
+			String sql = "SELECT * FROM ("
+					   + "  SELECT ROWNUM AS rn, t.* FROM ("
+					   + "    SELECT q.*, i.item_name FROM tb_quality q "
+					   + "    JOIN tb_item i ON q.prod_key = i.item_key "
+					   + "    ORDER BY q.quality_key ASC"
+					   + "  ) t"
+					   + ") WHERE rn BETWEEN ? AND ?";
 
 			ps = conn.prepareStatement(sql);
+			// 페이징 파라미터 세팅
+			ps.setInt(1, start);
+			ps.setInt(2, end);
+			
 			rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -54,7 +63,7 @@ public class QualityDAO {
 	}
 
 
-	// 2. 품질 데이터 등록 (insertQuality)
+	// 2. 품질 데이터 등록 (insertQuality) - [기존 유지]
 	public int insertQuality(QualityDTO dto) {
 
 		Connection conn = null;
@@ -88,7 +97,7 @@ public class QualityDAO {
 	}
 
 
-	// 3. 품질 데이터 수정 (updateQuality)
+	// 3. 품질 데이터 수정 (updateQuality) - [기존 유지]
 	public int updateQuality(QualityDTO dto) {
 
 		Connection conn = null;
@@ -116,7 +125,7 @@ public class QualityDAO {
 	}
 
 
-	// 4. 품질 데이터 삭제 (deleteQuality)
+	// 4. 품질 데이터 삭제 (deleteQuality) - [기존 유지]
 	public int deleteQuality(QualityDTO dto) {
 
 		Connection conn = null;

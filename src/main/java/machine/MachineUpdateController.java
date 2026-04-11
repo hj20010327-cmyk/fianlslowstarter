@@ -15,11 +15,13 @@ public class MachineUpdateController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("/machine update do post ½ÇÇà");
+		System.out.println("/machine update do post ì‹¤í–‰");
+		
+		// í•œê¸€ êº ì§ ë°©ì§€ 
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 
-		// ÆÄ¶ó¸ŞÅÍ È®º¸
+		// íŒŒë¼ë¯¸í„° ë°›ê¸°
 		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
 		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
@@ -28,9 +30,9 @@ public class MachineUpdateController extends HttpServlet {
 		String remark = request.getParameter("remark");
 		Date buyDate = Date.valueOf(request.getParameter("buyDate"));
 		Date lastCheckDate = Date.valueOf(request.getParameter("lastCheckDate"));
-		Date Create_at = Date.valueOf(request.getParameter("Create_at"));
+//		Date Create_at = Date.valueOf(request.getParameter("Create_at")); í•„ìš”ì—†ì–´ì„œ ì£¼ì„
 
-		// DTO¿¡ ´ã±â
+		// DTOì— ë‹´ê¸° 
 		MachineDTO dto = new MachineDTO();
 		dto.setMachineKey(machineKey);
 		dto.setMachineCode(machineCode);
@@ -40,13 +42,15 @@ public class MachineUpdateController extends HttpServlet {
 		dto.setMachineStatus(machineStatus);
 		dto.setBuyDate(buyDate);
 		dto.setLastCheckDate(lastCheckDate);
-		dto.setCreatedAt(Create_at);
+//		dto.setCreatedAt(Create_at); í•„ìš”ì—†ìŒ
 
+		// Service í˜¸ì¶œ 
 		MachineService machineservice = new MachineService();
 		int count = machineservice.getupdatemachine(dto);
-		System.out.println("¾÷µ¥ÀÌÆ® °á°ú" + count);
+		System.out.println("count: "+ count);
 
-		response.sendRedirect("/machine");
+		// ëª©ë¡ìœ¼ë¡œ ì´ë™ 
+		response.sendRedirect("/slowstarter/machine");
 
 	}
 

@@ -18,19 +18,26 @@ public class MachineDeleteController extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/machine delete ����");	
+		System.out.println("/machine delete 실행");	
+		// 한글 깨짐 방지 
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
-		
-		MachineDTO dto = new MachineDTO();
-		dto.setMachineKey(machineKey);
+		// 체크된 key 배열 받기 
+		String[] machineKeys = request.getParameterValues("machineKey");
 
-        MachineService 	machineService = new MachineService();
-        machineService.getdeletemachine(dto);
+		// 삭제 처리 
+		if (machineKeys != null) {
+			MachineService machineService = new MachineService();
 
-        response.sendRedirect("/machine");
+			for (String key : machineKeys) {
+				MachineDTO dto = new MachineDTO();
+				dto.setMachineKey(Integer.parseInt(key));
+				machineService.getdeletemachine(dto);
+			}
+		}
+		// 목록으로 이동 
+        response.sendRedirect("/slowstarter/machine");
 	
 	}
 

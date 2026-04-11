@@ -71,7 +71,7 @@ public class WorkOrderController extends HttpServlet {
 		int result = service.addWorkOrder(dto);
 		System.out.println("insert result : " + result);
 
-		response.sendRedirect("workorder");
+		response.sendRedirect("/slowstarter/workorder");
 	}
 
 	
@@ -107,7 +107,7 @@ public class WorkOrderController extends HttpServlet {
 			int result = service.updateWorkOrder(dto);
 			System.out.println("update result : " + result);
 
-			response.sendRedirect("workorder");
+			response.sendRedirect("/slowstarter/workorder");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,7 +128,7 @@ public class WorkOrderController extends HttpServlet {
 			int result = service.deleteWorkOrder(work_order_key);
 			System.out.println("result : " + result);
 			
-			response.sendRedirect("workorder");
+			response.sendRedirect("/slowstarter/workorder");
 			
 		} catch (Exception e) {
 			e.printStackTrace(); 

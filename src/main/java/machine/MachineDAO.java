@@ -21,12 +21,10 @@ public class MachineDAO {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			// JNDI 방식
-			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			
+			// DB 연결 
 			Context ctx = new InitialContext();
-			// DataSource : 커넥션 풀 관리자
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-			// DB 접속(그런데 이제 커넥션 풀로)
 			conn = dataFactory.getConnection();
 
 			// SQL 준비
@@ -200,13 +198,9 @@ public class MachineDAO {
 		int result = -1;
 
 		try {
-			// 1. DB ����
-			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			// DB연결
 			Context ctx = new InitialContext();
-			// DataSource : 커넥션 풀 관리자
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-
-			 // DB 접속(그런데 이제 커넥션 풀로)
 			conn = dataFactory.getConnection();
 
 			// 2. SQL 준비
@@ -229,7 +223,7 @@ public class MachineDAO {
 
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
-			System.out.println("insert ���:" + result);
+			System.out.println("insert의 결과:" + result);
 
 			// 결과 활용
 
@@ -272,16 +266,12 @@ public class MachineDAO {
 		int result = -1;
 
 		try {
-			// 1. DB ����
-			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			// DB연결
 			Context ctx = new InitialContext();
-			// DataSource : 커넥션 풀 관리자
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-
-			// DB 접속(그런데 이제 커넥션 풀로)
 			conn = dataFactory.getConnection();
 
-			// 2. SQL �غ�
+			// 2. SQL 준비
 			String query = "UPDATE tb_machine SET " +
 		               "machine_code = ?, " +
 		               "machine_name = ?, " +
@@ -304,7 +294,7 @@ public class MachineDAO {
 
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
-			System.out.println("update ���:" + result);
+			System.out.println("update의 결과:" + result);
 
 			// 결과 활용
 
@@ -347,16 +337,12 @@ public class MachineDAO {
 		int result = -1;
 
 		try {
-			// 1. DB ����
-			// context.xml에 있는 DB 정보로 커넥션 풀을 가져온다
+			// 1. DB 연결
 			Context ctx = new InitialContext();
-			// DataSource : Ŀ�ؼ� Ǯ ������
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-
-			// DB 접속(그런데 이제 커넥션 풀로)
 			conn = dataFactory.getConnection();
 
-			// 2. SQL �غ�
+			// 2. SQL 준비
 			String query = " delete from tb_machine";
 			query += " where machine_key = ?";
 			ps = conn.prepareStatement(query);
@@ -364,7 +350,7 @@ public class MachineDAO {
 
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
-			System.out.println("delete ���:" + result);
+			System.out.println("delete의 결과:" + result);
 
 			// 결과 활용
 

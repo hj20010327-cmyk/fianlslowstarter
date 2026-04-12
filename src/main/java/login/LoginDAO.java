@@ -44,13 +44,15 @@ public class LoginDAO {
 				String user_phone = rs.getString("user_phone");
 				String user_email = rs.getString("user_email");
 				String status = rs.getString("status");
+				String emp_no = rs.getString("emp_no");
 				
-			
+				dto.setUser_id(id);
 				dto.setUser_name(user_name);
 				dto.setUser_role(user_role);
 				dto.setUser_phone(user_phone);
 				dto.setUser_email(user_email);
 				dto.setStatus(status);
+				dto.setEmp_no(emp_no);
 			}
 
 		} catch (Exception e) {

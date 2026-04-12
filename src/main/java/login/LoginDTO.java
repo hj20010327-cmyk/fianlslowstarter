@@ -10,13 +10,14 @@ public class LoginDTO {
 	private String user_phone;
 	private String user_email;
 	private String status;
+	private String emp_no;
 	
 	
-	@Override
-	public String toString() {
-		return "LoginDTO [user_id=" + user_id + ", user_pw=" + user_pw + ", user_key=" + user_key + ", user_name="
-				+ user_name + ", user_role=" + user_role + ", user_phone=" + user_phone + ", user_email=" + user_email
-				+ ", status=" + status + "]";
+	public String getEmp_no() {
+		return emp_no;
+	}
+	public void setEmp_no(String emp_no) {
+		this.emp_no = emp_no;
 	}
 	public int getUser_key() {
 		return user_key;
@@ -66,5 +67,12 @@ public class LoginDTO {
 	public void setUser_pw(String user_pw) {
 		this.user_pw = user_pw;
 	}
+	@Override
+	public String toString() {
+		return "LoginDTO [user_id=" + user_id + ", user_pw=" + user_pw + ", user_key=" + user_key + ", user_name="
+				+ user_name + ", user_role=" + user_role + ", user_phone=" + user_phone + ", user_email=" + user_email
+				+ ", status=" + status + ", emp_no=" + emp_no + "]";
+	}
+	
 	
 }

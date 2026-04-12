@@ -131,7 +131,6 @@
         .btn-blue { background: #3182ce; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
         .btn-white { background: #fff; border: 1px solid #e2e8f0; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 
-        /* [수정] 모달 스타일 보정 (이미지 참고) */
         .modal { display: none; }
         .modal.show { 
             display: flex; 
@@ -161,11 +160,10 @@
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 14px; font-weight: 600; color: #555; margin-bottom: 8px; }
 
-        /* [수정] 푸터 스타일 (이미지 60f75b 참고) */
         .footer {
             clear: both;
             width: 100%;
-            background-color: #0f1a30; /* 어두운 네이비색 */
+            background-color: #0f1a30; 
             color: #8fa0bc;
             padding: 30px 0;
             font-size: 13px;
@@ -183,103 +181,148 @@
         .copyright { margin-top: 15px; color: #475569; text-align: center; }
     </style>
 
+
     <script>
-        // [수정] 이미지 610da9 에러 해결 로직
+        // 날짜 자동 생성
         window.addEventListener('load', () => {
-            const dateEl = document.querySelector('.header-chip:first-child'); // .date 대신 실제 날짜가 표시될 요소를 선택
+
+            const dateEl = document.querySelector('.header-chip:first-child');
             const now = new Date();
-            const iso = now.toISOString();
-            const arr = iso.split('T');
-            
-            console.log(arr[0]);
+            const arr = now.toISOString().split('T');
+
             if (dateEl) {
                 dateEl.textContent = arr[0];
             }
+
         });
+
 
         function stopProp(e) { e.stopPropagation(); }
 
+
         function toggleAllByText() {
+
             const checkboxes = document.querySelectorAll('input[name="chk_quality"]');
             const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach((cb) => cb.checked = !allChecked);
+            
+            checkboxes.forEach((cb) => {
+                cb.checked = !allChecked;
+            });
+
         }
 
+
+        // [조회 기능]
         function doSearch() {
+
             const keyword = document.getElementById('searchKeyword').value.trim();
             const status = document.getElementById('searchStatus').value;
             const path = "${pageContext.request.contextPath}/qualityList";
-            location.href = path + "?p=1&keyword=" + encodeURIComponent(keyword) + "&status=" + encodeURIComponent(status);
+
+            location.href = path + "?p=1&keyword=" + encodeURIComponent(keyword) 
+                                 + "&status=" + encodeURIComponent(status);
+
         }
 
+
         function deleteSelected() {
+
             const checked = document.querySelectorAll('input[name="chk_quality"]:checked');
-            if (checked.length === 0) { alert("삭제할 항목을 선택해주세요."); return; }
+
+            if (checked.length === 0) { 
+                alert("삭제할 항목을 선택해주세요."); 
+                return; 
+            }
+
             if (confirm("선택한 항목을 삭제하시겠습니까?")) {
                 let codes = Array.from(checked).map(cb => cb.value).join(",");
                 location.href = "${pageContext.request.contextPath}/qualityDelete?codes=" + codes;
             }
+
         }
 
+
         function openModal(mode, code = '', name = '', qty = '', status = '합격', date = '') {
+
             const modal = document.getElementById("commonModal");
             const title = document.getElementById("modalTitle");
             const submitBtn = document.getElementById("modalSubmitBtn");
-
             const pureQty = (qty && qty.toString()) ? qty.toString().replace(/,/g, '') : '';
 
             if(mode === 'edit') {
                 title.innerText = "품질관리 수정"; 
                 submitBtn.innerText = "수정하기";
+                
                 document.getElementById("modal_code").value = code;
                 document.getElementById("modal_code").readOnly = true; 
                 document.getElementById("modal_name").value = name;
                 document.getElementById("modal_qty").value = pureQty;
                 document.getElementById("modal_status").value = status;
                 document.getElementById("modal_date").value = date;
+                
                 submitBtn.onclick = function() { sendData('update'); };
             } else {
-                title.innerText = "reg"; // 이미지 5fb488 기준
+                title.innerText = "품질관리 등록";
                 submitBtn.innerText = "저장하기";
+                
                 document.getElementById("modal_code").value = "";
                 document.getElementById("modal_code").readOnly = false;
                 document.getElementById("modal_name").value = "";
                 document.getElementById("modal_qty").value = "";
                 document.getElementById("modal_status").value = "합격";
                 document.getElementById("modal_date").value = "";
+                
                 submitBtn.onclick = function() { sendData('insert'); };
             }
+
             modal.classList.add("show");
+
         }
 
+
         function sendData(type) {
+
             const code = document.getElementById("modal_code").value;
             const name = document.getElementById("modal_name").value;
             const qty = document.getElementById("modal_qty").value;
             const status = document.getElementById("modal_status").value;
             const date = document.getElementById("modal_date").value;
-            if(!code || !name) { alert("번호와 품목명은 필수입니다."); return; }
+
+            if(!code || !name) { 
+                alert("번호와 품목명은 필수입니다."); 
+                return; 
+            }
+
             const targetUrl = type === 'insert' ? "/qualityInsert" : "/qualityUpdate";
+            
             location.href = "${pageContext.request.contextPath}" + targetUrl + 
                             "?code=" + code + "&name=" + encodeURIComponent(name) + 
                             "&qty=" + qty + "&status=" + encodeURIComponent(status) + "&date=" + date;
+
         }
+
 
         function closeModal() {
             document.getElementById("commonModal").classList.remove("show");
         }
 
+
         function goPage(pageNum) {
+
             const keyword = document.getElementById('searchKeyword').value;
             const status = document.getElementById('searchStatus').value;
+
             location.href = "${pageContext.request.contextPath}/qualityList?p=" + pageNum + 
                             "&keyword=" + encodeURIComponent(keyword) + 
                             "&status=" + encodeURIComponent(status);
+
         }
     </script>
 </head>
 
+
 <body>
+<%System.out.print("jsp 들어옴"); %>
     <header class="header">
         <div class="header-left">
             <a href="./index.do" class="logo">
@@ -289,12 +332,15 @@
         </div>
 
         <div class="header-right">
-            <div class="header-chip"></div> <div class="header-chip">생산 1라인 가동중</div>
+            <div class="header-chip"></div> 
+            <div class="header-chip">생산 1라인 가동중</div>
             <div class="header-chip">관리자</div>
         </div>
     </header>
 
+
     <div class="layout">
+
         <aside class="snb" id="snb">
             <div class="snb-section">
                 <div class="snb-title">MAIN</div>
@@ -302,6 +348,7 @@
                     <li><a href="./index.html">대시보드</a></li>
                 </ul>
             </div>
+
             <div class="snb-section">
                 <div class="snb-title">기준관리</div>
                 <ul class="snb-menu">
@@ -310,6 +357,7 @@
                     <li><a href="./process.html">공정</a></li>
                 </ul>
             </div>
+
             <div class="snb-section">
                 <div class="snb-title">생산관리</div>
                 <ul class="snb-menu">
@@ -317,6 +365,7 @@
                     <li><a href="./plan.html">생산계획 <span class="menu-badge">2</span></a></li>
                 </ul>
             </div>
+
             <div class="snb-section">
                 <div class="snb-title">재고관리</div>
                 <ul class="snb-menu">
@@ -325,7 +374,8 @@
                     <li><a href="./item.html">자재</a></li>
                 </ul>
             </div>
-            <div class="snb-section">
+
+            <div class="snb-section active">
                 <div class="snb-title">품질관리</div>
                 <ul class="snb-menu">
                     <li class="active">
@@ -333,6 +383,7 @@
                     </li>
                 </ul>
             </div>
+
             <div class="snb-section">
                 <div class="snb-title">리포트</div>
                 <ul class="snb-menu">
@@ -340,6 +391,7 @@
                     <li><a href="./production.html">생산실적</a></li>
                 </ul>
             </div>
+
             <div class="snb-section">
                 <div class="snb-title">시스템</div>
                 <ul class="snb-menu">
@@ -349,7 +401,9 @@
             </div>
         </aside>
 
+
         <main class="content">
+
             <div class="page-header">
                 <div class="page-header-title">
                     <h1>품질관리</h1>
@@ -360,11 +414,14 @@
                 </div>
             </div>
 
+
             <div class="card">
                 <div class="search-container">
                     <div style="flex:2">
-                        <input type="text" id="searchKeyword" class="input-field" placeholder="품목코드 또는 검사번호 입력" value="${param.keyword}">
+                        <input type="text" id="searchKeyword" class="input-field" 
+                               placeholder="품목코드 또는 검사번호 입력" value="${param.keyword}">
                     </div>
+
                     <div style="flex:1">
                         <select id="searchStatus" class="input-field">
                             <option value="" ${empty param.status ? 'selected' : ''}>전체 상태</option>
@@ -373,16 +430,20 @@
                             <option value="불합격" ${param.status == '불합격' ? 'selected' : ''}>불합격</option>
                         </select>
                     </div>
+
                     <button type="button" class="btn-blue" onclick="doSearch()">조회</button>
                 </div>
             </div>
 
+
             <div class="main-grid">
+
                 <div class="card">
                     <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                         <h2>품질 목록</h2>
                         <button type="button" class="btn-delete-custom" onclick="deleteSelected()">삭제</button>
                     </div>
+
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -412,6 +473,7 @@
                             </tbody>
                         </table>
                     </div>
+
                     <div class="pagination">
                         <a onclick="goPage(1)">&laquo;</a>
                         <c:forEach var="i" begin="1" end="4">
@@ -420,6 +482,7 @@
                         <a onclick="goPage(2)">&raquo;</a>
                     </div>
                 </div>
+
 
                 <div class="card">
                     <div class="section-header"><h2>요약 / 상태</h2></div>
@@ -435,9 +498,11 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
+
 
     <footer class="footer">
         <div class="footer-container">
@@ -469,25 +534,31 @@
         </div>
     </footer>
 
+
     <div id="commonModal" class="modal">
         <div class="modal-box">
+
             <div class="modal-header">
-                <h3 id="modalTitle">reg</h3>
+                <h3 id="modalTitle">등록</h3>
                 <span onclick="closeModal()" style="cursor:pointer; font-size:20px; color:#999;">&times;</span>
             </div>
+
             <div class="modal-body">
                 <div class="form-group">
                     <label>검사번호</label>
                     <input type="text" id="modal_code" name="quality_code" class="input-field" placeholder="번호를 입력하세요">
                 </div>
+
                 <div class="form-group">
                     <label>품목명</label>
                     <input type="text" id="modal_name" name="item_name" class="input-field" placeholder="품목명을 입력하세요">
                 </div>
+
                 <div class="form-group">
                     <label>검사수량</label>
                     <input type="number" id="modal_qty" name="inspect_qty" class="input-field" placeholder="수량을 입력하세요">
                 </div>
+
                 <div class="form-group">
                     <label>상태</label>
                     <select id="modal_status" name="qc_status" class="input-field">
@@ -496,16 +567,20 @@
                         <option value="불합격">불합격</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>검사일자</label>
                     <input type="date" id="modal_date" name="inspect_date" class="input-field">
                 </div>
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn-white" style="width:80px;" onclick="closeModal()">취소</button>
                 <button type="button" class="btn-blue" style="width:120px;" id="modalSubmitBtn">저장하기</button>
             </div>
+
         </div>
     </div>
+
 </body>
 </html>

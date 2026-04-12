@@ -1,133 +1,205 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AUTO MES | 생산계획</title>
-    <script src="./asset/js/common.js" defer></script>
-    <link rel="stylesheet" href="./asset/css/common.css" />
-    <link rel="stylesheet" href="./asset/css/page.css" />
+    <title>AUTO MES | 재고 현황</title>
+
+
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/common.css" />
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/page.css" />
+
+
+    <style>
+        .content { 
+            padding: 24px; 
+            background-color: #f4f7fa; 
+            min-height: calc(100vh - 60px); 
+        }
+
+
+        .card { 
+            background: #fff; 
+            border-radius: 12px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            padding: 24px; 
+            margin-bottom: 20px; 
+        }
+
+
+        .page-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+
+
+        .search-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+        }
+
+
+        .input-field { 
+            width: 100%; 
+            padding: 10px 14px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 8px; 
+            font-size: 14px; 
+            box-sizing: border-box; 
+        }
+
+
+        .btn-blue { 
+            background: #3182ce; 
+            color: #fff; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600;
+        }
+
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+        }
+
+
+        th { 
+            background-color: #f8fafc; 
+            padding: 12px; 
+            border-bottom: 1px solid #e2e8f0; 
+            font-size: 13px; 
+            text-align: center; 
+            color: #64748b; 
+        }
+
+
+        td { 
+            padding: 14px 12px; 
+            border-bottom: 1px solid #f1f5f9; 
+            text-align: center; 
+            font-size: 14px; 
+            color: #334155; 
+        }
+
+
+        /* 재고 부족 경고 스타일 */
+        .stock-warning { 
+            color: #e53e3e; 
+            font-weight: 700; 
+            background-color: #fff5f5; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+        }
+
+
+        .stock-safe { 
+            color: #38a169; 
+            font-weight: 600; 
+        }
+
+
+        .badge-category { 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            background: #edf2f7; 
+            color: #4a5568; 
+        }
+    </style>
+
+
+    <script>
+        function doSearch() {
+            const keyword = document.getElementById('searchKeyword').value;
+            location.href = "${pageContext.request.contextPath}/stockList?keyword=" + encodeURIComponent(keyword);
+        }
+    </script>
 </head>
+
+
 <body>
-   <header class="header">
-		<div class="header-left">
-			<a href="./index.html" class="logo"><span class="logo-mark">AM</span><span>AUTO
-					MES</span></a>
-			<div class="header-title">자동차 콤프레셔 제조 MES</div>
-		</div>
-		<div class="header-right">
-			<div class="header-chip">2026-03-30</div>
-			<div class="header-chip">생산 1라인 가동중</div>
-			<div class="header-chip">관리자</div>
-		</div>
-		<button type="button" class="menu-toggle" id="menuToggle">☰</button>
-	</header>
-	<div class="layout">
-		<aside class="snb" id="snb">
-			<div class="snb-section">
-				<div class="snb-title">MAIN</div>
-				<ul class="snb-menu">
-					<li><a href="./index.html">대시보드</a></li>
-					<li><a href="./mypage.html">마이페이지</a></li>
-				</ul>
-			</div>
+    <header class="header">
+        <div class="header-left">
+            <a href="#" class="logo"><span class="logo-mark">AM</span><span>AUTO MES</span></a>
+        </div>
+    </header>
 
-			<div class="snb-section">
-				<div class="snb-title">MASTER</div>
-				<ul class="snb-menu">
-					<li><a href="./product.html">제품관리</a></li>
-					<li class="active"><a href="./item.html">품목관리</a></li>
-					<li><a href="./bom.html">BOM관리</a></li>
-					<li><a href="./process.html">공정관리</a></li>
-				</ul>
-			</div>
 
-			<div class="snb-section">
-				<div class="snb-title">OPERATION</div>
-				<ul class="snb-menu">
-					<li><a href="./workorder.html">작업지시 <span
-							class="menu-badge">4</span></a></li>
-					<li><a href="./production.html">생산실적</a></li>
-					<li><a href="./quality.html">품질관리 <span class="menu-badge">2</span></a></li>
-					<li><a href="./stock.html">재고관리</a></li>
-					<li><a href="./machine.html">설비</a></li>
-					<li><a href="./plan.html">생산계획</a></li>
-				</ul>
-			</div>
+    <div class="layout">
+        <aside class="snb">
+            <div class="snb-section active">
+                <div class="snb-title">재고관리</div>
+                <ul class="snb-menu">
+                    <li><a href="${pageContext.request.contextPath}/productList">완제품 관리</a></li>
+                    <li><a href="${pageContext.request.contextPath}/itemList">자재 관리</a></li>
+                    <li class="active"><a href="${pageContext.request.contextPath}/stockList">재고 현황</a></li>
+                </ul>
+            </div>
+        </aside>
 
-			<div class="snb-section">
-				<div class="snb-title">SYSTEM</div>
-				<ul class="snb-menu">
-					<li><a href="./report.html">리포트</a></li>
-					<li><a href="./user.html">사용자관리</a></li>
-				</ul>
-			</div>
-		</aside>
-     <main class="content">
-            <div class="page-head">
-                <div class="page-head-left">
-                    <h1>재고관리</h1>
-                    <p>원자재, 부품, 완제품 재고를 확인하고 부족 재고를 점검합니다.</p>
-                </div>
-                <div class="page-actions"><button class="btn primary">신규 등록</button></div>
+
+        <main class="content">
+            <div class="page-header">
+                <h1>재고 현황</h1>
             </div>
 
-            <section class="card mb-20">
-                <div class="section-title"><h2>검색 조건</h2></div>
-                <form action="stockList" method="get">
-                    <div class="search-row">
-                        <input class="input" type="text" name="searchCode" placeholder="코드 입력" value="${param.searchCode}">
-                        <input class="input" type="text" name="searchName" placeholder="명칭 입력" value="${param.searchName}">
-                        <button class="btn primary">조회</button>
-                    </div>
-                </form>
-            </section>
 
-            <div class="panel-grid">
-                <div class="card">
-                    <div class="section-title" style="display: flex; justify-content: space-between;">
-                        <h2>재고관리 목록</h2><button class="btn btn-sm">삭제</button>
-                    </div>
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <%-- [수정] 테이블 제목을 상민님 새 사진의 데이터 순서로 맞춤 --%>
-                                <tr>
-                                    <th>No</th>
-                                    <th>품목 코드</th>
-                                    <th>입고량</th>
-                                    <th>출고량</th>
-                                    <th>현재고</th>
-                                    <th>안전재고</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%-- [수정] 데이터가 안 나오던 이유: 이름표(${dto.lot_key})가 틀렸음. 
-                                     새 DB 사진의 컬럼명인 item_key, current_qty 등으로 이름표를 교체함 --%>
-                                <c:forEach var="dto" items="${list}">
-                                    <tr>
-                                        <td>${dto.stock_key}</td>
-                                        <td>${dto.item_key}</td>
-                                        <td>${dto.in_qty}</td>
-                                        <td>${dto.out_qty}</td>
-                                        <td>${dto.current_qty}</td>
-                                        <td>${dto.safe_qty}</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="card">
+                <div class="search-container">
+                    <input type="text" id="searchKeyword" class="input-field" placeholder="품목명 또는 코드로 검색" style="flex:4">
+                    <button type="button" class="btn-blue" onclick="doSearch()">조회</button>
                 </div>
+            </div>
 
-                <div class="card">
-                    <div class="section-title"><h2>요약 / 상태</h2><span>오늘 기준</span></div>
-                    <ul class="summary-list">
-                        <li><div><strong>안전재고 미만</strong></div><span class="badge danger">부족</span></li>
-                        <li><div><strong>창고 상태</strong></div><span class="badge ok">완료</span></li>
-                    </ul>
-                </div>
+
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>품목코드</th>
+                            <th>품목명</th>
+                            <th>규격</th>
+                            <th>현재고</th>
+                            <th>안전재고</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="s" items="${stockList}">
+                            <tr>
+                                <td><span class="badge-category">${s.itemType}</span></td>
+                                <td style="font-weight:600;">${s.itemCode}</td>
+                                <td>${s.itemName}</td>
+                                <td>${s.spec}</td>
+                                <td class="${s.currQty < s.safeQty ? 'stock-warning' : 'stock-safe'}">
+                                    <fmt:formatNumber value="${s.currQty}" />
+                                </td>
+                                <td><fmt:formatNumber value="${s.safeQty}" /></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${s.currQty < s.safeQty}">
+                                            <span style="color:#e53e3e;">▼ 재고부족</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span style="color:#38a169;">● 정상</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>

@@ -1,70 +1,99 @@
 package stock;
 
-/**
- * Àç°í°ü¸® µ¥ÀÌÅÍ Àü¼Û °´Ã¼ (DTO)
- */
+
 public class StockDTO {
 
-	// [¸â¹ö º¯¼ö] 
-	private String lot_key;   // Ç°¸ñ ÄÚµå (DB: ITEM_CODE)
-	private String name;      // Ç°¸ñ¸í (DB: ITEM_NAME)
-	private String type;      // ±¸ºĞ (DB: ITEM_TYPE)
-	private String spec;      // ±Ô°İ (DB: SPEC)
-	private int remain;       // ÇöÀç°í (DB: REMAIN)
-	private String vender;    // °ø±Ş¾÷Ã¼ (DB: VENDER)
 
-	
-	public StockDTO() {
-	}
+    private int stockKey;      // STOCK_KEY
+    private String lot;        // LOT
+    private int inQty;         // IN_QTY
+    private int outQty;        // OUT_QTY
+    private int currentQty;    // CURRENT_QTY
+    private int safeQty;       // SAFE_QTY
+    private String updatedAt;  // UPDATED_AT
+    private int itemKey;       // ITEM_KEY
 
-	
-	// [Getter & Setter] 
-	public String getLot_key() {
-		return lot_key;
-	}
 
-	public void setLot_key(String lot_key) {
-		this.lot_key = lot_key;
-	}
 
-	public String getName() {
-		return name;
-	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    // ê¸°ë³¸ ìƒì„±ì
+    public StockDTO() {
+    }
 
-	public String getType() {
-		return type;
-	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
 
-	public String getSpec() {
-		return spec;
-	}
 
-	public void setSpec(String spec) {
-		this.spec = spec;
-	}
+    // Getter & Setter (í•˜ë‚˜í•˜ë‚˜ êµ¬ë¶„í•´ì„œ ì—”í„° ë„£ì—ˆìŠµë‹ˆë‹¤)
+    public int getStockKey() {
+        return stockKey;
+    }
 
-	public int getRemain() {
-		return remain;
-	}
+    public void setStockKey(int stockKey) {
+        this.stockKey = stockKey;
+    }
 
-	public void setRemain(int remain) {
-		this.remain = remain;
-	}
 
-	public String getVender() {
-		return vender;
-	}
+    public String getLot() {
+        return lot;
+    }
 
-	public void setVender(String vender) {
-		this.vender = vender;
-	}
+    public void setLot(String lot) {
+        this.lot = lot;
+    }
+
+
+    public int getInQty() {
+        return inQty;
+    }
+
+    public void setInQty(int inQty) {
+        this.inQty = inQty;
+    }
+
+
+    public int getOutQty() {
+        return outQty;
+    }
+
+    public void setOutQty(int outQty) {
+        this.outQty = outQty;
+    }
+
+
+    public int getCurrentQty() {
+        return currentQty;
+    }
+
+    public void setCurrentQty(int currentQty) {
+        this.currentQty = currentQty;
+    }
+
+
+    public int getSafeQty() {
+        return safeQty;
+    }
+
+    public void setSafeQty(int safeQty) {
+        this.safeQty = safeQty;
+    }
+
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+
+    public int getItemKey() {
+        return itemKey;
+    }
+
+    public void setItemKey(int itemKey) {
+        this.itemKey = itemKey;
+    }
+
 
 }

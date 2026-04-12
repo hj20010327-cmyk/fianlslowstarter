@@ -37,18 +37,18 @@ public class BOMDAO {
 		List<BOMDTO> list = new ArrayList();
 
 		try (Connection conn = getConn(); 
-			PreparedStatement ps = new LoggableStatement(conn, "SELECT *\r\n"
-					+ "FROM ( SELECT ROWNUM AS rnum, b.*\r\n"
-					+ "    FROM ( SELECT b.bom_key,\r\n"
-					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) AS product_item_key,\r\n"
-					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) AS material_item_key, \r\n"
-					+ "               b.qty,\r\n"
-					+ "               b.remark\r\n"
-					+ "        FROM tb_bom b\r\n"
-					+ "        ORDER BY b.bom_key\r\n"
-					+ "    ) b\r\n"
-					+ "    WHERE ROWNUM <= ?\r\n"
-					+ ")\r\n"
+			PreparedStatement ps = new LoggableStatement(conn, "SELECT * "
+					+ "FROM ( SELECT ROWNUM AS rnum, b.* "
+					+ "    FROM ( SELECT b.bom_key, "
+					+ "               b.bom_code, "
+					+ "               b.qty, "
+					+ "               b.remark, "
+					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.item_key) AS bom_item_key "
+					+ "        FROM tb_bom b "
+					+ "        ORDER BY b.bom_key "
+					+ "    ) b "
+					+ "    WHERE ROWNUM <= ? "
+					+ " ) "
 					+ "WHERE rnum >= ?");
 					
 			) {
@@ -61,18 +61,12 @@ public class BOMDAO {
 				//결과 활용
 				while (rs.next()) {
 					BOMDTO dto = new BOMDTO();
-
-					int bom_key = Integer.parseInt(rs.getString("bom_key"));
-					dto.setBom_key(bom_key);
 					
-					
-					dto.setProduct_item_key(rs.getString("product_item_key"));
-					dto.setMaterial_item_key(rs.getString("material_item_key"));
-					
-							
+					dto.setBom_key(rs.getInt("bom_key"));	
+					dto.setBom_code(rs.getString("bom_code"));	
 					dto.setQTY(rs.getInt("qty"));
-					
 					dto.setRemark(rs.getString("remark"));
+					dto.setBom_item_key(rs.getString("bom_item_key"));
 
 					list.add(dto);
 				}
@@ -92,25 +86,24 @@ public class BOMDAO {
 		List<BOMDTO> list = new ArrayList();
 		
 		try (Connection conn = getConn();
-			PreparedStatement ps = new LoggableStatement(conn, " SELECT * FROM ("
-					+ "    SELECT ROWNUM AS rnum, b.*"
-					+ "    FROM ("
-					+ "        SELECT b.bom_key,"
-					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) AS product_item_key, "
-					+ "               (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) AS material_item_key, "
-					+ "               b.qty, "
-					+ "               b.remark "
+			PreparedStatement ps = new LoggableStatement(conn, "SELECT * FROM ( "
+					+ "    SELECT ROWNUM AS rnum, b.* "
+					+ "    FROM ( "
+					+ "        SELECT  "
+					+ "            b.bom_key, "
+					+ "            b.bom_code, "
+					+ "            b.qty, "
+					+ "            b.remark, "
+					+ "            i.item_name AS bom_item_key"
 					+ "        FROM tb_bom b "
-					+ "    WHERE 1=1 "
-				    + "    AND ( ? = 0 OR b.bom_key = ? ) " 
-				    + "    AND ( ? IS NULL OR " 
-				    + "        (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.product_item_key) LIKE '%' || ? || '%' " 
-				    + "    OR (SELECT i.item_name FROM tb_item i WHERE i.item_key = b.material_item_key) LIKE '%' || ? || '%' " 
-				    + " ) "
+					+ "        LEFT JOIN tb_item i ON b.item_key = i.item_key "
+					+ "        WHERE 1=1 "
+					+ "          AND ( ? = 0 OR b.bom_key = ? ) "
+					+ "          AND ( ? IS NULL OR i.item_name LIKE '%' || ? || '%' ) "
 					+ "        ORDER BY b.bom_key "
-					+ "    ) b "
-					+ "    WHERE ROWNUM <= ? "
-					+ ") "
+					+ "    ) b"
+					+ "    WHERE ROWNUM <= ?"
+					+ " ) "
 					+ " WHERE rnum >= ?");
 			) {
 			
@@ -118,25 +111,18 @@ public class BOMDAO {
 			ps.setInt(2, bomDTO.getKeycode());
 			ps.setString(3, bomDTO.getKeyword());
 			ps.setString(4, bomDTO.getKeyword());
-			ps.setString(5, bomDTO.getKeyword());
-			ps.setInt(6, bomDTO.getEnd());
-			ps.setInt(7, bomDTO.getStart());
+			ps.setInt(5, bomDTO.getEnd());
+			ps.setInt(6, bomDTO.getStart());
 
 			try (ResultSet rs = ps.executeQuery();) {
 				while(rs.next()) {
 					BOMDTO dto = new BOMDTO();
 
-					int bom_key = Integer.parseInt(rs.getString("bom_key"));
-					dto.setBom_key(bom_key);
-					
-					
-					dto.setProduct_item_key(rs.getString("product_item_key"));
-					dto.setMaterial_item_key(rs.getString("material_item_key"));
-					
-							
+					dto.setBom_key(rs.getInt("bom_key"));
+					dto.setBom_code(rs.getString("bom_code"));
 					dto.setQTY(rs.getInt("qty"));
-					
 					dto.setRemark(rs.getString("remark"));
+					dto.setBom_item_key(rs.getString("bom_item_key"));		
 
 					list.add(dto);
 				}
@@ -156,10 +142,18 @@ public class BOMDAO {
 
 		try (Connection conn = getConn();
 			PreparedStatement ps = new LoggableStatement(conn,
-						" insert into tb_bom " + " values(seq_bom.nextval, , , ?, ?); ");
+						"INSERT INTO tb_bom  "
+						+ "VALUES ( "
+						+ "    seq_bom.nextval, "
+						+ "    'BOM-' || LPAD(seq_bom.currval, 3, '0'), "
+						+ "    ?, "
+						+ "    ?, "
+						+ "    ? "
+						+ ") ");
 		) {
 			ps.setInt(1, bomDTO.getQTY());
 			ps.setString(2, bomDTO.getRemark());
+			ps.setString(3, bomDTO.getBom_item_key());
 
 			System.out.println(((LoggableStatement)ps).getQueryString());
 
@@ -255,15 +249,16 @@ public class BOMDAO {
 		
 		try( Connection conn = getConn(); 
 				PreparedStatement ps = new LoggableStatement(conn, "SELECT COUNT(*) cnt "
-						+ " FROM tb_bom b "
-						+ " JOIN tb_item p ON p.item_key = b.product_item_key "
-						+ " JOIN tb_item m ON m.item_key = b.material_item_key "
-						+ " WHERE  "
-						+ "    p.item_name LIKE '%' || ? || '%' "
-						+ " OR m.item_name LIKE '%' || ? || '%' ");
+						+ "FROM tb_bom b "
+						+ "LEFT JOIN tb_item i ON b.item_key = i.item_key "
+						+ "WHERE 1=1 "
+						+ "  AND ( ? = 0 OR b.bom_key = ? ) "
+						+ "  AND ( ? IS NULL OR i.item_name LIKE '%' || ? || '%' )");
 		){
-			ps.setString(1, keyword);
-			ps.setString(2, keyword);
+			ps.setInt(1, keycode);
+			ps.setInt(2, keycode);
+			ps.setString(3, keyword);
+			ps.setString(4, keyword);
 			
 			
 			System.out.println(((LoggableStatement)ps).getQueryString());

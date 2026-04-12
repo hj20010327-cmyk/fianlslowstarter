@@ -1,0 +1,56 @@
+package plan;
+
+import java.io.IOException;
+import java.sql.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/plan/add")
+public class PlanAddController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		System.out.println("/plan/add doPost 실행");
+
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8;");
+
+		try {
+			String plan_code = request.getParameter("plan_code");
+			int item_key = Integer.parseInt(request.getParameter("item_key"));
+			Date plan_date = Date.valueOf(request.getParameter("plan_date"));
+			Date due_date = Date.valueOf(request.getParameter("due_date"));
+			int plan_qty = Integer.parseInt(request.getParameter("plan_qty"));
+			String status = request.getParameter("status");
+			int user_key = Integer.parseInt(request.getParameter("user_key"));
+			int priority = Integer.parseInt(request.getParameter("priority"));
+
+			PlanDTO dto = new PlanDTO();
+			dto.setPlan_code(plan_code);
+			dto.setItem_key(item_key);
+			dto.setPlan_date(plan_date);
+			dto.setDue_date(due_date);
+			dto.setPlan_qty(plan_qty);
+			dto.setStatus(status);
+			dto.setUser_key(user_key);
+			dto.setPriority(priority);
+
+			PlanService service = new PlanService();
+			int result = service.addplan(dto);
+
+			System.out.println("plan insert result : " + result);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		response.sendRedirect("/slowstarter/plan");
+	}
+}

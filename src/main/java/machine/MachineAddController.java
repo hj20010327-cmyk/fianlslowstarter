@@ -24,13 +24,12 @@ public class MachineAddController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("/machine/add doPost ����");
-		// ��û�� �ѱ� ���� ����
+		// 한글 꺠짐 방지
 		request.setCharacterEncoding("utf-8");
-		// ������ �ѱ� ���� ����
 		response.setContentType("text/html; charset=utf-8;");
 
-		// �Ķ���� Ȯ��
-		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
+		// 파라미터 받기 
+//		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
 		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
 		int processKey = Integer.parseInt(request.getParameter("processKey"));
@@ -38,11 +37,11 @@ public class MachineAddController extends HttpServlet {
 		String remark = request.getParameter("remark");
 		Date buyDate = Date.valueOf(request.getParameter("buyDate")); 
 		Date lastCheckDate = Date.valueOf(request.getParameter("lastCheckDate")); 
-		Date Create_at = Date.valueOf(request.getParameter("Create_at")); 
-		System.out.println("machineKey :" + machineKey);
+//		Date Create_at = Date.valueOf(request.getParameter("Create_at")); 
+		System.out.println("machineCode :" + machineCode);
 		
 
-		// DTO�� ���
+		// DTO에 담기 
 		  MachineDTO dto = new MachineDTO();
 //		  	dto.setMachineKey(machineKey);
 		    dto.setMachineCode(machineCode);
@@ -54,11 +53,13 @@ public class MachineAddController extends HttpServlet {
 		    dto.setLastCheckDate(lastCheckDate);
 //		    dto.setCreatedAt(Create_at);
 
-		// service�� DTO�� ����
+		// service 호출 
 		MachineService machineService = new MachineService();
 		int result = machineService.getaddmachine(dto);
 		System.out.println("result : " + result);
-		response.sendRedirect("/machine.jsp");
+		
+		// 목록 페이지 이동 
+		response.sendRedirect("/slowstarter/machine");
 	}
 
 }

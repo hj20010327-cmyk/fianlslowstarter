@@ -1,11 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,21 +12,31 @@
     <script src="./asset/js/common.js" defer></script>
     <link rel="stylesheet" href="./asset/css/common.css" />
     <link rel="stylesheet" href="./asset/css/page.css" />
+    <style>
+        .msg-box {
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .msg-success { background:#e8f7ee; color:#1d7a46; border:1px solid #b9e3c9; }
+        .msg-error { background:#fff1f0; color:#c62828; border:1px solid #f0b8b8; }
+    </style>
 </head>
-
 <body>
     <header class="header">
         <div class="header-left">
-            <a href="./index.html" class="logo">
+            <a href="./index.jsp" class="logo">
                 <span class="logo-mark">AM</span>
                 <span>AUTO MES</span>
             </a>
             <div class="header-title">자동차 콤프레셔 제조 MES</div>
         </div>
         <div class="header-right">
-            <div class="header-chip">2026-03-30</div>
-            <div class="header-chip">생산 1라인 가동중</div>
-            <div class="header-chip">관리자</div>
+            <div class="header-chip date"></div>
+            <div class="header-chip">${dto.user_name}</div>
+            <div class="header-chip">${dto.user_role}</div>
         </div>
         <button type="button" class="menu-toggle" id="menuToggle">☰</button>
     </header>
@@ -85,8 +94,8 @@
             <div class="snb-section">
                 <div class="snb-title">시스템</div>
                 <ul class="snb-menu">
-                    <li><a href="./user.html">사용자관리</a></li>
-                    <li class="active"><a href="./mypage.html">마이페이지</a></li>
+                    <li><a href="./user">사용자관리</a></li>
+                    <li class="active"><a href="./mypage">마이페이지</a></li>
                 </ul>
             </div>
         </aside>
@@ -97,99 +106,97 @@
             <div class="page-head">
                 <div class="page-head-left">
                     <h1>마이페이지</h1>
-                    <p>내 계정 정보와 최근 작업 내역을 확인할 수 있습니다.</p>
-                </div>
-                <div class="page-actions">
-                    <button class="btn" type="button">취소</button>
-                    <button class="btn primary" type="button">저장</button>
+                    <p>내 계정 정보와 비밀번호를 변경할 수 있습니다.</p>
                 </div>
             </div>
 
-            <section class="two-col">
-                <div class="card">
-                    <div class="section-title">
-                        <h2>내 정보</h2>
-                        <span>기본 프로필</span>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>이름</label>
-                            <input class="input" type="text" value="관리자" />
-                        </div>
-                        <div class="form-group">
-                            <label>사번</label>
-                            <input class="input" type="text" value="ADM001" />
-                        </div>
-                        <div class="form-group">
-                            <label>부서</label>
-                            <input class="input" type="text" value="생산관리팀" />
-                        </div>
-                        <div class="form-group">
-                            <label>이메일</label>
-                            <input class="input" type="text" value="admin@automes.com" />
-                        </div>
-                        <div class="form-group">
-                            <label>연락처</label>
-                            <input class="input" type="text" value="010-1234-5678" />
-                        </div>
-                        <div class="form-group">
-                            <label>권한</label>
-                            <input class="input" type="text" value="시스템 관리자" />
-                        </div>
-                    </div>
-                </div>
+            <c:if test="${param.msg == 'success'}">
+                <div class="msg-box msg-success">회원 정보가 정상적으로 수정되었습니다.</div>
+            </c:if>
+            <c:if test="${param.msg == 'fail'}">
+                <div class="msg-box msg-error">수정에 실패했습니다. 다시 시도해주세요.</div>
+            </c:if>
+            <c:if test="${param.msg == 'wrongPw'}">
+                <div class="msg-box msg-error">현재 비밀번호가 일치하지 않습니다.</div>
+            </c:if>
+            <c:if test="${param.msg == 'pwMismatch'}">
+                <div class="msg-box msg-error">새 비밀번호와 비밀번호 확인이 일치하지 않습니다.</div>
+            </c:if>
+            <c:if test="${param.msg == 'pwShort'}">
+                <div class="msg-box msg-error">새 비밀번호는 8자 이상이어야 합니다.</div>
+            </c:if>
+            <c:if test="${param.msg == 'emptyPw'}">
+                <div class="msg-box msg-error">현재 비밀번호를 입력해주세요.</div>
+            </c:if>
 
-                <div class="card">
-                    <div class="section-title">
-                        <h2>최근 활동</h2>
-                        <span>최근 7일</span>
-                    </div>
-                    <ul class="summary-list">
-                        <li>
-                            <div>
-                                <strong>작업지시 2건 등록</strong>
-                                <p>2026-03-30 09:10</p>
-                            </div>
-                            <span class="badge ok">등록</span>
-                        </li>
-                        <li>
-                            <div>
-                                <strong>품목 정보 수정</strong>
-                                <p>2026-03-29 15:20</p>
-                            </div>
-                            <span class="badge warn">수정</span>
-                        </li>
-                        <li>
-                            <div>
-                                <strong>사용자 권한 변경</strong>
-                                <p>2026-03-28 11:08</p>
-                            </div>
-                            <span class="badge danger">권한</span>
-                        </li>
-                    </ul>
-                </div>
-            </section>
+            <form method="post" action="mypage">
+                <section class="two-col">
+                    <div class="card">
+                        <div class="section-title">
+                            <h2>내 정보</h2>
+                            <span>기본 프로필</span>
+                        </div>
 
-            <section class="card" style="margin-top:20px">
-                <div class="section-title">
-                    <h2>비밀번호 변경</h2>
-                    <span>보안 설정</span>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>아이디</label>
+                                <input class="input" type="text" value="${dto.user_id}" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label>사번</label>
+                                <input class="input" type="text" value="${dto.emp_no}" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label>이름</label>
+                                <input name="name" class="input" type="text" value="${dto.user_name}" required />
+                            </div>
+
+                            <div class="form-group">
+                                <label>이메일</label>
+                                <input name="email" class="input" type="email" value="${dto.user_email}" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>연락처</label>
+                                <input name="phone" class="input" type="text" value="${dto.user_phone}" />
+                            </div>
+
+                            <div class="form-group">
+                                <label>직책</label>
+                                <input class="input" type="text" value="${dto.user_role}" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="section-title">
+                            <h2>비밀번호 변경</h2>
+                            <span>비밀번호를 바꾸지 않으면 비워두세요</span>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>현재 비밀번호</label>
+                                <input name="pw" class="input" type="password"/>
+                            </div>
+                            <div class="form-group">
+                                <label>새 비밀번호</label>
+                                <input name="npw" class="input" type="password" />
+                            </div>
+                            <div class="form-group">
+                                <label>새 비밀번호 확인</label>
+                                <input name="cnpw" class="input" type="password" />
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="page-actions" style="margin-top:20px;">
+                    <input style="cursor:pointer;" class="btn primary" type="submit" value="저장">
                 </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>현재 비밀번호</label>
-                        <input class="input" type="password" />
-                    </div>
-                    <div class="form-group">
-                        <label>새 비밀번호</label>
-                        <input class="input" type="password" />
-                    </div>
-                    <div class="form-group">
-                        <label>새 비밀번호 확인</label>
-                        <input class="input" type="password" />
-                    </div>
-                </div>
-            </section>
+            </form>
         </main>
     </div>
 </body>

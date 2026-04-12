@@ -6,20 +6,6 @@ import java.util.Map;
 
 public class BOMService {
 	
-//	public List getList(BOMDTO dto) {
-//		
-//		BOMDAO bomDAO = new BOMDAO();
-//		return bomDAO.selectAllBOM(dto);
-//	
-//	}
-	
-//	public List getBOM(BOMDTO dto) {
-//	
-//		BOMDAO bomDAO = new BOMDAO(); 
-//		return bomDAO.selectdetailBOM(dto);
-//	
-//	}
-	
 	public int insert(BOMDTO dto) {
 		
 		BOMDAO bomDAO = new BOMDAO();

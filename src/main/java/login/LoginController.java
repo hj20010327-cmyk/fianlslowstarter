@@ -16,7 +16,6 @@ public class LoginController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/login doPost 실행");
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
@@ -34,6 +33,8 @@ public class LoginController extends HttpServlet {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else {			
 			session.setAttribute("dto", dto);
+			
+			session.setAttribute("loginUserId", dto.getUser_id());
 			response.sendRedirect("index.jsp");
 		}
 		

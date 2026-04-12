@@ -26,4 +26,15 @@ public class PlanService {
 		int a = plandaoDAO.deletePlan(plankey);
 		return a;
 	}
+	
+	public List searchList(String planCode, String status) {
+	    PlanDAO dao = new PlanDAO();
+	    return dao.searchList(planCode, status);
+	}
+
+	public List selectPage(int startRow, int endRow) {
+	    PlanDAO dao = new PlanDAO();
+	    return dao.selectPage(startRow, endRow);
+	}
+	
 }

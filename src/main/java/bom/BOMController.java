@@ -56,16 +56,6 @@ public class BOMController extends HttpServlet {
 		bomDTO.setKeycode(keycode);
 		bomDTO.setKeyword(keyword);
 		
-		
-//		String cmd = request.getParameter("cmd");
-//		
-//		if(cmd.equals("list")) {
-//			list(request, response);
-//		} 
-//		else if(cmd.equals("detail")) {
-//			detail(request, response);
-//		}
-		
 		// 서비스 
 		BOMService bomservice = new BOMService();
 		
@@ -110,21 +100,21 @@ public class BOMController extends HttpServlet {
 		response.setContentType("text/html; charset=utf-8");
 		
 		// 파라미터
-		String Bom_key = request.getParameter("bom_key");
-		int bom_key = Integer.parseInt(Bom_key);
-		String product_item_key = request.getParameter("product_item_key");
-		String material_item_key = request.getParameter("material_item_key");
+		
+		String bom_code = request.getParameter("bom_code");
 		String QTY = request.getParameter("QTY");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
+		String bom_item_key = request.getParameter("bom_item_key");
 		
 		// DTO실행
 		BOMDTO bomDTO = new BOMDTO(); 
-		bomDTO.setBom_key(bom_key);
-		bomDTO.setProduct_item_key(product_item_key);
-		bomDTO.setMaterial_item_key(material_item_key);
+		
+		
+		bomDTO.setBom_code(bom_code);
 		bomDTO.setQTY(qty);
 		bomDTO.setRemark(remark);
+		bomDTO.setBom_item_key(bom_item_key);
 		
 		// service & DTO
 		BOMService bomservice = new BOMService(); 
@@ -132,7 +122,7 @@ public class BOMController extends HttpServlet {
 		
 		System.out.println("insert된 rows: " + result);
 		
-		response.sendRedirect("");
+		response.sendRedirect("/slowstarter/BOM");
 		
 	}
 	
@@ -143,11 +133,11 @@ public class BOMController extends HttpServlet {
 		// 파라미터
 		String Bom_key = request.getParameter("bom_key");
 		int bom_key = Integer.parseInt(Bom_key);
-		String product_item_key = request.getParameter("product_item_key");
-		String material_item_key = request.getParameter("material_item_key");
+		String bom_code = request.getParameter("bom_code");
 		String QTY = request.getParameter("QTY");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
+		String bom_item_key = request.getParameter("bom_item_key");
 		
 		try {
 			BOMDTO bomDTO = new BOMDTO();
@@ -156,10 +146,10 @@ public class BOMController extends HttpServlet {
 			response.setContentType("text/html; charset=utf-8");
 			
 			bomDTO.setBom_key(bom_key);
-			bomDTO.setProduct_item_key(product_item_key);
-			bomDTO.setMaterial_item_key(material_item_key);
+			bomDTO.setBom_code(bom_code);
 			bomDTO.setQTY(qty);
 			bomDTO.setRemark(remark);
+			bomDTO.setBom_item_key(bom_item_key);
 			
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);
@@ -181,11 +171,8 @@ public class BOMController extends HttpServlet {
 			request.setCharacterEncoding("utf-8");
 			response.setContentType("text/html; charset=utf-8");
 	
-			//int bom_key = Integer.parseInt(request.getParameter("bom_key"));
 			String[] keys=request.getParameterValues("bom_key");
-//			bomDTO.setBom_key(keys);  
-//			
-			
+
 			BOMDTO dto = new BOMDTO();
 			
 			if(keys != null) {

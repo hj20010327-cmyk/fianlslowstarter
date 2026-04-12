@@ -6,13 +6,13 @@ public class MachineDTO {
 	private int machineKey;
 	private String machineCode;
 	private String machineName;
-	private int processKey;
 	private String machineStatus;
 	private Date buyDate;
 	private Date lastCheckDate;
 	private String remark;
 	private String status;
 	private Date createdAt;
+	private int processKey;
 	public int getMachineKey() {
 		return machineKey;
 	}

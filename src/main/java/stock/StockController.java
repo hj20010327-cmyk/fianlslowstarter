@@ -2,152 +2,99 @@ package stock;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-@WebServlet("/stock.html")
+@WebServlet("/stockList")
 public class StockController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    
-    // ¼­ºñ½º °´Ã¼ »ı¼º
-    private StockService stockService = new StockService();
 
+    // [ì¡°íšŒ ë¡œì§] TB_ITEM í…Œì´ë¸” ê¸°ë°˜ ê²€ìƒ‰ ë° í˜ì´ì§•
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock doGet ½ÇÇà");
+        System.out.println("/stockList (ì¬ê³  ëª©ë¡ì¡°íšŒ) ì‹¤í–‰");
         
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8;");
         
-       
-        String cmd = request.getParameter("cmd");
+        // ê²€ìƒ‰ íŒŒë¼ë¯¸í„° ë³€ê²½ (í’ˆëª©ì½”ë“œ, í’ˆëª©ëª…)
+        String searchCode = request.getParameter("searchCode");
+        String searchName = request.getParameter("searchName");
         
-      
-        if(cmd == null || cmd.equals("list")) {
-            list(request, response);
-        } else if(cmd.equals("detail")) {
-            detail(request, response);
-        }
-    }
+        String pStr = request.getParameter("page");
+        int curPage = (pStr == null || pStr.isEmpty()) ? 1 : Integer.parseInt(pStr);
+        int size = 10; // ì¬ê³  ëª©ë¡ì€ ì¡°ê¸ˆ ë” ë§ì´ ë³´ì´ê²Œ 10ê°œë¡œ ì¡°ì • ê°€ëŠ¥
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock doPost ½ÇÇà");
-        
-        request.setCharacterEncoding("utf-8");
-        response.setContentType("text/html; charset=utf-8;");
-        
-        String cmd = request.getParameter("cmd");
-        
-        if(cmd.equals("insert")) {
-            insert(request, response);
-        } else if(cmd.equals("update")) {
-            update(request, response);
-        } else if(cmd.equals("delete")) {
-            delete(request, response);
-        }
-    }
+        int startRow = (curPage - 1) * size + 1;
+        int endRow = curPage * size;
 
-    // 1. Àç°í ¸ñ·Ï Á¶È¸ ¸Ş¼­µå
-    protected void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock list ½ÇÇà");
+        // StockService ê°ì²´ ìƒì„± (í’ˆì§ˆ ì„œë¹„ìŠ¤ ë³µì‚¬í•´ì„œ ìƒˆë¡œ ë§Œë“œì…”ì•¼ í•¨)
+        StockService stockService = new StockService();
         
-        //  ÆÄ¶ó¹ÌÅÍ È®º¸ 
-        String searchCode = request.getParameter("searchCode"); // Ç°¸ñ ÄÚµå °Ë»ö
-        String searchName = request.getParameter("searchName"); // Ç°¸ñ¸í °Ë»ö
+        // TB_ITEM ë°ì´í„°ë¥¼ ê°€ì ¸ì˜¤ëŠ” ë©”ì„œë“œ í˜¸ì¶œ
+        List<StockDTO> list = stockService.getSearchList(searchCode, searchName, startRow, endRow);
+        Map<String, Object> pageInfo = stockService.getPageInfo(curPage, size);
         
+        System.out.println("ì¡°íšŒëœ ì¬ê³  í’ˆëª© ê°œìˆ˜: " + list.size());
         
-        List<StockDTO> list = stockService.getStockList(searchCode, searchName); 
-        
-        // JSP·Î µ¥ÀÌÅÍ¸¦ º¸³»±â À§ÇØ request¿¡ ´ã±â
         request.setAttribute("list", list);
+        request.setAttribute("p", pageInfo); 
+        request.setAttribute("searchCode", searchCode);
+        request.setAttribute("searchName", searchName);
         
-        System.out.println("Á¶È¸µÈ µ¥ÀÌÅÍ °³¼ö: " + list.size());
-        
-        
+        // ì¬ê³ ê´€ë¦¬ í˜ì´ì§€(JSP)ë¡œ ì´ë™
         request.getRequestDispatcher("/stock.jsp").forward(request, response);
     }
 
-    // 2. Àç°í ½Å±Ô µî·Ï ¸Ş¼­µå
-    protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock insert ½ÇÇà");
-        
-        // [ÆÄ¶ó¹ÌÅÍ È®º¸] 
-        String lot_key = request.getParameter("lot_key");
-        String name = request.getParameter("name");
-        String type = request.getParameter("type"); 
-        int remain = Integer.parseInt(request.getParameter("remain"));
-        String vender = request.getParameter("vender");
-        
-        // DTO¿¡ ³Ö±â
-        StockDTO stockDTO = new StockDTO();
-        stockDTO.setLot_key(lot_key);
-        stockDTO.setName(name);
-        stockDTO.setType(type);
-        stockDTO.setRemain(remain);
-        stockDTO.setVender(vender);
-        
-        // DTO º¸³»±â
-        int result = stockService.insert(stockDTO);
-        
-        System.out.println("insert °á°ú : " + result);
-        
-       
-        response.sendRedirect("stock.html?cmd=list");
-    }
+    // [ì €ì¥/ìˆ˜ì • ë¡œì§] ì•ˆì „ì¬ê³  ìˆ˜ëŸ‰ ìˆ˜ì • ë“± ì²˜ë¦¬
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("utf-8");
 
-    //  Àç°í Á¤º¸ ¼öÁ¤ 
-    protected void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock update ½ÇÇà");
+        // PKì¸ ITEM_CODE ë˜ëŠ” ITEM_KEYë¥¼ í™•ì¸
+        String itemCode = request.getParameter("item_code");
         
-        // ÆÄ¶ó¹ÌÅÍ È®º¸
-        String lot_key = request.getParameter("lot_key");
-        int remain = Integer.parseInt(request.getParameter("remain"));
-        
-        // DTO¿¡ ³Ö±â
-        StockDTO stockDTO = new StockDTO();
-        stockDTO.setLot_key(lot_key);
-        stockDTO.setRemain(remain);
-        
-        // [¼­ºñ½º·Î DTO º¸³»±â]
-        int result = stockService.update(stockDTO);
-        
-        System.out.println("update °á°ú : " + result);
-        
-        response.sendRedirect("stock.html?cmd=list");
-    }
+        if (itemCode != null && !itemCode.isEmpty()) {
+            System.out.println("ì¬ê³  ë°ì´í„°(ì•ˆì „ì¬ê³  ë“±) ìˆ˜ì • í”„ë¡œì„¸ìŠ¤ ì‹œì‘");
+            
+            try {
+                // ìˆ˜ì •í•  ì •ë³´ë“¤ íŒŒë¼ë¯¸í„° ìˆ˜ì§‘ (ì´ë¯¸ì§€ ì»¬ëŸ¼ ê¸°ì¤€)
+                String itemName = request.getParameter("item_name");
+                String spec = request.getParameter("spec");
+                String safeQtyStr = request.getParameter("safe_qty");
 
-    //  Àç°í »èÁ¦ ¸Ş¼­µå
-    protected void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock delete ½ÇÇà");
-        
-        // ÆÄ¶ó¹ÌÅÍ È®º¸ 
-        String lot_key = request.getParameter("lot_key");
-        
-        // [DTO¿¡ ³Ö±â]
-        StockDTO stockDTO = new StockDTO();
-        stockDTO.setLot_key(lot_key);
-        
-        // [¼­ºñ½º·Î DTO º¸³»±â]
-        int result = stockService.delete(stockDTO);
-        
-        System.out.println("delete °á°ú : " + result);
-        
-        response.sendRedirect("stock.html?cmd=list");
-    }
+                StockDTO dto = new StockDTO();
+                dto.setItem_code(itemCode);
+                dto.setItem_name(itemName);
+                dto.setSpec(spec);
+                
+                // ì•ˆì „ì¬ê³  ìˆ«ì ë³€í™˜
+                if(safeQtyStr != null && !safeQtyStr.isEmpty()) {
+                    dto.setSafe_qty(Integer.parseInt(safeQtyStr));
+                }
 
-    // 5. »ó¼¼ Á¶È¸ ¸Ş¼­µå
-    protected void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("/stock detail ½ÇÇà");
-        
-        String lot_key = request.getParameter("lot_key");
-        
-        // ¼­ºñ½º¿¡¼­ »ó¼¼ Á¤º¸ ÇÑ °Ç °¡Á®¿À±â
-        StockDTO dto = stockService.getDetail(lot_key);
-        
-        request.setAttribute("dto", dto);
-        request.getRequestDispatcher("/stockDetail.jsp").forward(request, response);
+                StockService stockService = new StockService();
+                
+                // ì„œë¹„ìŠ¤ì—ì„œ ì—…ë°ì´íŠ¸(ë˜ëŠ” ì¸ì„œíŠ¸) ì²˜ë¦¬
+                int result = stockService.updateStockInfo(dto); 
+
+                if (result > 0) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+            
+        } else {
+            // ë°ì´í„° ì—†ìœ¼ë©´ ë‹¤ì‹œ ëª©ë¡ìœ¼ë¡œ
+            doGet(request, response);
+        }
     }
 }

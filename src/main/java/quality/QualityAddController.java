@@ -1,55 +1,66 @@
 package quality;
 
 import java.io.IOException;
+import java.sql.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/quality/add.do")
+@WebServlet("/quality/add")
 public class QualityAddController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 1. ÇÑ±Û ±úÁü ¹æÁö ¼³Á¤
-        request.setCharacterEncoding("UTF-8");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		System.out.println("/quality/add doPost ì‹¤í–‰");
+		
+		// 1. ì¸ì½”ë”© ì„¤ì •
+		request.setCharacterEncoding("utf-8");
+		response.setContentType("text/html; charset=utf-8;");
 
-        // 2. ÆÄ¶ó¹ÌÅÍ ¼öÁı (HTML inputÀÇ name ¼Ó¼º°ú ÀÏÄ¡ÇØ¾ß ÇÔ)
-        String prod_key = request.getParameter("prod_key");
-        String item_key = request.getParameter("item_key");
-        
-        // ¼ıÀÚ·Î º¯È¯ÇØ¾ß ÇÏ´Â ÇÊµåµé (nullÀÌ³ª ºó°ª Ã¼Å©°¡ ÇÊ¿äÇÒ ¼ö ÀÖÀ½)
-        int inspect_qty = Integer.parseInt(request.getParameter("inspect_qty"));
-        int good_qty = Integer.parseInt(request.getParameter("good_qty"));
-        int defect_qty = Integer.parseInt(request.getParameter("defect_qty"));
-        
-        String defect_reason = request.getParameter("defect_reason");
-        String qc_status = request.getParameter("qc_status");
-        String user_key = request.getParameter("user_key");
+		try {
+			// 2. íŒŒë¼ë¯¸í„° í™•ë³´ (JSPì˜ input name íƒœê·¸ì™€ ì¼ì¹˜í•´ì•¼ í•¨)
+			String quality_code = request.getParameter("quality_code");
+			int inspect_qty = Integer.parseInt(request.getParameter("inspect_qty"));
+			int good_qty = Integer.parseInt(request.getParameter("good_qty"));
+			int defect_qty = Integer.parseInt(request.getParameter("defect_qty"));
+			String defect_reason = request.getParameter("defect_reason");
+			String qc_status = request.getParameter("qc_status");
+			int prod_key = Integer.parseInt(request.getParameter("prod_key"));
+			
+			// ë‚ ì§œ ì²˜ë¦¬ (yyyy-mm-dd í˜•ì‹)
+			Date inspect_date = Date.valueOf(request.getParameter("inspect_date"));
 
-        // 3. DTO °´Ã¼ »ı¼º ¹× µ¥ÀÌÅÍ ¼¼ÆÃ
-        QualityDTO dto = new QualityDTO();
-        dto.setProd_key(prod_key);
-        dto.setItem_key(item_key);
-        dto.setInspect_qty(inspect_qty);
-        dto.setGood_qty(good_qty);
-        dto.setDefect_qty(defect_qty);
-        dto.setDefect_reason(defect_reason);
-        dto.setQc_status(qc_status);
-        dto.setUser_key(user_key);
+			// 3. DTOì— ë°ì´í„° ë‹´ê¸°
+			QualityDTO dto = new QualityDTO();
+			dto.setQuality_code(quality_code);
+			dto.setInspect_qty(inspect_qty);
+			dto.setGood_qty(good_qty);
+			dto.setDefect_qty(defect_qty);
+			dto.setDefect_reason(defect_reason);
+			dto.setQc_status(qc_status);
+			dto.setProd_key(prod_key);
+			dto.setInspect_date(inspect_date);
 
-        // 4. DAO¸¦ ÅëÇÑ DB ÀúÀå
-        QualityDAO dao = new QualityDAO();
-        int result = dao.insert(dto);
+			// 4. ì„œë¹„ìŠ¤ í˜¸ì¶œ (ë©”ì„œë“œ ì´ë¦„ì„ getaddqualityë¡œ í†µì¼)
+			QualityService service = new QualityService();
+			int result = service.getaddquality(dto);
 
-        // 5. °á°ú¿¡ µû¸¥ ÆäÀÌÁö ÀÌµ¿
-        if (result > 0) {
-            // ¼º°ø ½Ã ¸ñ·Ï ÆäÀÌÁö·Î ÀÌµ¿
-            response.sendRedirect("list.do");
-        } else {
-            // ½ÇÆĞ ½Ã ÀÌÀü ÆäÀÌÁö³ª ¿¡·¯ ÆäÀÌÁö·Î ÀÌµ¿
-            response.sendRedirect("add_form.jsp?error=1");
-        }
-    }
+			if (result > 0) {
+				System.out.println("ë“±ë¡ ì„±ê³µ");
+				// ë“±ë¡ í›„ ë¦¬ìŠ¤íŠ¸ í˜ì´ì§€ë¡œ ì´ë™ (QualityListControllerê°€ ì—†ìœ¼ë¯€ë¡œ jspë¡œ ì§ì ‘ ì´ë™)
+				response.sendRedirect(request.getContextPath() + "/quality.jsp");
+			} else {
+				System.out.println("ë“±ë¡ ì‹¤íŒ¨");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("íŒŒë¼ë¯¸í„° ë³€í™˜ ë˜ëŠ” DB ë“±ë¡ ì¤‘ ì—ëŸ¬ ë°œìƒ");
+		}
+	}
 }

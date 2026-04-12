@@ -1,6 +1,5 @@
 package stock;
 
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,57 +7,42 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
+/**
+ * 재고 신규 등록을 처리하는 컨트롤러입니다.
+ * URL: http://localhost:8080/프로젝트명/stockAdd
+ */
 @WebServlet("/stockAdd")
 public class stockAddController extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
 
-
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
+        
+        // 1. 한글 깨짐 방지 설정
+        request.setCharacterEncoding("UTF-8");
 
-
-        request.setCharacterEncoding("utf-8");
-
-
-
-
-        // JSP에서 보낸 파라미터 받기 (DB 컬럼명 참고)
+        // 2. JSP 모달창 폼에서 넘어온 파라미터 받기
         String lot = request.getParameter("lot");
-        int inQty = Integer.parseInt(request.getParameter("inQty"));
-        int currentQty = Integer.parseInt(request.getParameter("currentQty"));
-        int safeQty = Integer.parseInt(request.getParameter("safeQty"));
-        int itemKey = Integer.parseInt(request.getParameter("itemKey"));
+        int inQty = Integer.parseInt(request.getParameter("in_qty"));
+        int outQty = Integer.parseInt(request.getParameter("out_qty"));
+        int safeQty = Integer.parseInt(request.getParameter("safe_qty"));
+        int itemKey = Integer.parseInt(request.getParameter("item_key"));
 
-
-
-
-        // DTO에 담기
+        // 3. DTO 객체에 데이터 담기
         StockDTO dto = new StockDTO();
         dto.setLot(lot);
-        dto.setInQty(inQty);
-        dto.setCurrentQty(currentQty);
-        dto.setSafeQty(safeQty);
-        dto.setItemKey(itemKey);
+        dto.setIn_qty(inQty);
+        dto.setOut_qty(outQty);
+        dto.setSafe_qty(safeQty);
+        dto.setItem_key(itemKey);
 
+        // 4. 서비스 호출하여 DB에 등록 실행
+        StockService service = new StockService();
+        service.register(dto);
 
-
-
-        // 서비스 호출 (서비스에 add 기능을 만들어야 합니다)
-        // StockService service = new StockService();
-        // service.addStock(dto);
-
-
-
-
-        // 등록 후 목록 페이지로 이동
+        // 5. 등록 완료 후 다시 목록 페이지(stockList)로 이동
         response.sendRedirect("stockList");
-
-
     }
-
-
 }

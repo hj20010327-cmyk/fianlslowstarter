@@ -1,6 +1,5 @@
 package stock;
 
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,58 +7,40 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
-
-
+/**
+ * 기존 재고 정보를 수정하는 컨트롤러입니다.
+ * URL: http://localhost:8080/프로젝트명/stockUpdate
+ */
 @WebServlet("/stockUpdate")
 public class stockUpdateController extends HttpServlet {
 
+    private static final long serialVersionUID = 1L;
 
-
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
-
-        request.setCharacterEncoding("utf-8");
-
-
-
-
-        // 수정을 위해 PK인 stockKey를 반드시 받아야 합니다
-        int stockKey = Integer.parseInt(request.getParameter("stockKey"));
         
+        request.setCharacterEncoding("UTF-8");
+
+        // 수정 시에는 어떤 데이터를 고칠지 결정하는 'stock_key'가 반드시 필요함
+        int stockKey = Integer.parseInt(request.getParameter("stock_key"));
         String lot = request.getParameter("lot");
-        int inQty = Integer.parseInt(request.getParameter("inQty"));
-        int outQty = Integer.parseInt(request.getParameter("outQty"));
-        int currentQty = Integer.parseInt(request.getParameter("currentQty"));
+        int inQty = Integer.parseInt(request.getParameter("in_qty"));
+        int outQty = Integer.parseInt(request.getParameter("out_qty"));
+        int safeQty = Integer.parseInt(request.getParameter("safe_qty"));
 
-
-
-
-        // DTO 구성
         StockDTO dto = new StockDTO();
-        dto.setStockKey(stockKey);
+        dto.setStock_key(stockKey);
         dto.setLot(lot);
-        dto.setInQty(inQty);
-        dto.setOutQty(outQty);
-        dto.setCurrentQty(currentQty);
+        dto.setIn_qty(inQty);
+        dto.setOut_qty(outQty);
+        dto.setSafe_qty(safeQty);
 
+        // 서비스의 update 메소드 호출
+        StockService service = new StockService();
+        service.update(dto);
 
-
-
-        // 서비스 호출
-        // StockService service = new StockService();
-        // service.updateStock(dto);
-
-
-
-
-        // 수정 후 목록으로 이동
+        // 수정 후 목록으로 리다이렉트
         response.sendRedirect("stockList");
-
-
     }
-
-
 }

@@ -13,34 +13,19 @@ public class QualityDeleteController extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        System.out.println("/quality/delete doPost 실행");
-        
+    	
         request.setCharacterEncoding("utf-8");
-        response.setContentType("text/html; charset=utf-8;");
+        String[] codes = request.getParameterValues("quality_code");
 
-        try {
-            // 1. JSP의 삭제 버튼이나 폼에서 보낸 'quality_key'를 받음
-            String paramKey = request.getParameter("quality_key");
-            
-            if (paramKey != null && !paramKey.isEmpty()) {
-                int quality_key = Integer.parseInt(paramKey);
-
-                // 2. DTO에 담기
+        if (codes != null) {
+            QualityService service = new QualityService();
+            for (String code : codes) {
                 QualityDTO dto = new QualityDTO();
-                dto.setQuality_key(quality_key);
-
-                // 3. 서비스 호출 (Service에 getdeletequality가 있어야 함)
-                QualityService service = new QualityService();
+                dto.setQuality_code(code);
                 service.getdeletequality(dto);
-                
-                System.out.println("삭제 처리 완료 키: " + quality_key);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
-        // 4. 목록으로 이동 (QualityListController가 없으므로 jsp로 리다이렉트)
-        response.sendRedirect(request.getContextPath() + "/quality.jsp");
+        response.sendRedirect(request.getContextPath() + "/qualityList");
     }
 }

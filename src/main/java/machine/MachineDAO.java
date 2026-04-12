@@ -226,6 +226,7 @@ public class MachineDAO {
 			System.out.println("insert의 결과:" + result);
 
 			// 결과 활용
+			return result;
 
 		} catch (Exception e) {
 			e.printStackTrace();

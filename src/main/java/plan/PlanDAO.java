@@ -247,4 +247,113 @@ public class PlanDAO {
 		
 		return result;
 	}
+    
+    public List<PlanDTO> searchList(String planCode, String status) {
+        List<PlanDTO> list = new ArrayList<PlanDTO>();
+
+        try {
+            Context ctx = new InitialContext();
+            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+            conn = dataFactory.getConnection();
+
+            String query = "select * from tb_plan where 1=1";
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                query += " and plan_code like ?";
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                query += " and plan_status = ?";
+            }
+
+            query += " order by plan_key";
+
+            ps = conn.prepareStatement(query);
+
+            int idx = 1;
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                ps.setString(idx++, "%" + planCode.trim() + "%");
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                ps.setString(idx++, status);
+            }
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PlanDTO dto = new PlanDTO();
+                dto.setPlan_key(rs.getInt("plan_key"));
+                dto.setPlan_code(rs.getString("plan_code"));
+                dto.setItem_key(rs.getInt("item_key"));
+                dto.setPlan_date(rs.getDate("plan_date"));
+                dto.setDue_date(rs.getDate("due_date"));
+                dto.setPlan_qty(rs.getInt("plan_qty"));
+                dto.setStatus(rs.getString("plan_status"));
+                dto.setUser_key(rs.getInt("user_key"));
+                dto.setCreate_at(rs.getDate("created_at"));
+                dto.setPriority(rs.getInt("priority"));
+
+                list.add(dto);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return list;
+    }
+
+    public List<PlanDTO> selectPage(int startRow, int endRow) {
+        List<PlanDTO> list = new ArrayList<PlanDTO>();
+
+        try {
+            Context ctx = new InitialContext();
+            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+            conn = dataFactory.getConnection();
+
+            String query =
+                "SELECT * FROM ( " +
+                "  SELECT ROWNUM rnum, A.* FROM ( " +
+                "    SELECT * FROM tb_plan ORDER BY plan_key " +
+                "  ) A WHERE ROWNUM <= ? " +
+                ") WHERE rnum >= ?";
+
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, endRow);
+            ps.setInt(2, startRow);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PlanDTO dto = new PlanDTO();
+                dto.setPlan_key(rs.getInt("plan_key"));
+                dto.setPlan_code(rs.getString("plan_code"));
+                dto.setItem_key(rs.getInt("item_key"));
+                dto.setPlan_date(rs.getDate("plan_date"));
+                dto.setDue_date(rs.getDate("due_date"));
+                dto.setPlan_qty(rs.getInt("plan_qty"));
+                dto.setStatus(rs.getString("plan_status"));
+                dto.setUser_key(rs.getInt("user_key"));
+                dto.setCreate_at(rs.getDate("created_at"));
+                dto.setPriority(rs.getInt("priority"));
+
+                list.add(dto);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+
+        return list;
+    }
 }

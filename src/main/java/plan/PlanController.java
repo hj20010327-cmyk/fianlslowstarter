@@ -1,169 +1,171 @@
-package plan;
 
-import java.io.IOException;
-import java.sql.Date;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import Commoncode.CommoncodeDTO;
-import Commoncode.CommoncodeService;
-import machine.MachineDTO;
-import machine.MachineService;
-
-@WebServlet("/plan")
-public class PlanController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		System.out.println("/plan do Get ½ÇÇà");
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-		
-		PlanService service = new PlanService();
-		List<PlanDTO> list = service.getList();
-		
-		request.setAttribute("list", list);
-		
-		request.getRequestDispatcher("/plan.jsp").forward(request, response);
-		
-		
-	}
-	
-	
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		System.out.println("/plan controller doPost ½ÇÇà");
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-
-		String cmd = request.getParameter("cmd");
-
-		if ("insert".equals(cmd)) {
-		    insert(request, response);
-		} else if ("update".equals(cmd)) {
-		    update(request, response);
-		} else if ("delete".equals(cmd)) {
-		    delete(request, response);
-		}
-	}
-	protected void insert(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		System.out.println("/plan/insert doPost ½ÇÇà");
-
-		// ÇÑ±Û Ã³¸®
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-
-		// ÆÄ¶ó¸ŞÅÍ È®º¸
+// íŒŒì¼ í•˜ë‚˜ì—ì„œ ì²˜ë¦¬í• ë ¤ë‹¤ê°€ êµ¬ì¡° ë§ì¶œë ¤ê³  controller ë§ˆë‹¤ ë”°ë¡œ ê´€ë¦¬í•˜ê¸° ìœ„í•´ì„œ íŒŒì¼ì‚­ì œëŠ” í•˜ì§€ì•Šê³  ì „ë¶€ ì£¼ì„ì²˜ë¦¬í•¨
+//package plan;
+//
+//import java.io.IOException;
+//import java.sql.Date;
+//import java.util.List;
+//
+//import javax.servlet.ServletException;
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+//
+//import Commoncode.CommoncodeDTO;
+//import Commoncode.CommoncodeService;
+//import machine.MachineDTO;
+//import machine.MachineService;
+//
+//@WebServlet("/plan")
+//public class PlanController extends HttpServlet {
+//	private static final long serialVersionUID = 1L;
+//	
+//	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		System.out.println("/plan do Get ï¿½ï¿½ï¿½ï¿½");
+//		request.setCharacterEncoding("utf-8");
+//		response.setContentType("text/html; charset=utf-8;");
+//		
+//		PlanService service = new PlanService();
+//		List<PlanDTO> list = service.getList();
+//		
+//		request.setAttribute("list", list);
+//		
+//		request.getRequestDispatcher("/plan.jsp").forward(request, response);
+//		
+//		
+//	}
+//	
+//	
+//
+//	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		System.out.println("/plan controller doPost ï¿½ï¿½ï¿½ï¿½");
+//		request.setCharacterEncoding("utf-8");
+//		response.setContentType("text/html; charset=utf-8;");
+//
+//		String cmd = request.getParameter("cmd");
+//
+//		if ("insert".equals(cmd)) {
+//		    insert(request, response);
+//		} else if ("update".equals(cmd)) {
+//		    update(request, response);
+//		} else if ("delete".equals(cmd)) {
+//		    delete(request, response);
+//		}
+//	}
+//	protected void insert(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		System.out.println("/plan/insert doPost ï¿½ï¿½ï¿½ï¿½");
+//
+//		// ï¿½Ñ±ï¿½ Ã³ï¿½ï¿½
+//		request.setCharacterEncoding("utf-8");
+//		response.setContentType("text/html; charset=utf-8;");
+//
+//		// ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+////		int plan_key = Integer.parseInt(request.getParameter("plan_key"));
+//		String plan_code = request.getParameter("plan_code");
+//		int item_key = Integer.parseInt(request.getParameter("item_key")); 
+//		Date plan_date = Date.valueOf(request.getParameter("plan_date")); // ï¿½ï¿½È¹ ï¿½ï¿½ 
+//		Date due_date = Date.valueOf(request.getParameter("due_date")); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+//		int plan_qty = Integer.parseInt(request.getParameter("plan_qty")); //  ï¿½ï¿½È¹ ï¿½ï¿½ï¿½ï¿½ 
+//		String status = request.getParameter("status");	// ï¿½ï¿½ï¿½ï¿½ 
+//		int user_key = Integer.parseInt(request.getParameter("user_key"));
+////		Date create_at = Date.valueOf(request.getParameter("create_at")); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+//		int priority = Integer.parseInt(request.getParameter("priority")); // ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½
+//		
+//
+//		// DTOï¿½ï¿½ ï¿½ï¿½ï¿½
+//		PlanDTO dto = new PlanDTO();
+////		dto.setCreate_at(create_at);
+//		dto.setDue_date(due_date);
+//		dto.setItem_key(item_key);
+//		dto.setPlan_code(plan_code);
+//		dto.setPlan_date(plan_date);
+////		dto.setPlan_key(plan_key);
+//		dto.setPriority(priority);
+//		dto.setStatus(status);
+//		dto.setUser_key(user_key);
+//		dto.setPlan_qty(plan_qty);
+//		
+//		
+//		// serviceï¿½ï¿½ DTOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//		PlanService planservice = new PlanService();
+//		int result = planservice.addplan(dto);
+//		System.out.println("result2 : " + result);
+//		response.sendRedirect("plan");
+//
+//		
+//	}
+//
+//	protected void update(HttpServletRequest request, HttpServletResponse response)
+//			throws ServletException, IOException {
+//		System.out.println("/plan/update doPost ï¿½ï¿½ï¿½ï¿½");
+//
+//		request.setCharacterEncoding("utf-8");
+//		response.setContentType("text/html; charset=utf-8;");
+//
+//		// ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 //		int plan_key = Integer.parseInt(request.getParameter("plan_key"));
-		String plan_code = request.getParameter("plan_code");
-		int item_key = Integer.parseInt(request.getParameter("item_key")); 
-		Date plan_date = Date.valueOf(request.getParameter("plan_date")); // °èÈ¹ ÀÏ 
-		Date due_date = Date.valueOf(request.getParameter("due_date")); // ¸¶°¨ ÀÏ
-		int plan_qty = Integer.parseInt(request.getParameter("plan_qty")); //  °èÈ¹ ¼ö·® 
-		String status = request.getParameter("status");	// »óÅÂ 
-		int user_key = Integer.parseInt(request.getParameter("user_key"));
-//		Date create_at = Date.valueOf(request.getParameter("create_at")); // »ı¼º ÀÏ
-		int priority = Integer.parseInt(request.getParameter("priority")); // ¿ì¼±¼øÀ§
-		
-
-		// DTO¿¡ ´ã±â
-		PlanDTO dto = new PlanDTO();
-//		dto.setCreate_at(create_at);
-		dto.setDue_date(due_date);
-		dto.setItem_key(item_key);
-		dto.setPlan_code(plan_code);
-		dto.setPlan_date(plan_date);
-//		dto.setPlan_key(plan_key);
-		dto.setPriority(priority);
-		dto.setStatus(status);
-		dto.setUser_key(user_key);
-		dto.setPlan_qty(plan_qty);
-		
-		
-		// service·Î DTO¸¦ º¸³¿
-		PlanService planservice = new PlanService();
-		int result = planservice.addplan(dto);
-		System.out.println("result2 : " + result);
-		response.sendRedirect("plan");
-
-		
-	}
-
-	protected void update(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		System.out.println("/plan/update doPost ½ÇÇà");
-
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-
-		// ÆÄ¶ó¸ŞÅÍ È®º¸
-		int plan_key = Integer.parseInt(request.getParameter("plan_key"));
-		String plan_code = request.getParameter("plan_code");
-		int item_key = Integer.parseInt(request.getParameter("item_key")); 
-		Date plan_date = Date.valueOf(request.getParameter("plan_date")); // °èÈ¹ ÀÏ 
-		Date due_date = Date.valueOf(request.getParameter("due_date")); // ¸¶°¨ ÀÏ
-		int plan_qty = Integer.parseInt(request.getParameter("plan_qty")); //  °èÈ¹ ¼ö·® 
-		String status = request.getParameter("status");	// »óÅÂ 
-		int user_key = Integer.parseInt(request.getParameter("user_key"));
-		Date create_at = Date.valueOf(request.getParameter("create_at")); // »ı¼º ÀÏ
-		int priority = Integer.parseInt(request.getParameter("priority")); // ¿ì¼±¼øÀ§;
-
-		try {
-			PlanDTO dto = new PlanDTO();
-			
-			dto.setCreate_at(create_at);
-			dto.setDue_date(due_date);
-			dto.setItem_key(item_key);
-			dto.setPlan_code(plan_code);
-			dto.setPlan_date(plan_date);
-			dto.setPlan_key(plan_key);
-			dto.setPriority(priority);
-			dto.setStatus(status);
-			dto.setUser_key(user_key);
-			dto.setPlan_qty(plan_qty);
-
-			// service·Î DTO¸¦ º¸³¿
-			PlanService planservice = new PlanService();
-			int result = planservice.updateplan(dto);
-			System.out.println("result2 : "+ result);
-
-		
-			response.sendRedirect("plan");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-	
-	protected void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		System.out.println("/plan delete ½ÇÇà");
-		
-		try {
-			request.setCharacterEncoding("utf-8");
-			response.setContentType("text/html; charset=utf-8;");
-			
-			PlanDTO dto = new PlanDTO();
-			int plan_key = Integer.parseInt(request.getParameter("plan_key"));
-			dto.setPlan_key(plan_key);
-			
-			PlanService planservice = new PlanService(); 
-			int result = planservice.deleteplan(plan_key);
-			
-			response.sendRedirect("plan");
-			
-		} catch (Exception e) {
-			e.printStackTrace(); 
-		}
-	}
-
-}
+//		String plan_code = request.getParameter("plan_code");
+//		int item_key = Integer.parseInt(request.getParameter("item_key")); 
+//		Date plan_date = Date.valueOf(request.getParameter("plan_date")); // ï¿½ï¿½È¹ ï¿½ï¿½ 
+//		Date due_date = Date.valueOf(request.getParameter("due_date")); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+//		int plan_qty = Integer.parseInt(request.getParameter("plan_qty")); //  ï¿½ï¿½È¹ ï¿½ï¿½ï¿½ï¿½ 
+//		String status = request.getParameter("status");	// ï¿½ï¿½ï¿½ï¿½ 
+//		int user_key = Integer.parseInt(request.getParameter("user_key"));
+//		Date create_at = Date.valueOf(request.getParameter("create_at")); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+//		int priority = Integer.parseInt(request.getParameter("priority")); // ï¿½ì¼±ï¿½ï¿½ï¿½ï¿½;
+//
+//		try {
+//			PlanDTO dto = new PlanDTO();
+//			
+//			dto.setCreate_at(create_at);
+//			dto.setDue_date(due_date);
+//			dto.setItem_key(item_key);
+//			dto.setPlan_code(plan_code);
+//			dto.setPlan_date(plan_date);
+//			dto.setPlan_key(plan_key);
+//			dto.setPriority(priority);
+//			dto.setStatus(status);
+//			dto.setUser_key(user_key);
+//			dto.setPlan_qty(plan_qty);
+//
+//			// serviceï¿½ï¿½ DTOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+//			PlanService planservice = new PlanService();
+//			int result = planservice.updateplan(dto);
+//			System.out.println("result2 : "+ result);
+//
+//		
+//			response.sendRedirect("plan");
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
+//	
+//	protected void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+//		
+//		System.out.println("/plan delete ï¿½ï¿½ï¿½ï¿½");
+//		
+//		try {
+//			request.setCharacterEncoding("utf-8");
+//			response.setContentType("text/html; charset=utf-8;");
+//			
+//			PlanDTO dto = new PlanDTO();
+//			int plan_key = Integer.parseInt(request.getParameter("plan_key"));
+//			dto.setPlan_key(plan_key);
+//			
+//			PlanService planservice = new PlanService(); 
+//			int result = planservice.deleteplan(plan_key);
+//			
+//			response.sendRedirect("plan");
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace(); 
+//		}
+//	}
+//
+//}

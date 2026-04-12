@@ -236,4 +236,109 @@ public class WorkOrderDAO {
 
 		return result;
 	}
+	
+	public List<WorkOrderDTO> searchList(String workOrderCode, String planKey) {
+	    List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query = "select * from tb_work_order where 1=1";
+
+	        if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+	            query += " and work_order_code like ?";
+	        }
+
+	        if (planKey != null && !planKey.trim().equals("")) {
+	            query += " and plan_key = ?";
+	        }
+
+	        query += " order by work_order_key";
+
+	        ps = conn.prepareStatement(query);
+
+	        int idx = 1;
+
+	        if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+	            ps.setString(idx++, "%" + workOrderCode.trim() + "%");
+	        }
+
+	        if (planKey != null && !planKey.trim().equals("")) {
+	            ps.setInt(idx++, Integer.parseInt(planKey));
+	        }
+
+	        rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            WorkOrderDTO dto = new WorkOrderDTO();
+	            dto.setWork_order_key(rs.getInt("work_order_key"));
+	            dto.setOrder_user_key(rs.getInt("order_user_key"));
+	            dto.setWork_user_key(rs.getInt("work_user_key"));
+	            dto.setWork_order_code(rs.getString("work_order_code"));
+	            dto.setOrder_qty(rs.getInt("order_qty"));
+	            dto.setWork_date(rs.getDate("work_date"));
+	            dto.setCreated_at(rs.getDate("created_at"));
+	            dto.setPlan_key(rs.getInt("plan_key"));
+
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+	    }
+
+	    return list;
+	}
+
+	public List<WorkOrderDTO> selectPage(int startRow, int endRow) {
+	    List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query =
+	            "SELECT * FROM ( " +
+	            "  SELECT ROWNUM rnum, A.* FROM ( " +
+	            "    SELECT * FROM tb_work_order ORDER BY work_order_key " +
+	            "  ) A WHERE ROWNUM <= ? " +
+	            ") WHERE rnum >= ?";
+
+	        ps = conn.prepareStatement(query);
+	        ps.setInt(1, endRow);
+	        ps.setInt(2, startRow);
+
+	        rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            WorkOrderDTO dto = new WorkOrderDTO();
+	            dto.setWork_order_key(rs.getInt("work_order_key"));
+	            dto.setOrder_user_key(rs.getInt("order_user_key"));
+	            dto.setWork_user_key(rs.getInt("work_user_key"));
+	            dto.setWork_order_code(rs.getString("work_order_code"));
+	            dto.setOrder_qty(rs.getInt("order_qty"));
+	            dto.setWork_date(rs.getDate("work_date"));
+	            dto.setCreated_at(rs.getDate("created_at"));
+	            dto.setPlan_key(rs.getInt("plan_key"));
+
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+	    }
+
+	    return list;
+	}
 }

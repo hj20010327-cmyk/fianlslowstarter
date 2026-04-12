@@ -75,16 +75,16 @@
 					<li><a href="./master.jsp">기준관리</a></li>
 					<li><a href="./bom.jsp">BOM</a></li>
 					<li><a href="./process.jsp">공정</a></li>
-					<li><a href="./machine.jsp">설비</a></li>
+					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">생산관리</div>
 				<ul class="snb-menu">
-					<li><a href="./workorder.jsp">작업지시 <span
+					<li><a href="/slowstarter/workorder">작업지시 <span
 							class="menu-badge"></span></a></li>
-					<li><a href="./plan.jsp">생산계획 <span class="menu-badge"></span></a></li>
+					<li><a href="/slowstarter/plan">생산계획 <span class="menu-badge"></span></a></li>
 				</ul>
 			</div>
 			<div class="snb-section">

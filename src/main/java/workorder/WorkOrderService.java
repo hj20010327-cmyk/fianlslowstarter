@@ -24,4 +24,14 @@ public class WorkOrderService {
 		WorkOrderDAO dao = new WorkOrderDAO();
 		return dao.deleteWorkOrder(key);
 	}
+	
+	public List searchList(String workOrderCode, String planKey) {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.searchList(workOrderCode, planKey);
+	}
+
+	public List selectPage(int startRow, int endRow) {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.selectPage(startRow, endRow);
+	}
 }

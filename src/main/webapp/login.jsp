@@ -55,7 +55,7 @@
 				<button class="auth-subbtn" type="button"
 					onclick="location.href='./signup.jsp'">회원가입</button>
 				<div class="auth-links">
-					<a href="./findpw.html">비밀번호 찾기</a>
+					<a href="./findpw">비밀번호 찾기</a>
 				</div>
 			</form>
 		</section>

@@ -33,9 +33,10 @@ public class LoginController extends HttpServlet {
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else {			
 			session.setAttribute("dto", dto);
+			session.setAttribute("login", "Y");
 			
 			session.setAttribute("loginUserId", dto.getUser_id());
-			response.sendRedirect("index.jsp");
+			response.sendRedirect("index");
 		}
 		
 		

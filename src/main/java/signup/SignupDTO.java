@@ -11,7 +11,7 @@ public class SignupDTO {
 	private String user_role;
 	private String user_phone;
 	private String user_email;
-	private char status;
+	private String status;
 	private Date created_at;
 	
 	
@@ -63,10 +63,10 @@ public class SignupDTO {
 	public void setUser_email(String user_email) {
 		this.user_email = user_email;
 	}
-	public char getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(char status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public Date getCreated_at() {

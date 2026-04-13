@@ -48,23 +48,24 @@
                 <div class="snb-title">기준관리</div>
                 <ul class="snb-menu">
                     <li><a href="./master.jsp">기준관리</a></li>
-                    <li><a href="./bom.jsp">BOM</a></li>
+                    <li><a href="./BOM">BOM</a></li>
                     <li><a href="./process.jsp">공정</a></li>
+                    <li><a href="/slowstarter/machine">설비</a></li>
                 </ul>
             </div>
             
             <div class="snb-section">
                 <div class="snb-title">생산관리</div>
                 <ul class="snb-menu">
-                    <li><a href="./workorder.jsp">작업지시 <span class="menu-badge">4</span></a></li>
-                    <li><a href="./plan.jsp">생산계획 <span class="menu-badge">2</span></a></li>
+                    <li><a href="/slowstarter/workorder">작업지시</a></li>
+                    <li><a href="/slowstarter/plan">생산계획</a></li>
                 </ul>
             </div>
             <div class="snb-section">
                 <div class="snb-title">재고관리</div>
                 <ul class="snb-menu">
                     <li><a href="./stock.jsp">재고</a></li>
-                    <li><a href="./product.html">완제품</a></li>
+                    <li><a href="./product.jsp">완제품</a></li>
                     <li><a href="./item.html">자재</a></li>
                 </ul>
             </div>
@@ -72,7 +73,7 @@
             <div class="snb-section">
                 <div class="snb-title">품질관리</div>
                 <ul class="snb-menu">
-                    <li><a href="./quality.jsp">품질<span class="menu-badge">2</span></a></li>
+                    <li><a href="qualityList">품질</a></li>
                 </ul>
             </div>
             <div class="snb-section">
@@ -85,6 +86,7 @@
             <div class="snb-section">
                 <div class="snb-title">시스템</div>
                 <ul class="snb-menu">
+                	<li><a href="./board.jsp">게시판</a></li>
                     <li><a href="./user">사용자관리</a></li>
                     <li><a href="./mypage">마이페이지</a></li>
                 </ul>

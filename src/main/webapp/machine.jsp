@@ -135,19 +135,19 @@
 					<span>설비 조회 조건</span>
 				</div>
 				<form action="/slowstarter/machine" method="get">
-				 <!-- 페이지 초기화 항상 1페이지부터 시작 -->
+					<!-- 페이지 초기화 항상 1페이지부터 시작 -->
 					<input type="hidden" name="page" value="1">
 					<div class="search-row">
-					<!--  설비명 검색 -->
+						<!--  설비명 검색 -->
 						<input class="input" type="text" name="machineName"
-							placeholder="설비명 입력" /> 
+							placeholder="설비명 입력" />
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
 							<option value="">전체</option>
 							<option value="가동중">가동중</option>
 							<option value="점검중">점검중</option>
 						</select>
-						
+
 						<!-- 조회 버튼 → MachineListController로 이동 -->
 						<button class="btn primary" type="submit">조회</button>
 					</div>
@@ -191,7 +191,7 @@
 		   									'${m.lastCheckDate}',
 		   									'${m.remark}'
 	   										)">
-											${m.machineName} </a></td>
+												${m.machineName} </a></td>
 										<td>${m.machineCode}</td>
 										<td>${m.machineStatus}</td>
 										<td>${m.processKey}</td>
@@ -199,11 +199,16 @@
 								</c:forEach>
 							</table>
 							<div class="pagination">
-								<a href="machine?page=1">1</a>
-								<a href="machine?page=2">2</a> 
-								<a href="machine?page=3">3</a> 
-								<a href="machine?page=4">4</a>
-								<a href="machine?page=5">5</a>
+								<c:forEach var="i" begin="1" end="${totalPage}">
+									<c:choose>
+										<c:when test="${page == i}">
+											<a href="machine?page=${i}" class="active">${i}</a>
+										</c:when>
+										<c:otherwise>
+											<a href="machine?page=${i}">${i}</a>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
 							</div>
 						</div>
 					</form>
@@ -240,7 +245,8 @@
 		<!-- ===== 공통 모달 ===== -->
 		<div id="commonModal" class="modal">
 			<div class="modal-box">
-				<form id="machineForm" action="/slowstarter/machine/add" method="post">
+				<form id="machineForm" action="/slowstarter/machine/add"
+					method="post">
 
 					<!-- 헤더 -->
 					<div class="modal-header">
@@ -280,7 +286,7 @@
 
 							<div class="form-group">
 								<label>구매일</label> <input type="date" class="input" id="buyDate"
-									name="buyDate"/>
+									name="buyDate" />
 							</div>
 
 							<div class="form-group">

@@ -44,8 +44,7 @@
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index.jsp" class="logo">
-				<span class="logo-mark">AM</span>
+			<a href="./index.jsp" class="logo"> <span class="logo-mark">AM</span>
 				<span>AUTO MES</span>
 			</a>
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
@@ -130,7 +129,8 @@
 				</div>
 				<div class="page-actions">
 					<button class="btn" type="submit" form="workOrderSearchForm">조회</button>
-					<button class="btn primary" type="button" onclick="openInsertModal()">신규 등록</button>
+					<button class="btn primary" type="button"
+						onclick="openInsertModal()">신규 등록</button>
 				</div>
 			</div>
 
@@ -139,10 +139,12 @@
 					<h2>검색 조건</h2>
 					<span>기준 조건을 선택하세요</span>
 				</div>
-				<form id="workOrderSearchForm" action="/slowstarter/workorder" method="get">
+				<form id="workOrderSearchForm" action="/slowstarter/workorder"
+					method="get">
 					<div class="search-row">
-						<input class="input" type="text" name="workOrderCode" placeholder="작업지시 코드 입력" />
-						<input class="input" type="text" name="planKey" placeholder="계획 키 입력" />
+						<input class="input" type="text" name="workOrderCode"
+							placeholder="작업지시 코드 입력" /> <input class="input" type="text"
+							name="planKey" placeholder="계획 키 입력" />
 						<button class="btn primary" type="submit">조회</button>
 					</div>
 				</form>
@@ -170,10 +172,10 @@
 
 								<c:forEach var="w" items="${list}">
 									<tr>
-										<td><input type="checkbox" name="work_order_key" value="${w.work_order_key}"></td>
-										<td>
-											<a href="javascript:void(0);"
-												onclick="openEditModal(
+										<td><input type="checkbox" name="work_order_key"
+											value="${w.work_order_key}"></td>
+										<td><a href="javascript:void(0);"
+											onclick="openEditModal(
 													'${w.work_order_key}',
 													'${w.work_order_code}',
 													'${w.order_user_key}',
@@ -182,9 +184,7 @@
 													'${w.work_date}',
 													'${w.plan_key}'
 												)">
-												${w.work_order_code}
-											</a>
-										</td>
+												${w.work_order_code} </a></td>
 										<td>${w.plan_key}</td>
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
@@ -193,11 +193,16 @@
 								</c:forEach>
 							</table>
 							<div class="pagination">
-								<a href="workorder?page=1">1</a>
-								<a href="workorder?page=2">2</a> 
-								<a href="workorder?page=3">3</a> 
-								<a href="workorder?page=4">4</a>
-								<a href="workorder?page=5">5</a>
+								<c:forEach var="i" begin="1" end="${totalPage}">
+									<c:choose>
+										<c:when test="${page == i}">
+											<a href="workorder?page=${i}" class="active">${i}</a>
+										</c:when>
+										<c:otherwise>
+											<a href="workorder?page=${i}">${i}</a>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
 							</div>
 						</div>
 					</form>
@@ -213,22 +218,19 @@
 							<div>
 								<strong>진행중 작업</strong>
 								<p>현재 8건의 작업이 진행 중입니다.</p>
-							</div>
-							<span class="badge ok">8건</span>
+							</div> <span class="badge ok">8건</span>
 						</li>
 						<li>
 							<div>
 								<strong>금일 마감</strong>
 								<p>오늘 납기 작업이 3건 남았습니다.</p>
-							</div>
-							<span class="badge warn">3건</span>
+							</div> <span class="badge warn">3건</span>
 						</li>
 						<li>
 							<div>
 								<strong>지연 작업</strong>
 								<p>현재 지연 작업은 없습니다.</p>
-							</div>
-							<span class="badge ok">정상</span>
+							</div> <span class="badge ok">정상</span>
 						</li>
 					</ul>
 				</div>
@@ -238,7 +240,8 @@
 
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
-			<form id="workOrderForm" action="/slowstarter/workorder/add" method="post">
+			<form id="workOrderForm" action="/slowstarter/workorder/add"
+				method="post">
 				<div class="modal-header">
 					<h3 id="modalTitle">작업지시 신규 등록</h3>
 					<button type="button" class="modal-close" onclick="closeModal()">×</button>
@@ -249,33 +252,34 @@
 						<input type="hidden" id="work_order_key" name="work_order_key" />
 
 						<div class="form-group">
-							<label>작업지시 코드</label>
-							<input type="text" class="input" id="work_order_code" name="work_order_code" placeholder="작업지시 코드 입력" />
+							<label>작업지시 코드</label> <input type="text" class="input"
+								id="work_order_code" name="work_order_code"
+								placeholder="작업지시 코드 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>지시자</label>
-							<input type="number" class="input" id="order_user_key" name="order_user_key" placeholder="지시자 키 입력" />
+							<label>지시자</label> <input type="number" class="input"
+								id="order_user_key" name="order_user_key" placeholder="지시자 키 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>작업자</label>
-							<input type="number" class="input" id="work_user_key" name="work_user_key" placeholder="작업자 키 입력" />
+							<label>작업자</label> <input type="number" class="input"
+								id="work_user_key" name="work_user_key" placeholder="작업자 키 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>지시 수량</label>
-							<input type="number" class="input" id="order_qty" name="order_qty" placeholder="지시 수량 입력" />
+							<label>지시 수량</label> <input type="number" class="input"
+								id="order_qty" name="order_qty" placeholder="지시 수량 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>작업일</label>
-							<input type="date" class="input" id="work_date" name="work_date" />
+							<label>작업일</label> <input type="date" class="input"
+								id="work_date" name="work_date" />
 						</div>
 
 						<div class="form-group">
-							<label>계획 키</label>
-							<input type="number" class="input" id="plan_key" name="plan_key" placeholder="계획 키 입력" />
+							<label>계획 키</label> <input type="number" class="input"
+								id="plan_key" name="plan_key" placeholder="계획 키 입력" />
 						</div>
 					</div>
 				</div>
@@ -304,7 +308,8 @@
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openEditModal(work_order_key, work_order_code, order_user_key, work_user_key, order_qty, work_date, plan_key) {
+		function openEditModal(work_order_key, work_order_code, order_user_key,
+				work_user_key, order_qty, work_date, plan_key) {
 			document.getElementById("modalTitle").innerText = "작업지시 수정";
 			document.getElementById("workOrderForm").action = "/slowstarter/workorder/update";
 

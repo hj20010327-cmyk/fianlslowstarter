@@ -29,7 +29,7 @@ public class MachineListController extends HttpServlet {
 		    page = Integer.parseInt(pageStr);
 		}
 
-		int pageSize = 5; // 한 페이지 5개
+		int pageSize = 10; // 한 페이지 5개
 		int startRow = (page - 1) * pageSize + 1;
 		int endRow = page * pageSize;
 
@@ -46,9 +46,14 @@ public class MachineListController extends HttpServlet {
 	        // 검색 조건 있으면 조건조회
 	        list = service.searchList(name, status);
 	    }
+	    
+	    int totalCount = service.getTotalCount();
+	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
+	    
 		
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
+		request.setAttribute("totalPage", totalPage);
 		
 		request.getRequestDispatcher("/machine.jsp").forward(request, response);
 		

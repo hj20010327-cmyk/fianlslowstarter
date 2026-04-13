@@ -99,6 +99,7 @@ public class WorkOrderDAO {
 			ps.setInt(6, dto.getPlan_key());
 
 			result = ps.executeUpdate();
+			System.out.println("workorder insert의 결과:" + result);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,6 +160,7 @@ public class WorkOrderDAO {
 			ps.setInt(7, dto.getWork_order_key());
 
 			result = ps.executeUpdate();
+			System.out.println("workorder update의 결과:" + result);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -205,6 +207,7 @@ public class WorkOrderDAO {
 			ps.setInt(1, workorderkey);
 
 			result = ps.executeUpdate();
+			System.out.println("workorder delete의 결과:" + result);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -341,4 +344,41 @@ public class WorkOrderDAO {
 
 	    return list;
 	}
+	
+	public int getTotalCount() {
+	    Connection conn = null;
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
+	    int count = 0;
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query = "SELECT COUNT(*) FROM tb_work_order";
+	        ps = conn.prepareStatement(query);
+	        rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            count = rs.getInt(1);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        if (rs != null) {
+	            try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        }
+	        if (ps != null) {
+	            try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        }
+	        if (conn != null) {
+	            try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+	        }
+	    }
+
+	    return count;
+	}
+	
 }

@@ -29,7 +29,7 @@ public class BOMController extends HttpServlet {
 		String skeycode = request.getParameter("keycode");
 		String keyword = request.getParameter("keyword");
 		
-		//페이징¡ 
+		//페이징
 		int size = 5; 
 		int page = 1; 
 		int keycode = 0; 

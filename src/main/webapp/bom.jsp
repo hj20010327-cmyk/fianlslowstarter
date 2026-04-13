@@ -16,6 +16,8 @@
 
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
+<link rel="stylesheet" href="./asset/css/pagination.css" />
+
 </head>
 
 <body>
@@ -129,10 +131,11 @@
 								<button class="btn modify" type="button"
 									onclick="openModal('BOM 수정')">수정</button>
 								<button type="submit" class="btn" value="삭제"
-									style="background: #4a90e2; color: white;">삭제</button> <input
-								type="hidden" name="cmd" value="delete">
+									style="background: #4a90e2; color: white;">삭제</button> 
+								<input type="hidden" name="cmd" value="delete">
 							</span>
 						</div>
+						
 						<div class="table-wrap">
 							<table>
 								<thead>
@@ -166,31 +169,7 @@
 							</table>
 
 							<div class="page" style="text-align: center;">
-								<%--
-                           <% Map map = (Map)request.getAttribute("map");
-                           
-                           if(map != null){
-                        	    int total = Integer.parseInt(map.get("totalCount").toString());
-                        	    int size = Integer.parseInt(map.get("size").toString());
-                        	}
-                               		int total = (int)map.get("totalCount");
-                               		int size = (int)map.get("size");
-                               		
-                               		int totalPage = (int)Math.ceil((double)total/size);
-                               		
-                               		int section = 5; 
-                               		int pageNum = (int)map.get("page");
-                               		
-                               		int end_section = (int)Math.ceil((double)pageNum / section) * section;
-                               		int start_section = end_section - section + 1; 
-                               		
-                               		if(end_section > totalPage){
-                               			end_section = totalPage;
-                               			}
-                               		
-                               		System.out.println("end_section:" + end_section);
-                               		System.out.println("start_section:" + start_section);
-                            --%>
+							
 								<c:set var="total" value="${map.totalCount }" />
 								<c:set var="size" value="${map.size }" />
 								<c:set var="page" value="${map.page }" />
@@ -223,6 +202,7 @@
 
 
 						</div>
+						
 					</div>
 				</form>
 				<div class="card">

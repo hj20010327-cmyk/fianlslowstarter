@@ -11,151 +11,238 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 public class ProcessDAO {
-	
+
 	private Connection getConn() {
-		
-		Connection conn = null; 
-		
+
+		Connection conn = null;
+
 		try {
-			Context ctx = new InitialContext(); 
-			DataSource dataFactory = (DataSource)ctx.lookup("java:/comp/env/jdbc/oracle");
-			
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+
 			conn = dataFactory.getConnection();
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return conn;
 	}
-	
-	public List selectAllProcess() {
-		
+
+	// 페이징 + 리스트 나오게
+	public List selectAllProcess(ProcessDTO processDTO) {
+
 		List<ProcessDTO> list = new ArrayList();
-		
-		try( Connection conn = getConn();
-			 PreparedStatement ps = new LoggableStatement(conn, " select * from tb_process");		
-		){
-			System.out.println(((LoggableStatement)ps).getQueryString());
-			
-			try(ResultSet rs = ps.executeQuery();) {
-				while(rs.next()) {
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn, " SELECT * FROM (SELECT rownum AS rnum, p.*  "
+						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status, "
+						+ "			( SELECT i.item_name FROM tb_item i WHERE i.item_key = p.item_key) AS process_item_key  "
+						+ "				FROM tb_process p ORDER BY p.process_key ) p "
+						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ");) {
+			ps.setInt(1, processDTO.getEnd());
+			ps.setInt(2, processDTO.getStart());
+
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
+			try (ResultSet rs = ps.executeQuery();) {
+				// 결과 활용
+				while (rs.next()) {
 					ProcessDTO dto = new ProcessDTO();
-					
-					String process_key = rs.getString("process_key");
-					dto.setProcess_key(process_key);
-					
+
+					dto.setProcess_key(rs.getInt("process_key"));
+					dto.setProcess_code(rs.getString("process_code"));
+					dto.setProcess_name(rs.getString("process_name"));
 					dto.setSequence_no(rs.getInt("sequence_no"));
-					dto.setWork_desc(rs.getString("work_desc"));
-					dto.setProcess_note(rs.getString("process_note"));
-					dto.setCode_id(rs.getString("code_id"));
-					dto.setSystem_key(rs.getString("system_key"));
-					
+					dto.setProcess_desc(rs.getString("process_desc"));
+					dto.setStatus(rs.getString("status"));
+					dto.setProcess_item_key(rs.getString("process_item_key"));
+
 					list.add(dto);
 				}
 			}
-			
-		}catch(Exception e) {
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("DAO list.size: " + list.size());
+		return list;
+	}
+
+	// 조회 버튼 반영
+	public List selectdetailProcess(ProcessDTO processDTO) {
+
+		List<ProcessDTO> list = new ArrayList();
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn, "SELECT * FROM (SELECT rownum AS rnum, p.*  "
+						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status, "
+						+ "			i.item_name As process_item_key From tb_process p  "
+						+ "			left join tb_item i on p.item_key = i.item_key  "
+						+ "			where 1=1 and (? = 0 or p.process_key = ? ) "
+						+ "			and (? is null or i.item_name like '%' || ? || '%' )   "
+						+ "			ORDER BY p.process_key ) p  "
+						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ;");
+
+		) {
+			ps.setInt(1, processDTO.getKeycode());
+			ps.setInt(2, processDTO.getKeycode());
+			ps.setString(3, processDTO.getKeyword());
+			ps.setString(4, processDTO.getKeyword());
+			ps.setInt(5, processDTO.getEnd());
+			ps.setInt(6, processDTO.getStart());
+
+			try (ResultSet rs = ps.executeQuery();) {
+				while (rs.next()) {
+
+					ProcessDTO dto = new ProcessDTO();
+
+					dto.setProcess_key(rs.getInt("process_key"));
+					dto.setProcess_code(rs.getString("process_code"));
+					dto.setProcess_name(rs.getString("process_name"));
+					dto.setSequence_no(rs.getInt("sequence_no"));
+					dto.setProcess_desc(rs.getString("process_desc"));
+					dto.setStatus(rs.getString("status"));
+					dto.setProcess_item_key(rs.getString("process_item_key"));
+
+				}
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return list;
 	}
-	
-	public ProcessDTO selectOneProcess(String process_key) {
-		
-		ProcessDTO dto = null;
-		
-		try( Connection conn = getConn();
-				PreparedStatement ps = new LoggableStatement(conn, "select * from tb_process where process_key = ? ");
-				
-				){
-			ps.setString(1, process_key);
-			
-			try(ResultSet rs = ps.executeQuery(); ){
-				while (rs.next()) {
-					dto = new ProcessDTO(); 
-					
-					dto.setProcess_key(rs.getString("process_key"));
-					dto.setSequence_no(rs.getInt("sequence_no"));
-					dto.setWork_desc(rs.getString("work_desc"));
-					dto.setProcess_note(rs.getString("process_note"));
-					dto.setCode_id(rs.getString("code_id"));
-					dto.setSystem_key(rs.getString("system_key"));
-					
-				}
-			}
-			
-		} catch(Exception e) {
-			e.printStackTrace(); 
-		}
-		return dto;
-	}
-	
+
+	// 삽입
 	public int insertProcess(ProcessDTO processDTO) {
-		
-		int result = -1; 
-		
-		try ( Connection conn = getConn(); 
-				PreparedStatement ps = new LoggableStatement(conn, "insert into tb_process"
-						+ " values(null, seq_process.nextval, null, null, ?, ? );")
-		){
-			ps.setString(1, processDTO.getCode_id());
-			ps.setString(2, processDTO.getSystem_key());
-			
-			System.out.println(((LoggableStatement)ps).getQueryString());
-			
-			result = ps.executeUpdate(); 
-			System.out.println("insert ��� : " + result);
-			
-		} catch(Exception e) {
+
+		int result = -1;
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn,
+						"INSERT INTO tb_process  " + "VALUES ( " + "    seq_process.nextval, "
+								+ "    'PROC-' || LPAD(seq_process.currval, 3, '0'), " + "    ?, " + "    ?, "
+								+ "    ?, " + "    ?, " + "    ? " + ") ");) {
+			ps.setString(1, processDTO.getProcess_name());
+			ps.setInt(2, processDTO.getSequence_no());
+			ps.setString(3, processDTO.getProcess_desc());
+			ps.setString(4, processDTO.getStatus());
+			ps.setString(5, processDTO.getProcess_item_key());
+
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
+			result = ps.executeUpdate();
+			System.out.println("insert된 열 : " + result);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return result; 
-		
+		return result;
+
 	}
-	
+
+	// 수정
 	public int updateProcess(ProcessDTO processDTO) {
-		
-		int result = -1; 
-		
-		try ( Connection conn = getConn();
-				PreparedStatement ps = new LoggableStatement(conn, "update tb_process "
-						+ " set code_id = ?, "
-						+ " system_key = ?");
-				) {
-			
-			ps.setString(1, processDTO.getCode_id());
-			ps.setString(2, processDTO.getSystem_key());
-			
-			System.out.println(((LoggableStatement)ps).getQueryString());
-			
-			result = ps.executeUpdate(); 
-			System.out.println("update ��� : " + result);
-			
-		} catch(Exception e) {
-			e.printStackTrace(); 
+
+		int result = -1;
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn,
+						"update tb_process " + " set process_code = ?, " + "  process_name = ?, "
+								+ "  sequence_no = ?, " + "  process_desc = ?, " + "  status = ?, "
+								+ "  item_name = (select item_name from tb_item where item_key = ?) "
+								+ " where process_key = ? ");) {
+
+			ps.setString(1, processDTO.getProcess_code());
+			ps.setString(2, processDTO.getProcess_name());
+			ps.setInt(3, processDTO.getSequence_no());
+			ps.setString(4, processDTO.getStatus());
+			ps.setInt(5, processDTO.getItem_key());
+
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
+			result = ps.executeUpdate();
+			System.out.println("update된 열 : " + result);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}
-	
+
 	public int deleteProcess(ProcessDTO processDTO) {
-		
-		int result = -1; 
-		
-		try ( Connection conn = getConn(); 
-				PreparedStatement ps = new LoggableStatement(conn, "delete tb_process"
-						+ " where process_key = ?");
-		){
-			ps.setString(1, processDTO.getProcess_key());
-			System.out.println(((LoggableStatement)ps).getQueryString());
-			
+
+		int result = -1;
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn, "delete tb_process" + " where process_key = ?");) {
+			ps.setInt(1, processDTO.getProcess_key());
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
 			result = ps.executeUpdate();
-			System.out.println("delete ��� : " + result);
-			
-		} catch(Exception e) {
+			System.out.println("delete된 열 : " + result);
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return result; 
+		return result;
+	}
+
+	// 페이징용 전체 개수
+	public int ProcessTotal() {
+
+		int totalCount = 0;
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn, "Select count(*) cnt From tb_process");) {
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
+			try (ResultSet rs = ps.executeQuery();) {
+
+				if (rs.next()) {
+					totalCount = rs.getInt("cnt");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalCount;
+	}
+
+	public int SearchTotal(ProcessDTO dto) {
+
+		int totalCount = 0;
+
+		String keyword = dto.getKeyword();
+		int keycode = dto.getKeycode();
+
+		if (keyword == null)
+			keyword = "";
+
+		try (Connection conn = getConn();
+				PreparedStatement ps = new LoggableStatement(conn,
+						"SELECT COUNT(*) cnt " + "	FROM tb_bom b " + "	LEFT JOIN tb_item i ON b.item_key = i.item_key "
+								+ "	WHERE 1=1 " + "	AND ( ? = 0 OR b.bom_key = ? ) "
+								+ "	AND ( ? IS NULL OR i.item_name LIKE '%' || ? || '%' )");) {
+			ps.setInt(1, keycode);
+			ps.setInt(2, keycode);
+			ps.setString(3, keyword);
+			ps.setString(4, keyword);
+
+			System.out.println(((LoggableStatement) ps).getQueryString());
+
+			try (ResultSet rs = ps.executeQuery();) {
+				if (rs.next()) {
+					totalCount = rs.getInt("cnt");
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalCount;
 	}
 
 }

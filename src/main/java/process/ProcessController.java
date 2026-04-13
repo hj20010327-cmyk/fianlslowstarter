@@ -2,6 +2,7 @@ package process;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,27 +11,56 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/process")
+@WebServlet("/process.jsp")
 public class ProcessController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process doGet ½ÇÇà");
+		System.out.println("/process doGet ì‹¤í–‰");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		String cmd = request.getParameter("cmd");
+		String skeycode = request.getParameter("keycode");
+		String keyword = request.getParameter("keyword");
 		
-		if(cmd.equals("list")) {
-			list(request,response);
-		} else if(cmd.equals("detail")) {
-			detail(request, response);
-		}
+		// í˜ì´ì§• 
+		int size = 5; 
+		int page = 1; 
+		int keycode = 0; 
+		
+		String sSize = request.getParameter("size");
+		String sPage = request.getParameter("page");
+		
+		try {
+			size = Integer.parseInt(sSize);
+		} catch(Exception e) {}
+		try {
+			page = Integer.parseInt(sPage);
+		} catch(Exception e) {}
+		try {
+			keycode = Integer.parseInt(skeycode);
+		} catch(Exception e) {}
+		
+		ProcessDTO processDTO = new ProcessDTO();
+		processDTO.setSize(size);
+		processDTO.setPage(page);
+		processDTO.setKeycode(keycode);
+		processDTO.setKeyword(keyword);
+		
+		// ì„œë¹„ìŠ¤ 
+		ProcessService processservice = new ProcessService(); 
+		
+		Map<String, Object> map = processservice.getPaging(processDTO);
+		map.put("size", size);
+		map.put("page", page);
+		
+		request.setAttribute("map",map);
+		request.setAttribute(sPage, processservice);
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process doPost ½ÇÇà");
+		System.out.println("/process doPost ì‹¤í–‰");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
@@ -47,24 +77,24 @@ public class ProcessController extends HttpServlet {
 	}
 	
 	protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process insert ½ÇÇà");
+		System.out.println("/process insert ï¿½ï¿½ï¿½ï¿½");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		// ÆÄ¶ó¹ÌÅÍ È®º¸
+		// ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 		String process_key = request.getParameter("process_key");
 		System.out.println("process_key: " + process_key);
 		
-		// DTO ³Ö±â 
+		// DTO ï¿½Ö±ï¿½ 
 		ProcessDTO processDTO = new ProcessDTO(); 
 		processDTO.setProcess_key(process_key);
 		
-		// ¼­ºñ½º·Î DTO¸¦ º¸³¿ 
+		// ï¿½ï¿½ï¿½ñ½º·ï¿½ DTOï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 
 		ProcessService processservice = new ProcessService(); 
 		int result = processservice.insert(processDTO);
 		
-		System.out.println("insertµÈ rows : " + result);
+		System.out.println("insertï¿½ï¿½ rows : " + result);
 		
 		response.sendRedirect("");
 		
@@ -72,9 +102,9 @@ public class ProcessController extends HttpServlet {
 	
 	protected void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/process update ½ÇÇà");
+		System.out.println("/process update ï¿½ï¿½ï¿½ï¿½");
 		
-		// ÆÄ¶ó¹ÌÅÍ È®º¸ 
+		// ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ 
 		String process_key = request.getParameter("process_key");
 		String Sequence_no = request.getParameter("sequence_no");
 		String work_desc = request.getParameter("work-desc");
@@ -98,7 +128,7 @@ public class ProcessController extends HttpServlet {
 			ProcessService processservice = new ProcessService(); 
 			int result = processservice.update(processDTO);
 			
-			System.out.println("update °á°ú : " + result);
+			System.out.println("update ï¿½ï¿½ï¿½ : " + result);
 			response.sendRedirect("");
 			
 			
@@ -109,7 +139,7 @@ public class ProcessController extends HttpServlet {
 	}
 	
 	protected void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process delete ½ÇÇà");
+		System.out.println("/process delete ï¿½ï¿½ï¿½ï¿½");
 		
 		try {
 			request.setCharacterEncoding("utf-8");
@@ -131,7 +161,7 @@ public class ProcessController extends HttpServlet {
 	
 	protected void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/process list ½ÇÇà");
+		System.out.println("/process list ï¿½ï¿½ï¿½ï¿½");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
@@ -150,7 +180,7 @@ public class ProcessController extends HttpServlet {
 	
 	protected void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/process detail ½ÇÇà");
+		System.out.println("/process detail ï¿½ï¿½ï¿½ï¿½");
 		
 		try { 
 			
@@ -160,7 +190,7 @@ public class ProcessController extends HttpServlet {
 			String process_key = request.getParameter("process_key");
 			System.out.println("process_key: " + process_key);
 			
-			// process_key ¸¦ service¶û DAO º¸³»±â 
+			// process_key ï¿½ï¿½ serviceï¿½ï¿½ DAO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 			ProcessService processservice = new ProcessService(); 
 			ProcessDTO processDTO = processservice.getProcess(process_key);
 			

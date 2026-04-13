@@ -173,14 +173,16 @@ public class BOMDAO {
 		
 		try (Connection conn = getConn();
 			 PreparedStatement ps = new LoggableStatement(conn, " update tb_bom "
-						+ " set item_code = ?, "
-						+ " item_count = ?, "
-						+ " status = ?, "
-						+ " code_id = ? "
+						+ " set bom_code = ?, "
+						+ " qty = ?, "
+						+ " remark = ? "
 						+ " where bom_key = ? ");
 		) {
-			ps.setString(1, bomDTO.getItem_code());
-			
+			ps.setString(1, bomDTO.getBom_code());
+			ps.setInt(2, bomDTO.getQTY());
+			ps.setString(3, bomDTO.getRemark());
+			ps.setInt(4, bomDTO.getBom_key());
+		
 			
 			System.out.println(((LoggableStatement) ps).getQueryString());
 			

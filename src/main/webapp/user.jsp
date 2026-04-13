@@ -512,7 +512,7 @@
 									</div>
 									<div class="form-group">
 										<label>이름</label><input type="text" name="user_name"
-											class="input" value="${userOne.user_name}" required>
+											class="input" value="${userOne.user_name}" required readonly>
 									</div>
 									<div class="form-group">
 										<label>권한</label> <select name="user_role" class="select"
@@ -531,11 +531,11 @@
 									</div>
 									<div class="form-group">
 										<label>연락처</label><input type="text" name="user_phone"
-											class="input" value="${userOne.user_phone}">
+											class="input" value="${userOne.user_phone}" readonly>
 									</div>
 									<div class="form-group">
 										<label>이메일</label><input type="email" name="user_email"
-											class="input" value="${userOne.user_email}">
+											class="input" value="${userOne.user_email}" readonly>
 									</div>
 									<div class="form-group">
 										<label>상태</label> <select name="status" class="select"
@@ -574,7 +574,7 @@
 							</form>
 						</c:when>
 						<c:otherwise>
-							<div class="detail-empty">왼쪽 목록에서 사용자를 선택하면 상세 정보가 표시됩니다.</div>
+							<div class="detail-empty">위의 목록에서 사용자를 선택하면 상세 정보가 표시됩니다.</div>
 						</c:otherwise>
 					</c:choose>
 				</section>

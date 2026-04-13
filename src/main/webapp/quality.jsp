@@ -227,72 +227,7 @@
             margin-bottom: 8px; 
         }
 
-        /* 푸터 스타일 수정 */
-        .footer { 
-            width: 100%; 
-            background-color: #1a2332; 
-            color: #94a3b8; 
-            padding: 60px 24px; /* 좌우 패딩을 카드 마진과 맞춰 24px로 설정 */
-            font-size: 12px; 
-            margin-top: auto; 
-            border-radius: 0; /* 라운드 제거하여 창 끝에 붙임 */
-            box-sizing: border-box;
-        }
-
-        .footer-container {
-            max-width: 100%;
-            margin: 0;
-        }
-
-        .footer-top { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 25px; 
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .footer-logo { 
-            font-size: 18px; 
-            font-weight: 800; 
-            color: #f8fafc; 
-        }
-
-        .footer-links { 
-            display: flex; 
-            gap: 15px; 
-        }
-
-        .footer-links a { 
-            color: #cbd5e1; 
-            text-decoration: none; 
-        }
-        
-        .footer-info { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 10px; 
-            margin-bottom: 15px; 
-            line-height: 1.6; 
-        }
-
-        .info-row { 
-            display: flex; 
-            flex-wrap: wrap; 
-            gap: 20px; 
-        }
-
-        .info-item b { 
-            color: #cbd5e1; 
-            margin-right: 4px; 
-        }
-
-        .copyright { 
-            margin-top: 20px; 
-            color: #475569; 
-            font-size: 11px; 
-        }
+       
     </style>
 
     <script>
@@ -510,33 +445,7 @@
                 </div>
             </div>
             
-            <footer class="footer">
-                <div class="footer-container">
-                    <div class="footer-top">
-                        <div class="footer-logo">AUTO MES</div>
-                        <div class="footer-links">
-                            <a href="#">개인정보 처리방침</a>
-                            <a href="#">이용약관</a>
-                            <a href="#">사이트맵</a>
-                            <a href="#">고객센터</a>
-                        </div>
-                    </div>
-                    
-                    <div class="footer-info">
-                        <div class="info-row">
-                            <div class="info-item"><b>상호명</b> (주) AUTO</div>
-                            <div class="info-item"><b>대표자</b> 이용상</div>
-                            <div class="info-item"><b>사업자등록번호</b> 123-45-67890</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="info-item"><b>주소</b>충남 천안시 동남구 대흥로 215 7층, 8층 </div>
-                            <div class="info-item"><b>대표전화</b> 041-561-1122</div>
-                            <div class="info-item"><b>이메일</b> cungho2086@gmail.com</div>
-                        </div>
-                    </div>
-                    
-                    <p class="copyright">Copyright © 2026 AUTO MES. All rights reserved.</p>
-                </div>
+           
             </footer>
         </main>
     </div> 

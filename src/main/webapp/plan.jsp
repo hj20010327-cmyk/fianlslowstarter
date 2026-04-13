@@ -44,8 +44,7 @@
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index.jsp" class="logo">
-				<span class="logo-mark">AM</span>
+			<a href="./index.jsp" class="logo"> <span class="logo-mark">AM</span>
 				<span>AUTO MES</span>
 			</a>
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
@@ -82,7 +81,7 @@
 				<div class="snb-title">생산관리</div>
 				<ul class="snb-menu">
 					<li><a href="/slowstarter/workorder">작업지시</a></li>
-					<li><a href="/slowstarter/plan">생산계획</a></li>
+					<li class="active"><a href="/slowstarter/plan">생산계획</a></li>
 				</ul>
 			</div>
 
@@ -130,7 +129,8 @@
 				</div>
 				<div class="page-actions">
 					<button class="btn" type="submit" form="planSearchForm">조회</button>
-					<button class="btn primary" type="button" onclick="openInsertModal()">신규 등록</button>
+					<button class="btn primary" type="button"
+						onclick="openInsertModal()">신규 등록</button>
 				</div>
 			</div>
 
@@ -141,8 +141,8 @@
 				</div>
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
-						<input class="input" type="text" name="planCode" placeholder="계획 코드 입력" />
-						<select class="select" name="status">
+						<input class="input" type="text" name="planCode"
+							placeholder="계획 코드 입력" /> <select class="select" name="status">
 							<option value="">전체</option>
 							<option value="계획">계획</option>
 							<option value="진행중">진행중</option>
@@ -175,10 +175,10 @@
 
 								<c:forEach var="p" items="${list}">
 									<tr>
-										<td><input type="checkbox" name="plan_key" value="${p.plan_key}"></td>
-										<td>
-											<a href="javascript:void(0);"
-												onclick="openEditModal(
+										<td><input type="checkbox" name="plan_key"
+											value="${p.plan_key}"></td>
+										<td><a href="javascript:void(0);"
+											onclick="openEditModal(
 													'${p.plan_key}',
 													'${p.plan_code}',
 													'${p.item_key}',
@@ -189,9 +189,7 @@
 													'${p.user_key}',
 													'${p.priority}'
 												)">
-												${p.plan_code}
-											</a>
-										</td>
+												${p.plan_code} </a></td>
 										<td>${p.item_key}</td>
 										<td>${p.plan_date}</td>
 										<td>${p.due_date}</td>
@@ -201,11 +199,9 @@
 								</c:forEach>
 							</table>
 							<div class="pagination">
-								<a href="plan?page=1">1</a>
-								<a href="plan?page=2">2</a> 
-								<a href="plan?page=3">3</a> 
-								<a href="plan?page=4">4</a>
-								<a href="plan?page=5">5</a>
+								<a href="plan?page=1">1</a> <a href="plan?page=2">2</a> <a
+									href="plan?page=3">3</a> <a href="plan?page=4">4</a> <a
+									href="plan?page=5">5</a>
 							</div>
 						</div>
 					</form>
@@ -221,22 +217,19 @@
 							<div>
 								<strong>진행중 계획</strong>
 								<p>현재 생산계획 진행상태를 확인합니다.</p>
-							</div>
-							<span class="badge ok">확인</span>
+							</div> <span class="badge ok">확인</span>
 						</li>
 						<li>
 							<div>
 								<strong>금일 마감</strong>
 								<p>오늘 마감 예정 생산계획을 확인합니다.</p>
-							</div>
-							<span class="badge warn">확인</span>
+							</div> <span class="badge warn">확인</span>
 						</li>
 						<li>
 							<div>
 								<strong>지연 계획</strong>
 								<p>지연된 생산계획 여부를 확인합니다.</p>
-							</div>
-							<span class="badge ok">정상</span>
+							</div> <span class="badge ok">정상</span>
 						</li>
 					</ul>
 				</div>
@@ -257,33 +250,33 @@
 						<input type="hidden" id="plan_key" name="plan_key" />
 
 						<div class="form-group">
-							<label>계획 코드</label>
-							<input type="text" class="input" id="plan_code" name="plan_code" placeholder="계획 코드 입력" />
+							<label>계획 코드</label> <input type="text" class="input"
+								id="plan_code" name="plan_code" placeholder="계획 코드 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>품목 키</label>
-							<input type="number" class="input" id="item_key" name="item_key" placeholder="품목 키 입력" />
+							<label>품목 키</label> <input type="number" class="input"
+								id="item_key" name="item_key" placeholder="품목 키 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>계획일</label>
-							<input type="date" class="input" id="plan_date" name="plan_date" />
+							<label>계획일</label> <input type="date" class="input"
+								id="plan_date" name="plan_date" />
 						</div>
 
 						<div class="form-group">
-							<label>마감일</label>
-							<input type="date" class="input" id="due_date" name="due_date" />
+							<label>마감일</label> <input type="date" class="input" id="due_date"
+								name="due_date" />
 						</div>
 
 						<div class="form-group">
-							<label>계획 수량</label>
-							<input type="number" class="input" id="plan_qty" name="plan_qty" placeholder="계획 수량 입력" />
+							<label>계획 수량</label> <input type="number" class="input"
+								id="plan_qty" name="plan_qty" placeholder="계획 수량 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>계획 상태</label>
-							<select class="select" id="status" name="status">
+							<label>계획 상태</label> <select class="select" id="status"
+								name="status">
 								<option value="">선택</option>
 								<option value="계획">계획</option>
 								<option value="진행중">진행중</option>
@@ -292,13 +285,13 @@
 						</div>
 
 						<div class="form-group">
-							<label>사용자 키</label>
-							<input type="number" class="input" id="user_key" name="user_key" placeholder="사용자 키 입력" />
+							<label>사용자 키</label> <input type="number" class="input"
+								id="user_key" name="user_key" placeholder="사용자 키 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>우선순위</label>
-							<input type="number" class="input" id="priority" name="priority" placeholder="우선순위 입력" />
+							<label>우선순위</label> <input type="number" class="input"
+								id="priority" name="priority" placeholder="우선순위 입력" />
 						</div>
 					</div>
 				</div>
@@ -329,7 +322,8 @@
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openEditModal(plan_key, plan_code, item_key, plan_date, due_date, plan_qty, status, user_key, priority) {
+		function openEditModal(plan_key, plan_code, item_key, plan_date,
+				due_date, plan_qty, status, user_key, priority) {
 			document.getElementById("modalTitle").innerText = "생산계획 수정";
 			document.getElementById("planForm").action = "/slowstarter/plan/update";
 

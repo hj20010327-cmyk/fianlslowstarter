@@ -141,10 +141,6 @@ tbody tr:hover {
 	color: #38a169;
 }
 
-<<<<<<< HEAD
-       
-    </style>
-=======
 .status-불합격 {
 	background: #fff5f5;
 	color: #e53e3e;
@@ -216,7 +212,6 @@ tbody tr:hover {
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 	overflow: hidden;
 }
->>>>>>> 05ba314 (모든 사이트 연결)
 
 .modal-header {
 	display: flex;
@@ -323,6 +318,7 @@ tbody tr:hover {
 	font-size: 11px;
 }
 </style>
+
 
 <script>
         window.addEventListener('load', () => {
@@ -462,7 +458,7 @@ tbody tr:hover {
 				</ul>
 			</div>
 		</aside>
-
+		<div class="snb-overlay" id="snbOverlay"></div>
 		<main class="content">
 			<div class="page-header">
 				<div class="page-header-title">
@@ -534,25 +530,7 @@ tbody tr:hover {
 					</div>
 				</div>
 
-<<<<<<< HEAD
-                <div class="card">
-                    <div class="section-header"><h2>요약 / 상태</h2></div>
-                    <div class="summary-content">
-                        <div style="display:flex; justify-content:space-between; padding:15px 0; border-bottom:1px solid #f1f5f9;">
-                            <span>재검 건수</span><span style="color:#b7791f; font-weight:700;">1건</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; padding:15px 0;">
-                            <span>합격률</span><span style="color:#38a169; font-weight:700;">양호</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-           
-            </footer>
-        </main>
-    </div> 
-=======
+
 				<div class="card">
 					<div class="section-header">
 						<h2>요약 / 상태</h2>
@@ -569,49 +547,28 @@ tbody tr:hover {
 					</div>
 				</div>
 			</div>
->>>>>>> 05ba314 (모든 사이트 연결)
 
-			<footer class="footer">
-				<div class="footer-container">
-					<div class="footer-top">
-						<div class="footer-logo">AUTO MES</div>
-						<div class="footer-links">
-							<a href="#">개인정보 처리방침</a> <a href="#">이용약관</a> <a href="#">사이트맵</a>
-							<a href="#">고객센터</a>
-						</div>
-					</div>
 
-					<div class="footer-info">
-						<div class="info-row">
-							<div class="info-item">
-								<b>상호명</b> (주) AUTO
-							</div>
-							<div class="info-item">
-								<b>대표자</b> 이용상
-							</div>
-							<div class="info-item">
-								<b>사업자등록번호</b> 123-45-67890
-							</div>
-						</div>
-						<div class="info-row">
-							<div class="info-item">
-								<b>주소</b>충남 천안시 동남구 대흥로 215 7층, 8층
-							</div>
-							<div class="info-item">
-								<b>대표전화</b> 041-561-1122
-							</div>
-							<div class="info-item">
-								<b>이메일</b> cungho2086@gmail.com
-							</div>
-						</div>
-					</div>
 
-					<p class="copyright">Copyright © 2026 AUTO MES. All rights
-						reserved.</p>
+			<div class="card">
+				<div class="section-header">
+					<h2>요약 / 상태</h2>
 				</div>
-			</footer>
+				<div class="summary-content">
+					<div
+						style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f1f5f9;">
+						<span>재검 건수</span><span style="color: #b7791f; font-weight: 700;">1건</span>
+					</div>
+					<div
+						style="display: flex; justify-content: space-between; padding: 15px 0;">
+						<span>합격률</span><span style="color: #38a169; font-weight: 700;">양호</span>
+					</div>
+				</div>
+			</div>
 		</main>
 	</div>
+
+
 
 	<div id="commonModal" class="modal">
 		<div class="modal-box">

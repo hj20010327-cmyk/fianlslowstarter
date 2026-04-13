@@ -65,7 +65,7 @@
 			<div class="snb-section">
 				<div class="snb-title">MAIN</div>
 				<ul class="snb-menu">
-					<li class="active"><a href="./index.jsp">대시보드</a></li>
+					<li><a href="./index.jsp">대시보드</a></li>
 				</ul>
 			</div>
 
@@ -75,7 +75,7 @@
 					<li><a href="./master.jsp">기준관리</a></li>
 					<li><a href="./BOM">BOM</a></li>
 					<li><a href="./process.jsp">공정</a></li>
-					<li><a href="/slowstarter/machine">설비</a></li>
+					<li class="active"><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
 

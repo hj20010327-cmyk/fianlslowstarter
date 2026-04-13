@@ -185,10 +185,10 @@
 													'${w.plan_key}'
 												)">
 												${w.work_order_code} </a></td>
-										<td>${w.plan_key}</td>
+										<td>${w.plan_code}</td>
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
-										<td>${w.order_user_key}</td>
+										<td>${w.order_user_name}</td>
 									</tr>
 								</c:forEach>
 							</table>

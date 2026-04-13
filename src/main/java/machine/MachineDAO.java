@@ -13,15 +13,14 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 public class MachineDAO {
+	 	Connection conn = null;
+	    PreparedStatement ps = null;
+	    ResultSet rs = null;
 	public List<MachineDTO> selectAll() {
 //		List list = new ArrayList();
 		List<MachineDTO> list = new ArrayList<MachineDTO>();
 
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
 		try {
-			
 			// DB 연결 
 			Context ctx = new InitialContext();
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
@@ -68,30 +67,8 @@ public class MachineDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		}  finally {
+			closeAll();
 		}
 		System.out.println("list.size(): " + list.size());
 		return list;
@@ -99,10 +76,6 @@ public class MachineDAO {
 	
 	public List<MachineDTO> searchList(String machineName, String machineStatus) {
 	    List<MachineDTO> list = new ArrayList<MachineDTO>();
-
-	    Connection conn = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
 
 	    try {
 	    	// DB 연결 
@@ -163,38 +136,14 @@ public class MachineDAO {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    } finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 
 	    return list;
 	}
 
 	public int insertmachine(MachineDTO machineDTO) {
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		
 		int result = -1;
 
 		try {
@@ -230,30 +179,8 @@ public class MachineDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		}  finally {
+			closeAll();
 		}
 
 		return result;
@@ -261,9 +188,7 @@ public class MachineDAO {
 	}
 
 	public int updatemachine(MachineDTO machineDTO) {
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		
 		int result = -1;
 
 		try {
@@ -301,30 +226,8 @@ public class MachineDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		}  finally {
+			closeAll();
 		}
 
 		return result;
@@ -332,9 +235,7 @@ public class MachineDAO {
 	}
 
 	public int deletemachine(MachineDTO machineDTO) {
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		
 		int result = -1;
 
 		try {
@@ -357,28 +258,8 @@ public class MachineDAO {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+		}  finally {
+			closeAll();
 		}
 
 		return result;
@@ -386,10 +267,6 @@ public class MachineDAO {
 	 	// 페이징
 	public List<MachineDTO> selectPage(int startRow, int endRow) {
 	    List<MachineDTO> list = new ArrayList<>();
-
-	    Connection conn = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
 
 	    try {
 	        Context ctx = new InitialContext();
@@ -421,15 +298,15 @@ public class MachineDAO {
 
 	    } catch(Exception e) {
 	        e.printStackTrace();
-	    }
+	    }  finally {
+			closeAll();
+		}
 
 	    return list;
 	}
 	
 	public int getTotalCount() {
-	    Connection conn = null;
-	    PreparedStatement ps = null;
-	    ResultSet rs = null;
+	   
 	    int count = 0;
 
 	    try {
@@ -447,18 +324,17 @@ public class MachineDAO {
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	    } finally {
-	        if (rs != null) {
-	            try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-	        }
-	        if (ps != null) {
-	            try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-	        }
-	        if (conn != null) {
-	            try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-	        }
-	    }
+	    }  finally {
+			closeAll();
+		}
 
 	    return count;
 	}
+	// finally 의 close가 너무 반복되서 함수로 빼버림 
+		private void closeAll() {
+			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+			if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		}
+	
 }

@@ -49,29 +49,7 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		System.out.println("list.size(): " + list.size());
 		return list;
@@ -110,29 +88,7 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		return result;
 	}
@@ -175,29 +131,7 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 
 		return result;
@@ -223,29 +157,7 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		
 		return result;
@@ -303,12 +215,9 @@ public class PlanDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-
+        }finally {
+			closeAll();
+		}
         return list;
     }
 
@@ -351,19 +260,13 @@ public class PlanDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-
+        }finally {
+			closeAll();
+		}
         return list;
     }
     
     public int getTotalCount() {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         int count = 0;
 
         try {
@@ -382,17 +285,15 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            }
-            if (ps != null) {
-                try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            }
-            if (conn != null) {
-                try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-            }
-        }
+			closeAll();
+		}
 
         return count;
     }
+    // finally 의 close가 너무 반복되서 함수로 빼버림
+    private void closeAll() {
+		if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+		if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+		if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+	}
 }

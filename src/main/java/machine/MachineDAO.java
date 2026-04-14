@@ -287,13 +287,19 @@ public class MachineDAO {
 	        rs = ps.executeQuery();
 
 	        while(rs.next()) {
-	            MachineDTO dto = new MachineDTO();
-	            dto.setMachineKey(rs.getInt("machine_key"));
-	            dto.setMachineName(rs.getString("machine_name"));
-	            dto.setMachineCode(rs.getString("machine_code"));
-	            dto.setMachineStatus(rs.getString("machine_status"));
-	            dto.setProcessKey(rs.getInt("process_key"));
-	            list.add(dto);
+	        	 MachineDTO dto = new MachineDTO();
+	             dto.setMachineKey(rs.getInt("machine_key"));
+	             dto.setMachineName(rs.getString("machine_name"));
+	             dto.setMachineCode(rs.getString("machine_code"));
+	             dto.setMachineStatus(rs.getString("machine_status"));
+	             dto.setProcessKey(rs.getInt("process_key"));
+	             dto.setBuyDate(rs.getDate("buy_date"));
+	             dto.setLastCheckDate(rs.getDate("last_check_date"));
+	             dto.setRemark(rs.getString("remark"));
+	             dto.setStatus(rs.getString("status"));
+	             dto.setCreatedAt(rs.getDate("created_at"));
+
+	             list.add(dto);
 	        }
 
 	    } catch(Exception e) {

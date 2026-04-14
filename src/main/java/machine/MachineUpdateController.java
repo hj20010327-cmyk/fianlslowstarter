@@ -8,6 +8,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import login.LoginDTO;
 
 @WebServlet("/machine/update")
 public class MachineUpdateController extends HttpServlet {
@@ -20,6 +23,19 @@ public class MachineUpdateController extends HttpServlet {
 		// 한글 꺠짐 방지 
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
+		
+		HttpSession session = request.getSession();
+		LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
+		
+		System.out.println("loginUser = " + loginUser);
+
+		if (loginUser == null
+				|| (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
+
+			// 이거는 주소로 들어오는사람 막는용도
+			response.sendRedirect(request.getContextPath() + "/machine");
+			return;
+		}
 
 		// 파라미터 받기
 		int machineKey = Integer.parseInt(request.getParameter("machineKey"));

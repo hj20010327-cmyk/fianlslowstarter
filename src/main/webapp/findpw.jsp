@@ -7,6 +7,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AUTO MES | 비밀번호 찾기</title>
+    <script src="./asset/js/auth.js"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/common.css" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/auth.css" />
 </head>

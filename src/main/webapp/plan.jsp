@@ -44,7 +44,7 @@
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index.jsp" class="logo"> <span class="logo-mark">AM</span>
+			<a href="./index" class="logo"> <span class="logo-mark">AM</span>
 				<span>AUTO MES</span>
 			</a>
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
@@ -63,16 +63,16 @@
 			<div class="snb-section">
 				<div class="snb-title">MAIN</div>
 				<ul class="snb-menu">
-					<li><a href="./index.jsp">대시보드</a></li>
+					<li><a href="./index">대시보드</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master.jsp">기준관리</a></li>
+					<li><a href="./master">기준관리</a></li>
 					<li><a href="./BOM">BOM</a></li>
-					<li><a href="./process.jsp">공정</a></li>
+					<li><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
@@ -88,9 +88,9 @@
 			<div class="snb-section">
 				<div class="snb-title">재고관리</div>
 				<ul class="snb-menu">
-					<li><a href="./stock.jsp">재고</a></li>
-					<li><a href="./product.jsp">완제품</a></li>
-					<li><a href="./item.jsp">자재</a></li>
+					<li><a href="./stock">재고</a></li>
+					<li><a href="./product">완제품</a></li>
+					<li><a href="./item">자재</a></li>
 				</ul>
 			</div>
 
@@ -104,15 +104,15 @@
 			<div class="snb-section">
 				<div class="snb-title">리포트</div>
 				<ul class="snb-menu">
-					<li><a href="./report.jsp">리포트</a></li>
-					<li><a href="./production.jsp">생산실적</a></li>
+					<li><a href="./report">리포트</a></li>
+					<li><a href="./production">생산실적</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">시스템</div>
 				<ul class="snb-menu">
-					<li><a href="./board.jsp">게시판</a></li>
+					<li><a href="./board">게시판</a></li>
 					<li><a href="./user">사용자관리</a></li>
 					<li><a href="./mypage">마이페이지</a></li>
 				</ul>
@@ -128,13 +128,14 @@
 					<p>생산계획 등록 및 진행상태를 확인합니다.</p>
 				</div>
 				<div class="page-actions">
-					<button class="btn" type="submit" form="planSearchForm">조회</button>
+					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 					<button class="btn primary" type="button"
 						onclick="openInsertModal()">신규 등록</button>
+					</c:if>
 				</div>
 			</div>
 
-			<section class="card">
+			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
 					<span>기준 조건을 선택하세요</span>
@@ -158,8 +159,10 @@
 					<form action="/slowstarter/plan/delete" method="post">
 						<div class="section-title">
 							<h2>생산계획 목록</h2>
+							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 							<span>계획코드를 클릭하면 수정할 수 있습니다.</span>
 							<button type="submit" class="btn">삭제</button>
+							</c:if>
 						</div>
 						<div class="table-wrap">
 							<table>
@@ -177,7 +180,11 @@
 									<tr>
 										<td><input type="checkbox" name="plan_key"
 											value="${p.plan_key}"></td>
-										<td><a href="javascript:void(0);"
+										<td>
+										<!--  관리자 /슈퍼바이저 일때 계획명 누르면 수정가능하게 -->
+										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
+										<a href="javascript:void(0);"
 											onclick="openEditModal(
 													'${p.plan_key}',
 													'${p.plan_code}',
@@ -189,7 +196,12 @@
 													'${p.user_key}',
 													'${p.priority}'
 												)">
-												${p.plan_code} </a></td>
+												${p.plan_code}</a>
+										</c:if>
+										<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+											${p.plan_code}
+										</c:if>	
+										</td>	
 										<td>${p.item_key}</td>
 										<td>${p.plan_date}</td>
 										<td>${p.due_date}</td>

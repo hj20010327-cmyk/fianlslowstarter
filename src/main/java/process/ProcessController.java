@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/process.jsp")
+@WebServlet("/process")
 public class ProcessController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -56,7 +56,9 @@ public class ProcessController extends HttpServlet {
 		map.put("page", page);
 		
 		request.setAttribute("map",map);
-		request.setAttribute(sPage, processservice);
+		request.setAttribute("list", map.get("list"));
+		
+		System.out.println("sequence_no = " + request.getParameter("sequence_no"));
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/process.jsp");
 		rd.forward(request, response);
@@ -70,6 +72,7 @@ public class ProcessController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
+		// form 요소 
 		String cmd = request.getParameter("cmd");
 		
 		if(cmd.equals("insert")) {
@@ -82,58 +85,78 @@ public class ProcessController extends HttpServlet {
 	}
 	
 	protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process insert ����");
+		System.out.println("/process insert 실행");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		// �Ķ���� Ȯ��
-		String process_key = request.getParameter("process_key");
-		System.out.println("process_key: " + process_key);
+		// 파라미터
 		
-		// DTO �ֱ� 
+		String process_code = request.getParameter("process_code");
+		String process_name = request.getParameter("process_name");
+		String Sequence = request.getParameter("sequence_no");
+		int sequence_no = Integer.parseInt(Sequence);
+		String process_desc = request.getParameter("process_desc");
+		String status = request.getParameter("status");
+		String Pitem_key = request.getParameter("item_key");
+		int item_key = Integer.parseInt(Pitem_key);
+		
+		
+		// DTO 실행
 		ProcessDTO processDTO = new ProcessDTO(); 
-		processDTO.setProcess_key(process_key);
 		
-		// ���񽺷� DTO�� ���� 
+		processDTO.setProcess_code(process_code);
+		processDTO.setProcess_name(process_name);
+		processDTO.setSequence_no(sequence_no);
+		processDTO.setProcess_desc(process_desc);
+		processDTO.setStatus(status);
+		processDTO.setItem_key(item_key);
+		
+		// service & DTO 
 		ProcessService processservice = new ProcessService(); 
 		int result = processservice.insert(processDTO);
 		
-		System.out.println("insert�� rows : " + result);
+		System.out.println("insert된 rows : " + result);
 		
-		response.sendRedirect("");
+		response.sendRedirect("/slowstarter/process");
 		
 	}
 	
 	protected void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		System.out.println("/process update ����");
+		System.out.println("/process update 실행");
 		
-		// �Ķ���� Ȯ�� 
-		String process_key = request.getParameter("process_key");
-		String Sequence_no = request.getParameter("sequence_no");
-		String work_desc = request.getParameter("work-desc");
-		String process_note = request.getParameter("process_note");
-		String code_id = request.getParameter("code_id");
-		String system_key = request.getParameter("system_key");
+		// 파라미터
+		String Process_key = request.getParameter("process_key");
+		int process_key = Integer.parseInt(Process_key);
+		String process_code = request.getParameter("process_code");
+		String process_name = request.getParameter("process_name");
+		String Sequence = request.getParameter("sequence_no");
+		int sequence_no = Integer.parseInt(Sequence);
+		String process_desc = request.getParameter("process_desc");
+		String status = request.getParameter("status");
+		String Pitem_key = request.getParameter("item_key");
+		int item_key = Integer.parseInt(Pitem_key);
 		
 		try {
 			
 			ProcessDTO processDTO = new ProcessDTO(); 
 			
-			processDTO.setProcess_key(process_key);
+			request.setCharacterEncoding("utf-8");
+			response.setContentType("text/html; charset=utf-8");
 			
-			int sequence_no = Integer.parseInt(Sequence_no);
+			processDTO.setProcess_code(process_code);
+			processDTO.setProcess_name(process_name);
 			processDTO.setSequence_no(sequence_no);
-			
-			processDTO.setWork_desc(work_desc);
-			processDTO.setProcess_note(process_note);
-			processDTO.setSystem_key(system_key);
+			processDTO.setProcess_desc(process_desc);
+			processDTO.setStatus(status);
+			processDTO.setItem_key(item_key);
 			
 			ProcessService processservice = new ProcessService(); 
 			int result = processservice.update(processDTO);
 			
-			System.out.println("update ��� : " + result);
+			System.out.println("update된 열 : " + result);
+			
 			response.sendRedirect("");
 			
 			
@@ -144,71 +167,35 @@ public class ProcessController extends HttpServlet {
 	}
 	
 	protected void delete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process delete ����");
+		System.out.println("/process delete 실행");
 		
 		try {
 			request.setCharacterEncoding("utf-8");
 			response.setContentType("text/html; charset=utf-8;");
 			
-			ProcessDTO processDTO = new ProcessDTO();
-			String process_key = request.getParameter("process_key");
-			processDTO.setProcess_key(process_key);
+			String[] keys = request.getParameterValues("process_key");
 			
-			ProcessService processservice = new ProcessService(); 
-			int result = processservice.delete(processDTO);
+			ProcessDTO dto = new ProcessDTO();
 			
-			response.sendRedirect("");
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	protected void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		System.out.println("/process list ����");
-		
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8;");
-		
-		ProcessService processservice = new ProcessService();
-		
-		List<ProcessDTO> list = processservice.getList(); 
-		request.setAttribute("list", list);
-		
-		System.out.println(list.size());
-		
-		RequestDispatcher rd = request.getRequestDispatcher("/process.jsp");
-		rd.forward(request, response);
-		
-	}
-	
-	protected void detail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		System.out.println("/process detail ����");
-		
-		try { 
-			
-			request.setCharacterEncoding("utf-8");
-			response.setContentType("text/html; charset=utf-8;");
-			
-			String process_key = request.getParameter("process_key");
-			System.out.println("process_key: " + process_key);
-			
-			// process_key �� service�� DAO ������ 
-			ProcessService processservice = new ProcessService(); 
-			ProcessDTO processDTO = processservice.getProcess(process_key);
-			
-			request.setAttribute("processDTO", processDTO);
-			
-			System.out.println(processDTO);
-			
-			request.getRequestDispatcher("").forward(request, response);
+			if(keys != null) {
+				
+				ProcessService processservice = new ProcessService(); 
+				
+				for(String key : keys) {
+					int process_key = Integer.parseInt(key);
+					System.out.println("process_key : " + process_key);
+					
+					dto.setProcess_key(process_key);
+					
+					processservice.delete(dto);
+				}
+				int result = processservice.delete(dto);
+			}
+			response.sendRedirect("../slowstarter/process");
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 }

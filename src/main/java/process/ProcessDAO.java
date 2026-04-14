@@ -80,9 +80,9 @@ public class ProcessDAO {
 						+ "			i.item_name As process_item_key From tb_process p  "
 						+ "			left join tb_item i on p.item_key = i.item_key  "
 						+ "			where 1=1 and (? = 0 or p.process_key = ? ) "
-						+ "			and (? is null or i.item_name like '%' || ? || '%' )   "
+						+ "			and (? is null or p.process_name like '%' || ? || '%' )   "
 						+ "			ORDER BY p.process_key ) p  "
-						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ;");
+						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ");
 
 		) {
 			ps.setInt(1, processDTO.getKeycode());
@@ -104,6 +104,8 @@ public class ProcessDAO {
 					dto.setProcess_desc(rs.getString("process_desc"));
 					dto.setStatus(rs.getString("status"));
 					dto.setProcess_item_key(rs.getString("process_item_key"));
+					
+					list.add(dto);
 
 				}
 			}
@@ -128,7 +130,7 @@ public class ProcessDAO {
 			ps.setInt(2, processDTO.getSequence_no());
 			ps.setString(3, processDTO.getProcess_desc());
 			ps.setString(4, processDTO.getStatus());
-			ps.setString(5, processDTO.getProcess_item_key());
+			ps.setInt(5, processDTO.getItem_key());
 
 			System.out.println(((LoggableStatement) ps).getQueryString());
 
@@ -151,14 +153,16 @@ public class ProcessDAO {
 				PreparedStatement ps = new LoggableStatement(conn,
 						"update tb_process " + " set process_code = ?, " + "  process_name = ?, "
 								+ "  sequence_no = ?, " + "  process_desc = ?, " + "  status = ?, "
-								+ "  item_name = (select item_name from tb_item where item_key = ?) "
+								+ "  item_key = ? "
 								+ " where process_key = ? ");) {
 
 			ps.setString(1, processDTO.getProcess_code());
 			ps.setString(2, processDTO.getProcess_name());
 			ps.setInt(3, processDTO.getSequence_no());
-			ps.setString(4, processDTO.getStatus());
-			ps.setInt(5, processDTO.getItem_key());
+			ps.setString(4, processDTO.getProcess_desc());
+			ps.setString(5, processDTO.getStatus());
+			ps.setInt(6, processDTO.getItem_key());
+			ps.setInt(7, processDTO.getProcess_key());
 
 			System.out.println(((LoggableStatement) ps).getQueryString());
 
@@ -223,8 +227,8 @@ public class ProcessDAO {
 
 		try (Connection conn = getConn();
 				PreparedStatement ps = new LoggableStatement(conn,
-						"SELECT COUNT(*) cnt " + "	FROM tb_bom b " + "	LEFT JOIN tb_item i ON b.item_key = i.item_key "
-								+ "	WHERE 1=1 " + "	AND ( ? = 0 OR b.bom_key = ? ) "
+						"SELECT COUNT(*) cnt " + "	FROM tb_process p " + "	LEFT JOIN tb_item i ON p.item_key = i.item_key "
+								+ "	WHERE 1=1 " + "	AND ( ? = 0 OR p.process_key = ? ) "
 								+ "	AND ( ? IS NULL OR i.item_name LIKE '%' || ? || '%' )");) {
 			ps.setInt(1, keycode);
 			ps.setInt(2, keycode);

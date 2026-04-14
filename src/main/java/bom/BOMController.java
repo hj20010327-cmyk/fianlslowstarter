@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class bomcontroller
  */
-@WebServlet("/BOM")
+@WebServlet("/bom")
 public class BOMController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -122,7 +122,7 @@ public class BOMController extends HttpServlet {
 		
 		System.out.println("insert된 rows: " + result);
 		
-		response.sendRedirect("/slowstarter/BOM");
+		response.sendRedirect("/slowstarter/bom");
 		
 	}
 	
@@ -156,7 +156,7 @@ public class BOMController extends HttpServlet {
 			
 			System.out.println("update된 열 : " + result);
 			
-			response.sendRedirect("");
+			response.sendRedirect("/slowstarter/bom");
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -188,7 +188,7 @@ public class BOMController extends HttpServlet {
 				}
 			int result = bomservice.delete(dto);
 			}
-			response.sendRedirect("../slowstarter/BOM");
+			response.sendRedirect("../slowstarter/bom");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

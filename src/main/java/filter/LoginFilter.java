@@ -77,6 +77,7 @@ public class LoginFilter implements Filter {
 			|| path.indexOf("/asset") != -1
 			|| path.startsWith("/asset")
 			|| path.endsWith(".css")
+			|| path.endsWith(".js")
 			|| path.equals("/login")
 			|| path.equals("/findpw")
 			) {

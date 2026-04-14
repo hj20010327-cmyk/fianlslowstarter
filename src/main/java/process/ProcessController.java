@@ -57,6 +57,11 @@ public class ProcessController extends HttpServlet {
 		
 		request.setAttribute("map",map);
 		request.setAttribute(sPage, processservice);
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/process.jsp");
+		rd.forward(request, response);
+		
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

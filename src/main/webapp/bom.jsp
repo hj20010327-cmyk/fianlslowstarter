@@ -188,7 +188,7 @@
 
 
 
-
+							<div class = "pagination">
 								<c:forEach var="i" begin="${start_section}" end="${end_section}">
 									<a href="BOM?page=${i}&size=5"> <c:if
 											test="${map.page eq i }">
@@ -198,6 +198,7 @@
                                	</c:if>
 									</a>
 								</c:forEach>
+								</div>
 							</div>
 
 

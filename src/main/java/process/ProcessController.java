@@ -70,6 +70,7 @@ public class ProcessController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
+		// form 요소 
 		String cmd = request.getParameter("cmd");
 		
 		if(cmd.equals("insert")) {
@@ -82,24 +83,29 @@ public class ProcessController extends HttpServlet {
 	}
 	
 	protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("/process insert ����");
+		System.out.println("/process insert 실행");
 		
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 		
-		// �Ķ���� Ȯ��
-		String process_key = request.getParameter("process_key");
-		System.out.println("process_key: " + process_key);
+		// 파라미터
+		String process_code = request.getParameter("process_code");
+		String process_name = request.getParameter("process_name");
+		String sequence = request.getParameter("sequence_no");
+		String process_desc = request.getParameter("process_desc");
+		String status = request.getParameter("status");
+		String process_item_key = request.getParameter("process_item_key");
 		
-		// DTO �ֱ� 
+		
+		// DTO 실행
 		ProcessDTO processDTO = new ProcessDTO(); 
 		processDTO.setProcess_key(process_key);
 		
-		// ���񽺷� DTO�� ���� 
+		// service & DTO 
 		ProcessService processservice = new ProcessService(); 
 		int result = processservice.insert(processDTO);
 		
-		System.out.println("insert�� rows : " + result);
+		System.out.println("insert된 rows : " + result);
 		
 		response.sendRedirect("");
 		

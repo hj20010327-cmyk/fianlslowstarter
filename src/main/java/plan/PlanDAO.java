@@ -290,6 +290,118 @@ public class PlanDAO {
 
         return count;
     }
+    
+    public List<PlanDTO> searchPage(String planCode, String status, int startRow, int endRow) {
+        List<PlanDTO> list = new ArrayList<PlanDTO>();
+
+        try {
+            Context ctx = new InitialContext();
+            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+            conn = dataFactory.getConnection();
+
+            String query =
+                "SELECT * FROM ( " +
+                "  SELECT ROWNUM rnum, A.* FROM ( " +
+                "    SELECT * FROM tb_plan WHERE 1=1 ";
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                query += " AND plan_code LIKE ?";
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                query += " AND plan_status = ?";
+            }
+
+            query += " ORDER BY plan_key " +
+                     "  ) A WHERE ROWNUM <= ? " +
+                     ") WHERE rnum >= ?";
+
+            ps = conn.prepareStatement(query);
+
+            int idx = 1;
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                ps.setString(idx++, "%" + planCode.trim() + "%");
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                ps.setString(idx++, status);
+            }
+
+            ps.setInt(idx++, endRow);
+            ps.setInt(idx++, startRow);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                PlanDTO dto = new PlanDTO();
+                dto.setPlan_key(rs.getInt("plan_key"));
+                dto.setPlan_code(rs.getString("plan_code"));
+                dto.setItem_key(rs.getInt("item_key"));
+                dto.setPlan_date(rs.getDate("plan_date"));
+                dto.setDue_date(rs.getDate("due_date"));
+                dto.setPlan_qty(rs.getInt("plan_qty"));
+                dto.setStatus(rs.getString("plan_status"));
+                dto.setUser_key(rs.getInt("user_key"));
+                dto.setCreate_at(rs.getDate("created_at"));
+                dto.setPriority(rs.getInt("priority"));
+
+                list.add(dto);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeAll();
+        }
+
+        return list;
+    }
+    
+    public int getSearchCount(String planCode, String status) {
+        int count = 0;
+
+        try {
+            Context ctx = new InitialContext();
+            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+            conn = dataFactory.getConnection();
+
+            String query = "SELECT COUNT(*) FROM tb_plan WHERE 1=1";
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                query += " AND plan_code LIKE ?";
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                query += " AND plan_status = ?";
+            }
+
+            ps = conn.prepareStatement(query);
+
+            int idx = 1;
+
+            if (planCode != null && !planCode.trim().equals("")) {
+                ps.setString(idx++, "%" + planCode.trim() + "%");
+            }
+
+            if (status != null && !status.trim().equals("")) {
+                ps.setString(idx++, status);
+            }
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            closeAll();
+        }
+
+        return count;
+    }
     // finally 의 close가 너무 반복되서 함수로 빼버림
     private void closeAll() {
 		if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }

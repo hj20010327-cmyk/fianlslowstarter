@@ -129,8 +129,8 @@
 				</div>
 				<div class="page-actions">
 					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-					<button class="btn primary" type="button"
-						onclick="openInsertModal()">신규 등록</button>
+						<button class="btn primary" type="button"
+							onclick="openInsertModal()">신규 등록</button>
 					</c:if>
 				</div>
 			</div>
@@ -143,7 +143,8 @@
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
 						<input class="input" type="text" name="planCode"
-							placeholder="계획 코드 입력" /> <select class="select" name="status">
+							placeholder="계획 코드 입력" /> 
+						<select class="select" name="status">
 							<option value="">전체</option>
 							<option value="계획">계획</option>
 							<option value="진행중">진행중</option>
@@ -159,9 +160,10 @@
 					<form action="/slowstarter/plan/delete" method="post">
 						<div class="section-title">
 							<h2>생산계획 목록</h2>
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-							<span>계획코드를 클릭하면 수정할 수 있습니다.</span>
-							<button type="submit" class="btn">삭제</button>
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<span>계획코드를 클릭하면 수정할 수 있습니다.</span>
+								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
 						<div class="table-wrap">
@@ -181,11 +183,11 @@
 										<td><input type="checkbox" name="plan_key"
 											value="${p.plan_key}"></td>
 										<td>
-										<!--  관리자 /슈퍼바이저 일때 계획명 누르면 수정가능하게 -->
-										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-										<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
-										<a href="javascript:void(0);"
-											onclick="openEditModal(
+											<!--  관리자 /슈퍼바이저 일때 계획명 누르면 수정가능하게 --> <c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
+												<a href="javascript:void(0);"
+													onclick="openEditModal(
 													'${p.plan_key}',
 													'${p.plan_code}',
 													'${p.item_key}',
@@ -196,12 +198,12 @@
 													'${p.user_key}',
 													'${p.priority}'
 												)">
-												${p.plan_code}</a>
-										</c:if>
-										<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+													${p.plan_code}</a>
+											</c:if> <c:if
+												test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
 											${p.plan_code}
-										</c:if>	
-										</td>	
+										</c:if>
+										</td>
 										<td>${p.item_key}</td>
 										<td>${p.plan_date}</td>
 										<td>${p.due_date}</td>
@@ -212,14 +214,14 @@
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-									<c:choose>
-										<c:when test="${page == i}">
-											<a href="plan?page=${i}" class="active">${i}</a>
-										</c:when>
-										<c:otherwise>
-											<a href="plan?page=${i}">${i}</a>
-										</c:otherwise>
-									</c:choose>
+									<c:if test="${page == i}">
+										<a href="plan?page=${i}&planCode=${planCode}&status=${status}"
+											class="active">${i}</a>
+									</c:if>
+
+									<c:if test="${page != i}">
+										<a href="plan?page=${i}&planCode=${planCode}&status=${status}">${i}</a>
+									</c:if>
 								</c:forEach>
 							</div>
 						</div>

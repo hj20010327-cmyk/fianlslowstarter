@@ -36,24 +36,30 @@ public class MachineListController extends HttpServlet {
 		
 		MachineService service = new MachineService();
 		List<MachineDTO> list;
+		int totalCount = 0;
 		
-		  // 2조건 여부에 따라 분기
-	    if ((name == null || name.isEmpty()) && (status == null || status.isEmpty())) {
-//	        // 검색 조건 없으면 전체조회
-//	        list = service.getList();
-	    	list = service.selectPage(startRow, endRow);
-	    } else {
-	        // 검색 조건 있으면 조건조회
-	        list = service.searchList(name, status);
-	    }
+		  // 조건 여부에 따라 분기
+		if ((name == null || name.isEmpty()) && (status == null || status.isEmpty())) {
+		    // 검색 조건 없으면 전체 페이징
+		    list = service.selectPage(startRow, endRow);
+		    totalCount = service.getTotalCount();
+		} else {
+		    // 검색 조건 있으면 검색 + 페이징
+		    list = service.searchPage(name, status, startRow, endRow);
+		    totalCount = service.getSearchCount(name, status);
+		}
 	    
-	    int totalCount = service.getTotalCount();
+	    
 	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 	    
 		
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("totalPage", totalPage);
+		
+		// 검색값 유지용
+        request.setAttribute("machineName", name);
+        request.setAttribute("machineStatus", status);
 		
 		request.getRequestDispatcher("/machine.jsp").forward(request, response);
 		

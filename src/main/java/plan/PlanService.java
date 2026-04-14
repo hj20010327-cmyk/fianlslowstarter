@@ -41,5 +41,15 @@ public class PlanService {
 	    return dao.getTotalCount();
 	}
 	
+	public List<PlanDTO> searchPage(String planCode, String status, int startRow, int endRow) {
+	    PlanDAO dao = new PlanDAO();
+	    return dao.searchPage(planCode, status, startRow, endRow);
+	}
+
+	public int getSearchCount(String planCode, String status) {
+	    PlanDAO dao = new PlanDAO();
+	    return dao.getSearchCount(planCode, status);
+	}
+	
 	
 }

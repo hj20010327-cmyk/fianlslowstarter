@@ -74,74 +74,6 @@ public class MachineDAO {
 		return list;
 	}
 	
-	public List<MachineDTO> searchList(String machineName, String machineStatus) {
-	    List<MachineDTO> list = new ArrayList<MachineDTO>();
-
-	    try {
-	    	// DB 연결 
-	        Context ctx = new InitialContext();
-	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-	        conn = dataFactory.getConnection();
-	        
-	        // SQL 문 (where 1=1 은 조건 붙이기 위해서 씀)
-	        String query = "select * from tb_machine where 1=1";
-
-	        // 설비명 조건이 있으면 추가 
-	        if (machineName != null && !machineName.trim().equals("")) {
-	            query += " and machine_name like ?";
-	        }
-	        // 상태 조건이 있으면 추가 
-	        if (machineStatus != null && !machineStatus.trim().equals("")) {
-	            query += " and machine_status = ?";
-	        }
-	        // 정렬
-	        query += " order by machine_key";
-	        
-	        // SQL 준비 
-	        ps = conn.prepareStatement(query);
-	        
-	        // ?에 값을 넣기 위함
-	        int idx = 1;
-	        
-	        // 설비명 조회에서 부분검색 되기 위함 
-	        if (machineName != null && !machineName.trim().equals("")) {
-	            ps.setString(idx++, "%" + machineName.trim() + "%");
-	        }
-	        
-	        // 상태 값 세팅  
-	        if (machineStatus != null && !machineStatus.trim().equals("")) {
-	            ps.setString(idx++, machineStatus);
-	        }
-
-	        rs = ps.executeQuery();
-
-	        // 결과를 DTO에 담아서 리스트에 추가함 
-	        while (rs.next()) {
-	            MachineDTO dto = new MachineDTO();
-
-	            dto.setMachineKey(rs.getInt("machine_key"));
-	            dto.setMachineCode(rs.getString("machine_code"));
-	            dto.setMachineName(rs.getString("machine_name"));
-	            dto.setProcessKey(rs.getInt("process_key"));
-	            dto.setMachineStatus(rs.getString("machine_status"));
-	            dto.setBuyDate(rs.getDate("buy_date"));
-	            dto.setLastCheckDate(rs.getDate("last_check_date"));
-	            dto.setRemark(rs.getString("remark"));
-	            dto.setStatus(rs.getString("status"));
-	            dto.setCreatedAt(rs.getDate("created_at"));
-
-	            list.add(dto);
-	        }
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-			closeAll();
-		}
-
-	    return list;
-	}
-
 	public int insertmachine(MachineDTO machineDTO) {
 		
 		int result = -1;
@@ -333,6 +265,186 @@ public class MachineDAO {
 	    }  finally {
 			closeAll();
 		}
+
+	    return count;
+	}
+	
+	public List<MachineDTO> searchList(String machineName, String machineStatus) {
+	    List<MachineDTO> list = new ArrayList<MachineDTO>();
+
+	    try {
+	    	// DB 연결 
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+	        
+	        // SQL 문 (where 1=1 은 조건 붙이기 위해서 씀)
+	        String query = "select * from tb_machine where 1=1";
+
+	        // 설비명 조건이 있으면 추가 
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            query += " and machine_name like ?";
+	        }
+	        // 상태 조건이 있으면 추가 
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            query += " and machine_status = ?";
+	        }
+	        // 정렬
+	        query += " order by machine_key";
+	        
+	        // SQL 준비 
+	        ps = conn.prepareStatement(query);
+	        
+	        // ?에 값을 넣기 위함
+	        int idx = 1;
+	        
+	        // 설비명 조회에서 부분검색 되기 위함 
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            ps.setString(idx++, "%" + machineName.trim() + "%");
+	        }
+	        
+	        // 상태 값 세팅  
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            ps.setString(idx++, machineStatus);
+	        }
+
+	        rs = ps.executeQuery();
+
+	        // 결과를 DTO에 담아서 리스트에 추가함 
+	        while (rs.next()) {
+	            MachineDTO dto = new MachineDTO();
+
+	            dto.setMachineKey(rs.getInt("machine_key"));
+	            dto.setMachineCode(rs.getString("machine_code"));
+	            dto.setMachineName(rs.getString("machine_name"));
+	            dto.setProcessKey(rs.getInt("process_key"));
+	            dto.setMachineStatus(rs.getString("machine_status"));
+	            dto.setBuyDate(rs.getDate("buy_date"));
+	            dto.setLastCheckDate(rs.getDate("last_check_date"));
+	            dto.setRemark(rs.getString("remark"));
+	            dto.setStatus(rs.getString("status"));
+	            dto.setCreatedAt(rs.getDate("created_at"));
+
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+			closeAll();
+		}
+
+	    return list;
+	}
+	
+	public List<MachineDTO> searchPage(String machineName, String machineStatus, int startRow, int endRow) {
+	    List<MachineDTO> list = new ArrayList<>();
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query =
+	            "SELECT * FROM ( " +
+	            "  SELECT ROWNUM rnum, A.* FROM ( " +
+	            "    SELECT * FROM tb_machine WHERE 1=1 ";
+
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            query += " AND machine_name LIKE ?";
+	        }
+
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            query += " AND machine_status = ?";
+	        }
+
+	        query += " ORDER BY machine_key " +
+	                 "  ) A WHERE ROWNUM <= ? " +
+	                 ") WHERE rnum >= ?";
+
+	        ps = conn.prepareStatement(query);
+
+	        int idx = 1;
+
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            ps.setString(idx++, "%" + machineName.trim() + "%");
+	        }
+
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            ps.setString(idx++, machineStatus);
+	        }
+
+	        ps.setInt(idx++, endRow);
+	        ps.setInt(idx++, startRow);
+
+	        rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            MachineDTO dto = new MachineDTO();
+	            dto.setMachineKey(rs.getInt("machine_key"));
+	            dto.setMachineCode(rs.getString("machine_code"));
+	            dto.setMachineName(rs.getString("machine_name"));
+	            dto.setProcessKey(rs.getInt("process_key"));
+	            dto.setMachineStatus(rs.getString("machine_status"));
+	            dto.setBuyDate(rs.getDate("buy_date"));
+	            dto.setLastCheckDate(rs.getDate("last_check_date"));
+	            dto.setRemark(rs.getString("remark"));
+	            dto.setStatus(rs.getString("status"));
+	            dto.setCreatedAt(rs.getDate("created_at"));
+
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeAll();
+	    }
+
+	    return list;
+	}
+	
+	public int getSearchCount(String machineName, String machineStatus) {
+	    int count = 0;
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query = "SELECT COUNT(*) FROM tb_machine WHERE 1=1";
+
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            query += " AND machine_name LIKE ?";
+	        }
+
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            query += " AND machine_status = ?";
+	        }
+
+	        ps = conn.prepareStatement(query);
+
+	        int idx = 1;
+
+	        if (machineName != null && !machineName.trim().equals("")) {
+	            ps.setString(idx++, "%" + machineName.trim() + "%");
+	        }
+
+	        if (machineStatus != null && !machineStatus.trim().equals("")) {
+	            ps.setString(idx++, machineStatus);
+	        }
+
+	        rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            count = rs.getInt(1);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeAll();
+	    }
 
 	    return count;
 	}

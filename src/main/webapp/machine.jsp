@@ -152,9 +152,10 @@
 							placeholder="설비명 입력" />
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
-							<option value="">전체</option>
-							<option value="가동중">가동중</option>
-							<option value="점검중">점검중</option>
+							<option value="" <c:if test="${empty machineStatus}">selected</c:if>>전체</option>
+    						<option value="가동중" <c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
+    						<option value="점검중" <c:if test="${machineStatus == '점검중'}">selected</c:if>>점검중</option>
+
 						</select>
 
 						<!-- 조회 버튼 → MachineListController로 이동 -->
@@ -230,14 +231,13 @@
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-									<c:choose>
-										<c:when test="${page == i}">
-											<a href="machine?page=${i}" class="active">${i}</a>
-										</c:when>
-										<c:otherwise>
-											<a href="machine?page=${i}">${i}</a>
-										</c:otherwise>
-									</c:choose>
+										<c:if test="${page == i}">
+											<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}" class="active">${i}</a>
+										</c:if>
+										
+										<c:if test="${page != i}">
+											<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}">${i}</a>
+										</c:if>
 								</c:forEach>
 							</div>
 						</div>

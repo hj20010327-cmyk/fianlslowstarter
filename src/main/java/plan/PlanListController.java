@@ -35,15 +35,17 @@ public class PlanListController extends HttpServlet {
 
 		PlanService service = new PlanService();
 		List<PlanDTO> list;
+		int totalCount = 0;
 
-		if ((planCode == null || planCode.isEmpty()) &&
+		if ((planCode == null || planCode.isEmpty()) && 
 			(status == null || status.isEmpty())) {
-			list = service.selectPage(startRow, endRow);
+		    list = service.selectPage(startRow, endRow);
+		    totalCount = service.getTotalCount();
 		} else {
-			list = service.searchList(planCode, status);
+		    list = service.searchPage(planCode, status, startRow, endRow);
+		    totalCount = service.getSearchCount(planCode, status);
 		}
 		
-		int totalCount = service.getTotalCount();
 	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
 		request.setAttribute("list", list);

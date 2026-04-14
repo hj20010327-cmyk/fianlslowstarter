@@ -199,9 +199,16 @@
 								</c:forEach>
 							</table>
 							<div class="pagination">
-								<a href="plan?page=1">1</a> <a href="plan?page=2">2</a> <a
-									href="plan?page=3">3</a> <a href="plan?page=4">4</a> <a
-									href="plan?page=5">5</a>
+								<c:forEach var="i" begin="1" end="${totalPage}">
+									<c:choose>
+										<c:when test="${page == i}">
+											<a href="plan?page=${i}" class="active">${i}</a>
+										</c:when>
+										<c:otherwise>
+											<a href="plan?page=${i}">${i}</a>
+										</c:otherwise>
+									</c:choose>
+								</c:forEach>
 							</div>
 						</div>
 					</form>

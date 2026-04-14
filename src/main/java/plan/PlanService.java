@@ -36,5 +36,10 @@ public class PlanService {
 	    PlanDAO dao = new PlanDAO();
 	    return dao.selectPage(startRow, endRow);
 	}
+	public int getTotalCount() {
+		PlanDAO dao = new PlanDAO();
+	    return dao.getTotalCount();
+	}
+	
 	
 }

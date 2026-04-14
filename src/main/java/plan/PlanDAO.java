@@ -49,29 +49,7 @@ public class PlanDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		System.out.println("list.size(): " + list.size());
 		return list;
@@ -105,33 +83,12 @@ public class PlanDAO {
             ps.setInt(8, dto.getPriority());
 
             result = ps.executeUpdate();
+            System.out.println("insert의 결과:" + result);
 
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		return result;
 	}
@@ -169,33 +126,12 @@ public class PlanDAO {
             ps.setInt(9, dto.getPlan_key());
 
             result = ps.executeUpdate();
+            System.out.println("update의 결과:" + result);
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 
 		return result;
@@ -216,33 +152,12 @@ public class PlanDAO {
             ps.setInt(1, plankey);
 
             result = ps.executeUpdate();
+            System.out.println("delete의 결과:" + result);
 
         } catch (Exception e) {
             e.printStackTrace();
         }  finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			closeAll();
 		}
 		
 		return result;
@@ -300,12 +215,9 @@ public class PlanDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-
+        }finally {
+			closeAll();
+		}
         return list;
     }
 
@@ -348,12 +260,40 @@ public class PlanDAO {
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-            if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-        }
-
+        }finally {
+			closeAll();
+		}
         return list;
     }
+    
+    public int getTotalCount() {
+        int count = 0;
+
+        try {
+            Context ctx = new InitialContext();
+            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+            conn = dataFactory.getConnection();
+
+            String query = "SELECT COUNT(*) FROM tb_plan";
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+			closeAll();
+		}
+
+        return count;
+    }
+    // finally 의 close가 너무 반복되서 함수로 빼버림
+    private void closeAll() {
+		if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+		if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
+		if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+	}
 }

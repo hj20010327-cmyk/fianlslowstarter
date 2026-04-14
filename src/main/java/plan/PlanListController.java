@@ -29,7 +29,7 @@ public class PlanListController extends HttpServlet {
 			page = Integer.parseInt(pageStr);
 		}
 
-		int pageSize = 5;
+		int pageSize = 10;
 		int startRow = (page - 1) * pageSize + 1;
 		int endRow = page * pageSize;
 
@@ -42,11 +42,15 @@ public class PlanListController extends HttpServlet {
 		} else {
 			list = service.searchList(planCode, status);
 		}
+		
+		int totalCount = service.getTotalCount();
+	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("planCode", planCode);
 		request.setAttribute("status", status);
+		request.setAttribute("totalPage", totalPage);
 
 		request.getRequestDispatcher("/plan.jsp").forward(request, response);
 	}

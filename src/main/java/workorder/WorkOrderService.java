@@ -34,4 +34,9 @@ public class WorkOrderService {
 	    WorkOrderDAO dao = new WorkOrderDAO();
 	    return dao.selectPage(startRow, endRow);
 	}
+	
+	public int getTotalCount() {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.getTotalCount();
+	}
 }

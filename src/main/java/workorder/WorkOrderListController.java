@@ -29,7 +29,7 @@ public class WorkOrderListController extends HttpServlet {
 			page = Integer.parseInt(pageStr);
 		}
 
-		int pageSize = 5;
+		int pageSize = 10;
 		int startRow = (page - 1) * pageSize + 1;
 		int endRow = page * pageSize;
 
@@ -42,11 +42,15 @@ public class WorkOrderListController extends HttpServlet {
 		} else {
 			list = service.searchList(workOrderCode, planKey);
 		}
+		
+		int totalCount = service.getTotalCount();
+		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("workOrderCode", workOrderCode);
 		request.setAttribute("planKey", planKey);
+		request.setAttribute("totalPage", totalPage);
 
 		request.getRequestDispatcher("/workorder.jsp").forward(request, response);
 	}

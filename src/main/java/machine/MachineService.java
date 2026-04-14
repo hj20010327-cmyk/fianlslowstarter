@@ -35,5 +35,10 @@ public class MachineService {
 	    return dao.selectPage(startRow, endRow);
 	}
 	
+	public int getTotalCount() {
+	    MachineDAO dao = new MachineDAO();
+	    return dao.getTotalCount();
+	}
+	
 	
 }

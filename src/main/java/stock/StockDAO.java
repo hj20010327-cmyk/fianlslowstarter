@@ -60,6 +60,31 @@ public class StockDAO {
         return list;
     }
 
+    // [개수 조회] 페이징 처리를 위해 전체 데이터 개수를 가져오는 메소드 (추가됨)
+    public int getTotalCount(String keyword) {
+        int total = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            conn = getConnection();
+            String sql = "SELECT COUNT(*) FROM TB_STOCK WHERE UPPER(LOT) LIKE UPPER(?)";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
+            
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, ps, rs);
+        }
+        return total;
+    }
+
     // [등록] 현재고(입고-출고) 자동 계산 로직 포함
     public int insert(StockDTO dto) {
         Connection conn = null;

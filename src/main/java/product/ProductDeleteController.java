@@ -1,6 +1,5 @@
 package product;
 
-
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,27 +7,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @WebServlet("/productDelete")
-public class ProductDeleteController extends HttpServlet {
+public class ProductDeleteController extends HttpServlet { // P 대문자로 수정
+    private static final long serialVersionUID = 1L;
 
-
-    private ProductDAO dao = new ProductDAO();
-
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
+        request.setCharacterEncoding("utf-8");
 
-        // 1. 삭제할 제품의 Key값 가져오기
-        int itemKey = Integer.parseInt(request.getParameter("itemKey"));
+        // jsp에서 체크박스의 name이 "codes"인지 확인 필요
+        String codes = request.getParameter("codes");
 
+        if (codes != null && !codes.isEmpty()) {
+            ProductService service = new ProductService();
+            service.remove(codes);
+        }
 
-        // 2. DB 삭제 로직 수행
-        dao.deleteProduct(itemKey);
-
-
-        // 3. 삭제 후 목록으로 복귀
-        response.sendRedirect(request.getContextPath() + "/productList");
+        response.sendRedirect(request.getContextPath() + "/product");
     }
 }

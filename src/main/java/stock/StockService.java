@@ -33,4 +33,10 @@ public class StockService {
         }
         return 0;
     }
+    
+    public int getTotalCount(String keyword) {
+        StockDAO dao = new StockDAO();
+        return dao.getTotalCount(keyword);
+    }
 }
+

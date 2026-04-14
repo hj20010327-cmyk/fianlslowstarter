@@ -1,154 +1,79 @@
 package product;
 
-
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
+import javax.naming.*;
+import javax.sql.DataSource;
 
 public class ProductDAO {
-
-
-    // 1. DB 연결 정보 (직접 설정)
-    private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-    private String user = "comp";      // 본인의 오라클 아이디
-    private String password = "1234";  // 본인의 오라클 비밀번호
-
-
-
-
-    // 2. DB 연결 메서드
     private Connection getConnection() throws Exception {
-
-
-        Class.forName("oracle.jdbc.driver.OracleDriver");
-
-
-        return DriverManager.getConnection(url, user, password);
+        Context ctx = new InitialContext();
+        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+        return dataFactory.getConnection();
     }
 
-
-
-
-    // 3. 완제품 목록 조회 (ITEM_CODE가 CP-A로 시작)
-    public List<ProductDTO> selectProductList() {
-
-
+    // 매개변수를 3개로 맞춰서 Controller에서의 에러를 방지합니다.
+    public List<ProductDTO> selectAll(int startRow, int endRow, String keyword) {
         List<ProductDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM TB_ITEM WHERE ITEM_CODE LIKE 'CP-A%' ORDER BY ITEM_KEY DESC";
-
-
+        // 페이징 1페이지 고정이므로 start/endRow는 쿼리에서 일단 제외하고 검색어만 처리합니다.
+        String sql = "SELECT * FROM TB_PRODUCT WHERE PRODUCT_NAME LIKE ? ORDER BY PRODUCT_KEY ASC";
+        
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-
-
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ProductDTO dto = new ProductDTO();
-                dto.setItemKey(rs.getInt("ITEM_KEY"));
-                dto.setItemCode(rs.getString("ITEM_CODE"));
-                dto.setItemName(rs.getString("ITEM_NAME"));
-                dto.setSpec(rs.getString("ITEM_SPEC"));
-                dto.setUnit(rs.getString("ITEM_UNIT"));
-                dto.setPrice(rs.getInt("PRICE"));
-                dto.setSafeQty(rs.getInt("SAFE_QTY"));
-                dto.setStatus(rs.getString("STATUS"));
+                dto.setProduct_key(rs.getInt("PRODUCT_KEY"));
+                dto.setProduct_name(rs.getString("PRODUCT_NAME"));
+                dto.setSpec(rs.getString("SPEC"));
+                dto.setUnit(rs.getString("UNIT"));
+                dto.setRemarks(rs.getString("REMARKS"));
                 list.add(dto);
             }
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
         return list;
     }
 
-
-
-
-    // 4. 제품 삭제 (DeleteController에서 에러 나던 부분)
-    public int deleteProduct(int itemKey) {
-
-
-        String sql = "DELETE FROM TB_ITEM WHERE ITEM_KEY = ?";
-
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-
-            pstmt.setInt(1, itemKey);
-
-
-            return pstmt.executeUpdate();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // 전체 개수 조회 (페이징 UI를 위해 필요)
+    public int getTotalCount(String keyword) {
+        String sql = "SELECT COUNT(*) FROM TB_PRODUCT WHERE PRODUCT_NAME LIKE ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        } catch (Exception e) { e.printStackTrace(); }
         return 0;
     }
 
-
-
-
-    // 5. 신규 제품 등록
-    public int insertProduct(ProductDTO dto) {
-
-
-        String sql = "INSERT INTO TB_ITEM (ITEM_KEY, ITEM_CODE, ITEM_NAME, ITEM_SPEC, ITEM_UNIT, PRICE, SAFE_QTY, STATUS) " +
-                     "VALUES (SEQ_ITEM.NEXTVAL, ?, ?, ?, ?, ?, ?, 'Y')";
-
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-
-            pstmt.setString(1, dto.getItemCode());
-            pstmt.setString(2, dto.getItemName());
-            pstmt.setString(3, dto.getSpec());
-            pstmt.setString(4, dto.getUnit());
-            pstmt.setInt(5, dto.getPrice());
-            pstmt.setInt(6, dto.getSafeQty());
-
-
-            return pstmt.executeUpdate();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+    public int insert(ProductDTO dto) {
+        String sql = "INSERT INTO TB_PRODUCT (PRODUCT_KEY, PRODUCT_NAME, SPEC, UNIT, REMARKS) VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, dto.getProduct_name());
+            ps.setString(2, dto.getSpec());
+            ps.setString(3, dto.getUnit());
+            ps.setString(4, dto.getRemarks());
+            return ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); return 0; }
     }
 
+    public int update(ProductDTO dto) {
+        String sql = "UPDATE TB_PRODUCT SET PRODUCT_NAME=?, SPEC=?, UNIT=?, REMARKS=? WHERE PRODUCT_KEY=?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, dto.getProduct_name());
+            ps.setString(2, dto.getSpec());
+            ps.setString(3, dto.getUnit());
+            ps.setString(4, dto.getRemarks());
+            ps.setInt(5, dto.getProduct_key());
+            return ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); return 0; }
+    }
 
-
-
-    // 6. 제품 정보 수정
-    public int updateProduct(ProductDTO dto) {
-
-
-        String sql = "UPDATE TB_ITEM SET ITEM_NAME = ?, ITEM_SPEC = ?, PRICE = ?, SAFE_QTY = ?, STATUS = ? WHERE ITEM_KEY = ?";
-
-
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-
-            pstmt.setString(1, dto.getItemName());
-            pstmt.setString(2, dto.getSpec());
-            pstmt.setInt(3, dto.getPrice());
-            pstmt.setInt(4, dto.getSafeQty());
-            pstmt.setString(5, dto.getStatus());
-            pstmt.setInt(6, dto.getItemKey());
-
-
-            return pstmt.executeUpdate();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
+    public int delete(String ids) {
+        if (ids == null || ids.isEmpty()) return 0;
+        String sql = "DELETE FROM TB_PRODUCT WHERE PRODUCT_KEY IN (" + ids + ")";
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
+            return stmt.executeUpdate(sql);
+        } catch (Exception e) { e.printStackTrace(); return 0; }
     }
 }

@@ -148,10 +148,10 @@
 						<input class="input" type="text" name="planCode"
 							placeholder="계획 코드 입력" /> 
 						<select class="select" name="status">
-							<option value="">전체</option>
-							<option value="계획">계획</option>
-							<option value="진행중">진행중</option>
-							<option value="완료">완료</option>
+    <option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
+    <option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
+    <option value="진행중" <c:if test="${status == '진행중'}">selected</c:if>>진행중</option>
+    <option value="완료" <c:if test="${status == '완료'}">selected</c:if>>완료</option>
 						</select>
 						<button class="btn primary" type="submit">조회</button>
 					</div>

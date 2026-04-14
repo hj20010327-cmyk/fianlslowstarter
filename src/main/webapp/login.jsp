@@ -54,7 +54,7 @@
 					저장</label>
 				<input class="auth-btn" type="submit" value="로그인">
 				<button class="auth-subbtn" type="button"
-					onclick="location.href='./signup.jsp'">회원가입</button>
+					onclick="location.href='./signup'">회원가입</button>
 				<div class="auth-links">
 					<a href="./findpw">비밀번호 찾기</a>
 				</div>

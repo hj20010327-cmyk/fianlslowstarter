@@ -142,7 +142,7 @@
             <div class="page-head">
                 <div class="page-head-left">
                     <h1>완제품 관리</h1>
-                    <p>생산 완료된 완제품의 품목 정보 및 규격을 관리합니다.</p>
+                    <p>생산 완료된 완제품의 품목 정보 및 스펙을 관리합니다.</p>
                 </div>
                 
                 <div class="page-actions">
@@ -177,40 +177,51 @@
                         
                         <div class="table-wrap">
                             <table>
-                                <thead>
-                                    <tr>
-                                        <th onclick="toggleAllCheckboxes()" style="cursor:pointer;">선택</th>
-                                        <th>번호</th>
-                                        <th>완제품명</th>
-                                        <th>규격(Spec)</th>
-                                        <th>단위</th>
-                                        <th>비고</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <%-- [수정] 컨트롤러의 request.setAttribute("list", list)와 변수명 일치 확인 --%>
-                                    <c:forEach var="pDto" items="${list}">
-                                        <c:set var="params" value="'${pDto.product_key}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.remarks}'" />
-                                        <tr>
-                                            <td>
-                                                <input type="checkbox" name="codes" value="${pDto.product_key}" class="product-checkbox">
-                                            </td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_key}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_name}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.spec}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.unit}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.remarks}</td>
-                                        </tr>
-                                    </c:forEach>
-                                    
-                                    <c:if test="${empty list}">
-                                        <tr><td colspan="6" style="padding:40px; color:#999;">데이터가 없습니다.</td></tr>
-                                    </c:if>
-                                </tbody>
+                               <%-- [수정] 테이블 헤더 부분 --%>
+<thead>
+    <tr>
+        <th onclick="toggleAllCheckboxes()" style="cursor:pointer;">선택</th>
+        <th>번호</th>
+        <th>품목 코드</th> <%-- 추가 --%>
+        <th>완제품명</th>
+        <th>규격(Spec)</th>
+        <th>단위</th>
+        <th>가격</th> <%-- 추가 (비고 대신) --%>
+    </tr>
+</thead>
+
+<%-- [수정] 테이블 바디 부분 --%>
+<tbody>
+    <c:forEach var="pDto" items="${list}">
+        <%-- JS 모달 호출용 데이터 (필요 시 pDto.price 등 추가 가능) --%>
+        <c:set var="params" value="'${pDto.product_key}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.remarks}'" />
+        <tr>
+            <td>
+                <input type="checkbox" name="codes" value="${pDto.product_key}" class="product-checkbox">
+            </td>
+            <%-- 번호 (ITEM_KEY) --%>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_key}</td>
+            <%-- 품목 코드 (ITEM_CODE) - DTO에 item_code 필드가 있다고 가정 --%>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.item_code}</td>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_name}</td>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.spec}</td>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.unit}</td>
+            <%-- 가격 (PRICE) - 포맷팅 처리 --%>
+            <td class="clickable-cell" onclick="openUpdateModal(${params})">
+                <fmt:formatNumber value="${pDto.price}" type="number" />원
+            </td>
+        </tr>
+    </c:forEach>
+    
+    <c:if test="${empty list}">
+        <tr><td colspan="7" style="padding:40px; color:#999;">데이터가 없습니다.</td></tr>
+    </c:if>
+</tbody>
+
+<%-- 후략 (페이징 및 모달) --%>
                             </table>
                             
                             <div class="pagination">
-                                <%-- [수정] totalCount 기반 페이징 --%>
                                 <c:set var="tCount" value="${totalCount != null ? totalCount : 0}" /> 
                                 <fmt:parseNumber var="totalPage" value="${(tCount + 9) / 10}" integerOnly="true" />
                                 

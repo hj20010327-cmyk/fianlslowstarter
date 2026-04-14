@@ -10,7 +10,7 @@ import javax.servlet.http.*;
 public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("utf-8");
-        
+        System.out.println("product doGet 실행");
         // 1. 파라미터 수신
         String p_ = request.getParameter("p");
         String keyword = request.getParameter("keyword");

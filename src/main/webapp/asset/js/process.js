@@ -1,37 +1,36 @@
-/* window.onload 는 페이지가 로딩된 후 실행하고 싶을 때 
-버튼 클릭용만은 필요 없음 */
 
-function openModal(title, el = null) {
-  const modal = document.getElementById('commonModal');
+function openInsertModal(){
 
-  document.getElementById('modalTitle').innerText = title;
+	document.getElementById("modalTitle").innerText = "Process 신규 등록";
+	
+	
+	document.getElementById("processForm").reset(); 
+	document.querySelector("input[name='cmd']").value = "insert";
 
-  if (el) {
-    const key = el.dataset.key;
-    const code = el.dataset.code;
-    const name = el.dataset.name;
-    const desc = el.dataset.desc;
-    const status = el.dataset.status;
-    const itemkey = el.dataset.itemkey;
-    const itemName = el.dataset.itemname;
-   
+	document.getElementById("process_code").value = "";
+	document.getElementById("sequence_no").value = "";
+	document.getElementById("process_desc").value = "";
+	document.getElementById("status").value = "Y";
+	document.getElementById("item-key").value = "";
 
-    document.querySelector('input[name="process_key"]').value = key;
-    document.querySelector('input[name="process_code"]').value = code;
-    document.querySelector('input[name="process_name"]').value = name;
-    document.querySelector('input[name="process_desc"]').value = desc;
-    document.querySelector('select[name="status"]').value = status;
-    document.querySelector('select[name="item_name"]').value = itemName;
+	document.getElementById("commonModal").classList.add("show");
+}
 
-    document.querySelector('input[name="cmd"]').value = 'update';
-  } else {
-    document.querySelector('input[name="process_code"]').value = '';
-    document.querySelector('input[name="item_key"]').value = '';
-    document.querySelector('input[name="process_desc"]').value = '';
-    document.querySelector('input[name="sequence_no"]').value = '';
+function openEditModal(process_key, process_code, process_name, sequence_no, process_desc, status, item_key){
 
-    document.querySelector('input[name="cmd"]').value = 'insert';
-  }
+	document.getElementById("modalTitle").innerText = "Process 수정"; 
+	document.getElementById("processForm").reset(); 
+	document.querySelector("input[name='cmd']").value = "update";
 
-  modal.classList.add('show');
+	document.getElementById("process_code").value = process_code;
+	document.getElementById("sequence_no").value = sequence_no;
+	document.getElementById("process_desc").value = process_desc;
+	document.getElementById("status").value = status;
+	document.getElementById("item-key").value = item_key;
+
+	document.getElementById("commonModal").classList.add("show");
+}
+
+function closeModal(){
+	document.getElementById("commonModal").classList.remove("show");
 }

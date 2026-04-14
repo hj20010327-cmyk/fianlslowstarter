@@ -51,7 +51,7 @@
 					<div class="auth-row">
 						<label for="name">이름</label> <input id="name" name="name"
 							class="auth-input" type="text" placeholder="이름 입력"
-							value="${name }" />
+							value="${name }" data-required/>
 					</div>
 
 					<div class="auth-row">
@@ -72,36 +72,36 @@
 							<option value="010" selected>010</option>
 						</select> <span class="phone-dash">-</span> <input type="text" id="phone2"
 							name="phone2" class="phone-input" maxlength="4"
-							inputmode="numeric" placeholder="1234" value="${phone2 }" />
+							inputmode="numeric" placeholder="1234" value="${phone2 }" data-required/>
 
 						<span class="phone-dash">-</span> <input type="text" id="phone3"
 							name="phone3" class="phone-input" maxlength="4"
-							inputmode="numeric" placeholder="5678" value="${phone3 }" />
+							inputmode="numeric" placeholder="5678" value="${phone3 }" data-required/>
 					</div>
 				</div>
 
 				<div class="auth-row">
 					<label for="userId">아이디</label> <input id="userId" name="id"
-						class="auth-input" type="text" placeholder="아이디 입력" value="${id}" />
+						class="auth-input" type="text" placeholder="아이디 입력" value="${id}" data-required/>
 				</div>
 
 				<div class="auth-split">
 					<div class="auth-row">
 						<label for="pw">비밀번호</label> <input id="pw" name="pw"
-							class="auth-input" type="password" placeholder="비밀번호 입력" />
+							class="auth-input" type="password" placeholder="비밀번호 입력" data-required/>
 					</div>
 
 					<div class="auth-row">
 						<label for="pwCheck">비밀번호 확인</label> <input id="pwCheck"
 							name="pwCheck" class="auth-input" type="password"
-							placeholder="비밀번호 확인" />
+							placeholder="비밀번호 확인" data-required/>
 					</div>
 				</div>
 
 				<div class="auth-row">
 					<label for="email">이메일</label> <input id="email" name="email"
 						class="auth-input" type="email" placeholder="이메일 입력"
-						value="${email }" />
+						value="${email }" data-required/>
 				</div>
 
 				<input class="auth-btn" type="submit" value="가입 신청" />

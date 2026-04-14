@@ -110,7 +110,7 @@
 				</div>
 				<div class="page-actions">
 					<button class="btn primary" type="button"
-						onclick="openModal('Process 신규 등록')">신규 등록</button>
+						onclick="openInsertModal()">신규 등록</button>
 				</div>
 			</div>
 			<section class="card" style="margin-bottom: 20px">
@@ -163,18 +163,22 @@
 										
 											<td><input type="checkbox" name="process_key"
 												value="${process.process_key}"></td>
-											<td class="clickable" onclick="openModal('Process 수정', this)"
-												data-key="${process.process_key}"
-												data-code="${process.process_code}"
-												data-name="${process.process_name}"
-												data-desc="${process.process_desc}"
-												data-status="${process.status}" > 
-												${ process.process_code }</td>
+											<td> <a href="javascript:void(0);" 
+												onclick="openEditModal(
+												'${process.process_key}',		
+												'${process.process_code}',		
+												'${process.process_name}',		
+												'${process.sequence_no}',		
+												'${process.process_desc}',		
+												'${process.status}',		
+												'${process.item_key}'		
+												)"> 
+												${ process.process_code }</a></td>
 											<td>${ process.process_name }</td>
 											<td>${ process.sequence_no }</td>
 											<td>${ process.process_desc }</td>
 											<td>${ process.status }</td>
-											<td>${ process.process_item_key }</td>
+											<td>${ process.item_key }</td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -252,8 +256,8 @@
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
-			<form method="post" action="process">
-			<input type="hidden" name="process_key">
+			<form id="processForm" method="post" action="process">
+			
 
 				<!-- 헤더 -->
 				<div class="modal-header">
@@ -275,33 +279,33 @@
 
 						<div class="form-group">
 							<label>코드</label> 
-							<input type="text" name="process_code"
+							<input type="text" name="process_code" id="process_code"
 								class="input" placeholder="코드 입력" />
 						</div>
 
 
 						<div class="form-group">
 							<label>제품명</label> 
-							<input type="number" name="item_key" 
+							<input type="number" name="item_key" id="item-key"
 								class="input" placeholder="제품명 입력" />
-								<input type="hidden" name="item_key">
+								
 						</div>
 
 
 						<div class="form-group">
 							<label>공정 설명</label> 
-							<input type="text" name="process_desc" 
+							<input type="text" name="process_desc" id="process_desc"
 								class="input" placeholder="공정 설명 입력" />
 						</div>
 
 						<div class="form-group">
 							<label>공정 번호</label> 
-							<input type="number" class="input" name="sequence_no"
+							<input type="number" class="input" name="sequence_no" id="sequence_no"
 								placeholder="예: 1" />
 						</div>
 
 						<div class="form-group">
-							<label>사용여부</label> <select class="select" name="status">
+							<label>사용여부</label> <select class="select" name="status" id="status">
 								<option value="Y">사용</option>
 								<option value="N">미사용</option>
 							</select>

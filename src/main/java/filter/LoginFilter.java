@@ -80,6 +80,7 @@ public class LoginFilter implements Filter {
 			|| path.endsWith(".js")
 			|| path.equals("/login")
 			|| path.equals("/findpw")
+			|| path.equals("/signup")
 			) {
 			result = true;
 		}

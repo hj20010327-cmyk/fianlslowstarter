@@ -14,6 +14,7 @@
 <script src="./asset/js/common.js" defer></script>
 <script src="./asset/js/bom.js" defer></script>
 
+
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
 <link rel="stylesheet" href="./asset/css/pagination.css" />
@@ -46,9 +47,9 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master.jsp">기준관리</a></li>
-					<li class="active"><a href="./BOM">BOM</a></li>
-					<li><a href="./process.jsp">공정</a></li>
+					<li><a href="./master">기준관리</a></li>
+					<li class="active"><a href="./bom">BOM</a></li>
+					<li><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
@@ -109,7 +110,7 @@
 					<h2>검색 조건</h2>
 					<span>기준 조건을 선택하세요</span>
 				</div>
-				<form method="get" action="BOM">
+				<form method="get" action="bom">
 					<div class="search-row">
 						<input class="input" type="text" name="keycode"
 							placeholder="코드 또는 번호 입력" /> <input class="input" type="text"
@@ -123,19 +124,17 @@
 				</form>
 			</section>
 			<section class="panel-grid">
-				<form method="post" action="BOM">
+				<form method="post" action="bom">
 					<div class="card">
 						<div class="section-title">
 							<h2>BOM관리 목록</h2>
 							<span>
-								<button class="btn modify" type="button"
-									onclick="openModal('BOM 수정')">수정</button>
 								<button type="submit" class="btn" value="삭제"
-									style="background: #4a90e2; color: white;">삭제</button> 
-								<input type="hidden" name="cmd" value="delete">
+									style="background: #4a90e2; color: white;">삭제</button> <input
+								type="hidden" name="cmd" value="delete">
 							</span>
 						</div>
-						
+
 						<div class="table-wrap">
 							<table>
 								<thead>
@@ -153,11 +152,13 @@
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-											<td class="clickable" onclick="openEditModalFromElement(this)"
-												data-code="${bom.bom_code}" data-name="${bom.bom_item_key}"
-												data-qty="${bom.QTY}" data-remark="${bom.remark}">
-
-
+											<td class="clickable"
+												onclick="openModal('BOM 수정',this)"
+												data-key="${bom.bom_key}"
+												data-code="${bom.bom_code}"
+												data-name="<c:out value='${bom.bom_item_key}' />"
+												data-qty="${bom.QTY}"
+												data-remark="<c:out value='${bom.remark}' />">
 												${bom.bom_code}</td>
 											<td>${bom.QTY}</td>
 											<td>${bom.remark}</td>
@@ -169,7 +170,7 @@
 							</table>
 
 							<div class="page" style="text-align: center;">
-							
+
 								<c:set var="total" value="${map.totalCount }" />
 								<c:set var="size" value="${map.size }" />
 								<c:set var="page" value="${map.page }" />
@@ -188,22 +189,23 @@
 
 
 
-							<div class = "pagination">
-								<c:forEach var="i" begin="${start_section}" end="${end_section}">
-									<a href="BOM?page=${i}&size=5"> <c:if
-											test="${map.page eq i }">
-											<strong>${i}</strong>
-										</c:if> <c:if test="${map.page != i}">
+								<div class="pagination">
+									<c:forEach var="i" begin="${start_section}"
+										end="${end_section}">
+										<a href="bom?page=${i}&size=5"> <c:if
+												test="${map.page eq i }">
+												<strong>${i}</strong>
+											</c:if> <c:if test="${map.page != i}">
                                	${i}
                                	</c:if>
-									</a>
-								</c:forEach>
+										</a>
+									</c:forEach>
 								</div>
 							</div>
 
 
 						</div>
-						
+
 					</div>
 				</form>
 				<div class="card">
@@ -216,22 +218,19 @@
 							<div>
 								<strong>최신 버전</strong>
 								<p>B210 제품이 V2로 운영 중입니다.</p>
-							</div>
-							<span class="badge ok">적용</span>
+							</div> <span class="badge ok">적용</span>
 						</li>
 						<li>
 							<div>
 								<strong>변경 요청</strong>
 								<p>설계 변경 요청이 1건 있습니다.</p>
-							</div>
-							<span class="badge warn">1건</span>
+							</div> <span class="badge warn">1건</span>
 						</li>
 						<li>
 							<div>
 								<strong>미연결 품목</strong>
 								<p>BOM 미연결 자재가 없습니다.</p>
-							</div>
-							<span class="badge ok">정상</span>
+							</div> <span class="badge ok">정상</span>
 						</li>
 					</ul>
 				</div>
@@ -239,13 +238,12 @@
 		</main>
 	</div>
 
-	<span class="date" style="display: none;"></span>
 
 	<!-- ===== 공통 모달 ===== -->
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
-			<form method="post" action="BOM">
+			<form method="post" action="bom">
 
 				<!-- 헤더 -->
 				<div class="modal-header">
@@ -296,23 +294,10 @@
 							</select>
 						</div>
 
-
-
-
-
 						<div class="form-group" style="grid-column: span 2;">
 							<label>비고</label>
 							<textarea name="remark" class="textarea" placeholder="추가 설명 입력"></textarea>
 						</div>
-
-						<%-- 
-        <div class="form-group" style="grid-column: span 2;">
-          <label>비고</label>
-          <textarea class="textarea" placeholder="설명 입력"></textarea>
-        </div>
-        
-        --%>
-
 					</div>
 				</div>
 
@@ -328,7 +313,7 @@
 		</div>
 	</div>
 
+
 	
 </body>
-
 </html>

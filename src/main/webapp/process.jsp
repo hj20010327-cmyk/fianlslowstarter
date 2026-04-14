@@ -12,8 +12,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AUTO MES | 공정관리</title>
 <script src="./asset/js/common.js" defer></script>
+<script src="./asset/js/process.js" defer></script>
+
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
+<link rel="stylesheet" href="./asset/css/pagination.css" />
+
 </head>
 
 <body>
@@ -42,9 +46,9 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master.jsp">기준관리</a></li>
-					<li><a href="./BOM">BOM</a></li>
-					<li class="active"><a href="./process.jsp">공정</a></li>
+					<li><a href="./master">기준관리</a></li>
+					<li><a href="./bom">BOM</a></li>
+					<li class="active"><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
@@ -59,9 +63,9 @@
 			<div class="snb-section">
 				<div class="snb-title">재고관리</div>
 				<ul class="snb-menu">
-					<li><a href="./stock.jsp">재고</a></li>
-					<li><a href="./product.jsp">완제품</a></li>
-					<li><a href="./item.jsp">자재</a></li>
+					<li><a href="./stock">재고</a></li>
+					<li><a href="./product">완제품</a></li>
+					<li><a href="./item">자재</a></li>
 				</ul>
 			</div>
 
@@ -96,8 +100,8 @@
 					<p>제품 제조 공정 흐름과 표준 작업정보를 관리합니다</p>
 				</div>
 				<div class="page-actions">
-					<button class="btn" type="button">조회</button>
-					<button class="btn primary" type="button">신규 등록</button>
+					<button class="btn primary" type="button"
+						onclick="openModal('Process 신규 등록')">신규 등록</button>
 				</div>
 			</div>
 			<section class="card" style="margin-bottom: 20px">
@@ -105,48 +109,106 @@
 					<h2>검색 조건</h2>
 					<span>기준 조건을 선택하세요</span>
 				</div>
-				<div class="search-row">
-					<input class="input" type="text" placeholder="코드 또는 번호 입력" /><input
-						class="input" type="text" placeholder="명칭 입력" /><select
-						class="select">
-						<option>전체</option>
-						<option>사용</option>
-						<option>미사용</option>
-					</select>
-					<button class="btn primary" type="button">조회</button>
-				</div>
+				<form method="get" action="process">
+					<div class="search-row">
+						<input class="input" type="text" name="keycode"
+							placeholder="코드 또는 번호 입력" /><input class="input" name="keyword"
+							type="text" placeholder="명칭 입력" /><select class="select">
+							<option>전체</option>
+							<option>사용</option>
+							<option>미사용</option>
+						</select>
+						<button class="btn primary" type="submit">조회</button>
+					</div>
+				</form>
 			</section>
 			<section class="panel-grid">
-				<div class="card">
-					<div class="section-title">
-						<h2>공정관리 목록</h2>
-						<span>샘플 데이터</span>
-					</div>
-					<div class="table-wrap">
-						<table>
-							<thead>
-								<tr>
-									<th>공정코드</th>
-									<th>공정명</th>
-									<th>설비</th>
-									<th>표준시간</th>
-									<th>상태</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="process" items="${list}">
+				<form method="post" action="process">
+					<div class="card">
+						<div class="section-title">
+							<h2>공정관리 목록</h2>
+							<span>
+								<button type="submit" class="btn" value="삭제"
+									style="background: #4a90e2; color: white;">삭제</button> <input
+								type="hidden" name="cmd" value="delete">
+							</span>
+						</div>
+
+						<div class="table-wrap">
+							<table>
+								<thead>
 									<tr>
-										<td>${ process. }</td>
-										<td>${ process. }</td>
-										<td>${ process. }</td>
-										<td>${ process. }</td>
-										<td>${ process. }</td>
+										<th>선택</th>
+										<th>공정코드</th>
+										<th>공정명</th>
+										<th>일련번호</th>
+										<th>공정설명</th>
+										<th>상태</th>
+										<th>제품명</th>
 									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									<c:forEach var="process" items="${map.list}">
+										<tr>
+										
+										
+											<td><input type="checkbox" name="process_key"
+												value="${process.process_key}"></td>
+											<td class="clickable" onclick="openModal('Process 수정', this)"
+												data-key="${process.process_key}"
+												data-code="${process.process_code}"
+												data-name="${process.process_name}"
+												data-desc="${process.process_desc}"
+												data-status="${process.status}" > 
+												${ process.process_code }</td>
+											<td>${ process.process_name }</td>
+											<td>${ process.sequence_no }</td>
+											<td>${ process.process_desc }</td>
+											<td>${ process.status }</td>
+											<td>${ process.process_item_key }</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+
+							<div class="page" style="text-align: center;">
+
+								<c:set var="total" value="${map.totalCount}" />
+								<c:set var="size" value="${map.size}" />
+								<c:set var="page" value="${map.page}" />
+
+								<c:set var="totalPage" value="${(total + size - 1)/size}" />
+								<c:set var="section" value="5" />
+								<c:set var="end_section" value="${totalPage}" />
+								<c:set var="start_section" value="${end_section - section + 1}" />
+
+								<c:if test="${start_section < 1}">
+									<c:set var="start_section" value="1" />
+								</c:if>
+								<c:if test="${end_section > totalPage}">
+									<c:set var="end_section" value="${totalPage - 1}" />
+								</c:if>
+
+
+								<div class="pagination">
+									<c:forEach var="i" begin="${start_section}"
+										end="${end_section}">
+										<a href="process?page=${i}&size=5"> <c:if
+												test="${map.page eq i}">
+												<strong>${i}</strong>
+											</c:if> <c:if test="${map.page != i}">
+										${i}
+										</c:if>
+										</a>
+
+									</c:forEach>
+								</div>
+							</div>
+
+						</div>
 					</div>
-				</div>
+				</form>
+
 				<div class="card">
 					<div class="section-title">
 						<h2>요약 / 상태</h2>
@@ -157,28 +219,99 @@
 							<div>
 								<strong>병목 공정</strong>
 								<p>조립 공정이 평균 3분 지연됩니다.</p>
-							</div>
-							<span class="badge warn">주의</span>
+							</div> <span class="badge warn">주의</span>
 						</li>
 						<li>
 							<div>
 								<strong>표준시간 갱신</strong>
 								<p>검사 공정 표준시간이 수정되었습니다.</p>
-							</div>
-							<span class="badge ok">반영</span>
+							</div> <span class="badge ok">반영</span>
 						</li>
 						<li>
 							<div>
 								<strong>비사용 공정</strong>
 								<p>비사용 공정 1건이 있습니다.</p>
-							</div>
-							<span class="badge danger">1건</span>
+							</div> <span class="badge danger">1건</span>
 						</li>
 					</ul>
 				</div>
 			</section>
 		</main>
 	</div>
+	
+		<!-- ===== 공통 모달 ===== -->
+	<div id="commonModal" class="modal">
+		<div class="modal-box">
+
+			<form method="post" action="process">
+			<input type="hidden" name="process_key">
+
+				<!-- 헤더 -->
+				<div class="modal-header">
+					<h3 id="modalTitle">신규 등록</h3>
+					<button type="button" class="modal-close" onclick="closeModal()">×</button>
+				</div>
+
+				<!-- 바디 -->
+				<div class="modal-body">
+					<div class="form-grid">
+
+						<div class="form-group">
+							<label>등록일</label> 
+							<input type="text" class="input"
+								value="<%=new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date())%>"
+								readonly />
+						</div>
+
+
+						<div class="form-group">
+							<label>코드</label> 
+							<input type="text" name="process_code"
+								class="input" placeholder="코드 입력" />
+						</div>
+
+
+						<div class="form-group">
+							<label>제품명</label> 
+							<input type="number" name="item_key" 
+								class="input" placeholder="제품명 입력" />
+								<input type="hidden" name="item_key">
+						</div>
+
+
+						<div class="form-group">
+							<label>공정 설명</label> 
+							<input type="text" name="process_desc" 
+								class="input" placeholder="공정 설명 입력" />
+						</div>
+
+						<div class="form-group">
+							<label>공정 번호</label> 
+							<input type="number" class="input" name="sequence_no"
+								placeholder="예: 1" />
+						</div>
+
+						<div class="form-group">
+							<label>사용여부</label> <select class="select" name="status">
+								<option value="Y">사용</option>
+								<option value="N">미사용</option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+				<!-- 푸터 -->
+				<div class="modal-footer">
+					<button class="btn" onclick="closeModal()" type="button">취소</button>
+					<button class="btn primary" type="submit">저장</button>
+					<input type="hidden" name="cmd" value="insert">
+				</div>
+
+			</form>
+
+		</div>
+	</div>
+	
 </body>
 
 </html>

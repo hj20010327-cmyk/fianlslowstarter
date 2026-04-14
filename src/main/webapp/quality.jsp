@@ -550,23 +550,7 @@ tbody tr:hover {
 
 
 
-			<div class="card">
-				<div class="section-header">
-					<h2>요약 / 상태</h2>
-				</div>
-				<div class="summary-content">
-					<div
-						style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f1f5f9;">
-						<span>재검 건수</span><span style="color: #b7791f; font-weight: 700;">1건</span>
-					</div>
-					<div
-						style="display: flex; justify-content: space-between; padding: 15px 0;">
-						<span>합격률</span><span style="color: #38a169; font-weight: 700;">양호</span>
-					</div>
-				</div>
-			</div>
-		</main>
-	</div>
+			
 
 
 

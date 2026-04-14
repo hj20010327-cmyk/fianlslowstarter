@@ -9,6 +9,7 @@
 <meta charset="UTF-8">
 <title>AUTO MES | 리포트</title>
 <script src="./asset/js/common.js" defer></script>
+<script src="./asset/js/report.js"></script>
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
 </head>

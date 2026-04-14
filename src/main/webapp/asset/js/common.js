@@ -43,12 +43,14 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   window.addEventListener('load', ()=>{
     const date = document.querySelector('.date');
+    if (!date) return;
+
     const now = new Date();
-    const iso = now.toISOString();
-    const arr = iso.split('T');
-    
-    console.log(arr[0]);
-    date.textContent = arr[0];
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    date.textContent = `${year}-${month}-${day}`;
   })
 
 
@@ -64,3 +66,35 @@ function closeModal() {
   document.getElementById("commonModal").classList.remove("show");
 }
 
+document.addEventListener("click", function (e) {
+    const modal = document.getElementById("commonModal");
+    const modalBox = document.querySelector(".modal-box");
+
+    if (!modal || !modalBox) return;
+
+    if (modal.classList.contains("show") && e.target === modal) {
+        closeModal();
+    }
+});
+
+// ESC 키로 모달 닫기
+document.addEventListener("keydown", function (e) {
+    const modal = document.getElementById("commonModal");
+
+    if (!modal) return;
+
+    if (e.key === "Escape" && modal.classList.contains("show")) {
+        closeModal();
+    }
+});
+
+function logout() {
+    if (!confirm("로그아웃 하시겠습니까?")) return;
+
+    window.location.href = contextPath + "/logout";
+}
+
+setTimeout(() => {
+    alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+    logout();
+}, 1000 * 60 * 30);

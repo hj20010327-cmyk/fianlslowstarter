@@ -12,6 +12,7 @@
 <title>AUTO MES | 사용자 관리</title>
 <script src="${pageContext.request.contextPath}/asset/js/common.js"
 	defer></script>
+	<script src="./asset/js/user.js"></script>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/asset/css/common.css" />
 <link rel="stylesheet"

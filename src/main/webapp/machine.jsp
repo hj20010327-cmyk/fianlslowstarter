@@ -40,12 +40,19 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+.running {
+    color: green;
+}
+
+.stop {
+    color: red;
+}
 </style>
 <body>
 	<header class="header">
 		<div class="header-left">
 
-			<a href="./index.jsp" class="logo"> <span class="logo-mark">AM</span>
+			<a href="./index" class="logo"> <span class="logo-mark">AM</span>
 				<span>AUTO MES</span>
 			</a>
 
@@ -65,16 +72,16 @@
 			<div class="snb-section">
 				<div class="snb-title">MAIN</div>
 				<ul class="snb-menu">
-					<li><a href="./index.jsp">대시보드</a></li>
+					<li><a href="./index">대시보드</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master.jsp">기준관리</a></li>
+					<li><a href="./master">기준관리</a></li>
 					<li><a href="./BOM">BOM</a></li>
-					<li><a href="./process.jsp">공정</a></li>
+					<li><a href="./process">공정</a></li>
 					<li class="active"><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
@@ -89,9 +96,9 @@
 			<div class="snb-section">
 				<div class="snb-title">재고관리</div>
 				<ul class="snb-menu">
-					<li><a href="./stock.jsp">재고</a></li>
-					<li><a href="./product.jsp">완제품</a></li>
-					<li><a href="./item.jsp">자재</a></li>
+					<li><a href="./stock">재고</a></li>
+					<li><a href="./product">완제품</a></li>
+					<li><a href="./item">자재</a></li>
 				</ul>
 			</div>
 
@@ -104,14 +111,14 @@
 			<div class="snb-section">
 				<div class="snb-title">리포트</div>
 				<ul class="snb-menu">
-					<li><a href="./report.html">리포트</a></li>
-					<li><a href="./production.html">생산실적</a></li>
+					<li><a href="./report">리포트</a></li>
+					<li><a href="./production">생산실적</a></li>
 				</ul>
 			</div>
 			<div class="snb-section">
 				<div class="snb-title">시스템</div>
 				<ul class="snb-menu">
-					<li><a href="./board.jsp">게시판</a></li>
+					<li><a href="./board">게시판</a></li>
 					<li><a href="./user">사용자관리</a></li>
 					<li><a href="./mypage">마이페이지</a></li>
 				</ul>
@@ -124,12 +131,14 @@
 					<p>설비 상태 및 운영 정보를 관리합니다.</p>
 				</div>
 				<div class="page-actions">
+				<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 					<button class="btn primary" type="button"
 						onclick="openInsertModal()">설비 등록</button>
+				</c:if>
 				</div>
 			</div>
 
-			<section class="card">
+			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
 					<span>설비 조회 조건</span>
@@ -160,8 +169,10 @@
 						<div class="section-title">
 							<h2>설비 목록</h2>
 							<!--  안내 메시지용  -->
+							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 							<span>설비명을 클릭하면 수정할 수 있습니다.</span>
 							<button type="submit" class="btn">삭제</button>
+							</c:if>
 						</div>
 						<div class="table-wrap">
 
@@ -175,12 +186,17 @@
 									<th>공정 번호</th>
 								</tr>
 
+								
 								<c:forEach var="m" items="${list}">
 									<tr>
 										<td><input type="checkbox" name="machineKey"
 											value="${m.machineKey}"></td>
 										<td>${m.machineKey}</td>
-										<td><a href="javascript:void(0);"
+										<td>
+										<!-- 관리자, 슈퍼바이저 일때 설비명 누르면 모달창 열리게 -->
+										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
+										<a href="javascript:void(0);"
 											onclick="openEditModal(
 		   									'${m.machineKey}',
 		   									'${m.machineCode}',
@@ -191,9 +207,23 @@
 		   									'${m.lastCheckDate}',
 		   									'${m.remark}'
 	   										)">
-												${m.machineName} </a></td>
+												${m.machineName} </a>
+											</c:if>
+											<!--  작업자 일때 설비명 눌러도 반응 x -->
+											<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저') }">
+												${m.machineName}
+											</c:if>
+										</td>
 										<td>${m.machineCode}</td>
-										<td>${m.machineStatus}</td>
+										  <td>
+            <c:if test="${m.machineStatus eq '가동중'}">
+                <span class="running">가동중</span>
+            </c:if>
+
+            <c:if test="${m.machineStatus eq '점검중'}">
+                <span class="stop">점검중</span>
+            </c:if>
+        </td>
 										<td>${m.processKey}</td>
 									</tr>
 								</c:forEach>
@@ -332,6 +362,10 @@
 
 		function openEditModal(machineKey, machineCode, machineName,
 				processKey, machineStatus, buyDate, lastCheckDate, remark) {
+			
+			console.log("buyDate:", buyDate);
+		    console.log("lastCheckDate:", lastCheckDate);
+			
 			document.getElementById("modalTitle").innerText = "설비 수정";
 			document.getElementById("machineForm").action = "/slowstarter/machine/update";
 
@@ -340,8 +374,8 @@
 			document.getElementById("machineName").value = machineName;
 			document.getElementById("processKey").value = processKey;
 			document.getElementById("machineStatus").value = machineStatus;
-			document.getElementById("buyDate").value = buyDate;
-			document.getElementById("lastCheckDate").value = lastCheckDate;
+			document.getElementById("buyDate").value = buyDate.substring(0, 10);
+			document.getElementById("lastCheckDate").value = lastCheckDate.substring(0, 10);
 			if (remark == 'null') {
 				document.getElementById("remark").value = '';
 			} else {

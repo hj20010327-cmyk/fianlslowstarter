@@ -170,20 +170,18 @@
                                     <th>현재고</th>
                                     <th>최근 업데이트</th>
                                 </tr>
-                                <c:forEach var="s" items="${list}">
-                                    <tr>
-                                        <td><input type="checkbox" name="codes" value="${s.stock_key}"></td>
-                                        <td style="font-weight:600;">${s.lot}</td>
-                                        <td><fmt:formatNumber value="${s.in_qty}" /></td>
-                                        <td><fmt:formatNumber value="${s.out_qty}" /></td>
-                                        <td>
-                                            <span class="${s.current_qty < s.safe_qty ? 'qty-alert' : ''}">
-                                                <fmt:formatNumber value="${s.current_qty}" />
-                                            </span>
-                                        </td>
-                                        <td><fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" /></td>
-                                    </tr>
-                                </c:forEach>
+                              <c:forEach var="dto" items="${list}">
+    <tr>
+        <td><input type="checkbox" name="codes" value="${dto.stock_key}"></td>
+        <td>${dto.stock_key}</td>
+        <td>${dto.lot}</td>
+        <td>${dto.in_qty}</td>
+        <td>${dto.out_qty}</td>
+        <td>${dto.current_qty}</td>
+        <td>${dto.safe_qty}</td>
+        <td>${dto.updated_at}</td>
+    </tr>
+</c:forEach>
                                 <c:if test="${empty list}">
                                     <tr><td colspan="6" style="padding:40px; color:#999;">데이터가 없습니다.</td></tr>
                                 </c:if>

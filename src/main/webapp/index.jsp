@@ -79,8 +79,8 @@
 			<div class="snb-section">
 				<div class="snb-title">리포트</div>
 				<ul class="snb-menu">
-					<li><a href="./report.html">리포트</a></li>
-					<li><a href="./production.html">생산실적</a></li>
+					<li><a href="./report">리포트</a></li>
+					<li><a href="./production">생산실적</a></li>
 				</ul>
 			</div>
 			<div class="snb-section">

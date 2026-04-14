@@ -39,7 +39,7 @@
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
 					<li><a href="./master.jsp">기준관리</a></li>
-					<li><a href="./BOM">BOM</a></li>
+					<li><a href="./bom">BOM</a></li>
 					<li><a href="./process.jsp">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
@@ -70,7 +70,7 @@
 			<div class="snb-section">
 				<div class="snb-title">리포트</div>
 				<ul class="snb-menu">
-					<li class="active"><a href="./report.html">리포트</a></li>
+					<li class="active"><a href="./report">리포트</a></li>
 					<li><a href="./production.html">생산실적</a></li>
 				</ul>
 			</div>
@@ -89,96 +89,242 @@
 			<div class="page-head">
 				<div class="page-head-left">
 					<h1>리포트</h1>
-					<p>생산, 품질, 재고 데이터를 요약 보고서 형태로 확인합니다.</p>
+					<p>생산계획, 작업지시, 생산실적, 품질 데이터를 통합 조회합니다.</p>
 				</div>
+
 				<div class="page-actions">
-					<button class="btn" type="button">기간 설정</button>
-					<button class="btn primary" type="button">보고서 출력</button>
+					<a href="${pageContext.request.contextPath}/report" class="btn">초기화</a>
 				</div>
 			</div>
-			<section class="kpi-grid">
-				<div class="card">
-					<div class="card-label">월 생산량</div>
-					<div class="card-value">28,400EA</div>
-					<div class="card-meta">전월 대비 +6.2%</div>
+
+			<c:if test="${not empty errorMsg}">
+				<div class="card"
+					style="margin-bottom: 20px; color: #d64545; font-weight: 700;">
+					${errorMsg}</div>
+			</c:if>
+
+			<div class="card" style="margin-bottom: 20px;">
+				<form action="${pageContext.request.contextPath}/report"
+					method="get" class="search-row">
+					<input type="date" name="startDate" class="input"
+						value="${startDate}" /> <input type="date" name="endDate"
+						class="input" value="${endDate}" />
+					<button type="submit" class="btn primary">조회</button>
+				</form>
+			</div>
+
+			<section class="kpi-grid report-kpi-grid">
+				<div class="card report-kpi-grid">
+					<div class="card-label">총 계획수량</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.totalPlanQty}" pattern="#,##0" />
+					</div>
+					<div class="card-meta">생산계획 기준 수량</div>
 				</div>
-				<div class="card">
-					<div class="card-label">월 불량률</div>
-					<div class="card-value">2.9%</div>
-					<div class="card-meta">전월 대비 -0.4%</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">총 작업지시수량</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.totalOrderQty}" pattern="#,##0" />
+					</div>
+					<div class="card-meta">작업지시 등록 수량</div>
 				</div>
-				<div class="card">
-					<div class="card-label">재고 회전율</div>
-					<div class="card-value">4.7회</div>
-					<div class="card-meta">기준월 2026-03</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">총 생산투입수량</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.totalInputQty}" pattern="#,##0" />
+					</div>
+					<div class="card-meta">생산 투입 기준</div>
+				</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">총 양품수량</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.totalGoodQty}" pattern="#,##0" />
+					</div>
+					<div class="card-meta">실생산 양품 수량</div>
+				</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">총 불량수량</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.totalDefectQty}"
+							pattern="#,##0" />
+					</div>
+					<div class="card-meta">실생산 불량 수량</div>
+				</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">달성률</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.achievementRate}"
+							pattern="0.00" />
+						%
+					</div>
+					<div class="card-meta">양품수량 ÷ 계획수량</div>
+				</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">수율</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.yieldRate}" pattern="0.00" />
+						%
+					</div>
+					<div class="card-meta">양품수량 ÷ 투입수량</div>
+				</div>
+
+				<div class="card report-kpi-grid">
+					<div class="card-label">불량률</div>
+					<div class="card-value">
+						<fmt:formatNumber value="${summary.defectRate}" pattern="0.00" />
+						%
+					</div>
+					<div class="card-meta">불량수량 ÷ 투입수량</div>
 				</div>
 			</section>
-			<section class="two-col">
+
+			<div class="two-col" style="margin-top: 20px;">
 				<div class="card">
 					<div class="section-title">
-						<h2>주간 생산 요약</h2>
-						<span>최근 4주</span>
+						<h2>일자별 계획 대비 실적</h2>
+						<span>${startDate} ~ ${endDate}</span>
 					</div>
+
 					<div class="table-wrap">
 						<table>
 							<thead>
 								<tr>
-									<th>주차</th>
-									<th>계획</th>
-									<th>실적</th>
+									<th>일자</th>
+									<th>계획수량</th>
+									<th>지시수량</th>
+									<th>투입수량</th>
+									<th>양품수량</th>
+									<th>불량수량</th>
 									<th>달성률</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<td>1주차</td>
-									<td>6,800</td>
-									<td>6,520</td>
-									<td>96%</td>
-								</tr>
-								<tr>
-									<td>2주차</td>
-									<td>6,900</td>
-									<td>6,640</td>
-									<td>96%</td>
-								</tr>
-								<tr>
-									<td>3주차</td>
-									<td>7,000</td>
-									<td>6,480</td>
-									<td>93%</td>
-								</tr>
-								<tr>
-									<td>4주차</td>
-									<td>7,100</td>
-									<td>6,760</td>
-									<td>95%</td>
-								</tr>
+								<c:choose>
+									<c:when test="${not empty dailyList}">
+										<c:forEach var="d" items="${dailyList}">
+											<tr>
+												<td>${d.workDay}</td>
+												<td><fmt:formatNumber value="${d.planQty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.orderQty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.inputQty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.goodQty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.defectQty}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.achievementRate}"
+														pattern="0.00" />%</td>
+											</tr>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<tr>
+											<td colspan="7">조회 결과가 없습니다.</td>
+										</tr>
+									</c:otherwise>
+								</c:choose>
 							</tbody>
 						</table>
 					</div>
 				</div>
+
 				<div class="card">
 					<div class="section-title">
-						<h2>리포트 바로가기</h2>
-						<span>다운로드 준비</span>
+						<h2>불량 사유별 집계</h2>
+						<span>품질검사 기준</span>
 					</div>
-					<div class="link-list">
-						<div class="link-item">
-							<span>일일 생산 보고서</span><span class="badge ok">PDF</span>
-						</div>
-						<div class="link-item">
-							<span>월간 품질 분석표</span><span class="badge warn">XLSX</span>
-						</div>
-						<div class="link-item">
-							<span>재고 소진 예측표</span><span class="badge ok">CSV</span>
-						</div>
-						<div class="link-item">
-							<span>라인별 가동률 보고</span><span class="badge ok">PDF</span>
-						</div>
+
+					<div class="table-wrap">
+						<table>
+							<thead>
+								<tr>
+									<th>불량사유</th>
+									<th>건수</th>
+									<th>불량수량</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:choose>
+									<c:when test="${not empty defectList}">
+										<c:forEach var="d" items="${defectList}">
+											<tr>
+												<td>${d.defectReason}</td>
+												<td><fmt:formatNumber value="${d.defectCount}"
+														pattern="#,##0" /></td>
+												<td><fmt:formatNumber value="${d.totalDefectQty}"
+														pattern="#,##0" /></td>
+											</tr>
+										</c:forEach>
+									</c:when>
+									<c:otherwise>
+										<tr>
+											<td colspan="3">조회 결과가 없습니다.</td>
+										</tr>
+									</c:otherwise>
+								</c:choose>
+							</tbody>
+						</table>
 					</div>
 				</div>
-			</section>
+			</div>
+
+			<div class="card" style="margin-top: 20px;">
+				<div class="section-title">
+					<h2>품목별 계획 / 실적 현황</h2>
+					<span>ITEM 기준 집계</span>
+				</div>
+
+				<div class="table-wrap">
+					<table>
+						<thead>
+							<tr>
+								<th>품목코드</th>
+								<th>품목명</th>
+								<th>계획수량</th>
+								<th>지시수량</th>
+								<th>양품수량</th>
+								<th>불량수량</th>
+								<th>달성률</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${not empty itemList}">
+									<c:forEach var="i" items="${itemList}">
+										<tr>
+											<td>${i.itemCode}</td>
+											<td>${i.itemName}</td>
+											<td><fmt:formatNumber value="${i.planQty}"
+													pattern="#,##0" /></td>
+											<td><fmt:formatNumber value="${i.orderQty}"
+													pattern="#,##0" /></td>
+											<td><fmt:formatNumber value="${i.goodQty}"
+													pattern="#,##0" /></td>
+											<td><fmt:formatNumber value="${i.defectQty}"
+													pattern="#,##0" /></td>
+											<td><fmt:formatNumber value="${i.achievementRate}"
+													pattern="0.00" />%</td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<tr>
+										<td colspan="7">조회 결과가 없습니다.</td>
+									</tr>
+								</c:otherwise>
+							</c:choose>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</main>
 	</div>
 </body>

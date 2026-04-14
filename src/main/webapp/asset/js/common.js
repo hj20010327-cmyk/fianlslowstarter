@@ -1,100 +1,209 @@
-
-const menuToggle = document.getElementById('menuToggle');
-const snb = document.querySelector('.snb');
-const snbOverlay = document.getElementById('snbOverlay');
-
-if (menuToggle && snb && snbOverlay) {
-    menuToggle.addEventListener('click', function () {
-        snb.classList.toggle('open');
-        snbOverlay.classList.toggle('show');
-    });
-
-    snbOverlay.addEventListener('click', function () {
-        snb.classList.remove('open');
-        snbOverlay.classList.remove('show');
-    });
-
-    window.addEventListener('resize', function () {
-        if (window.innerWidth > 1024) {
-            snb.classList.remove('open');
-            snbOverlay.classList.remove('show');
-        }
-    });
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-    const sections = document.querySelectorAll(".snb-section");
+    CommonUI.init();
+});
 
-    sections.forEach((section) => {
-        if (section.querySelector("li.active")) {
-            section.classList.add("open");
-        }
-    });
+const CommonUI = {
+    warningTimer: null,
+    logoutTimer: null,
 
-    const titles = document.querySelectorAll(".snb-title");
+    init() {
+        this.cacheDom();
+        this.bindMenuToggle();
+        this.bindSnbAccordion();
+        this.renderTodayDate();
+        this.bindModalOutsideClick();
+        this.bindModalEscapeKey();
+        this.initSessionAutoLogout();
+    },
 
-    titles.forEach((title) => {
-        title.addEventListener("click", () => {
-            const section = title.closest(".snb-section");
-            section.classList.toggle("open");
+    cacheDom() {
+        this.menuToggle = document.getElementById("menuToggle");
+        this.snb = document.querySelector(".snb");
+        this.snbOverlay = document.getElementById("snbOverlay");
+        this.sections = document.querySelectorAll(".snb-section");
+        this.titles = document.querySelectorAll(".snb-title");
+        this.date = document.querySelector(".date");
+        this.modal = document.getElementById("commonModal");
+        this.modalTitle = document.getElementById("modalTitle");
+        this.modalBox = document.querySelector(".modal-box");
+    },
+
+    bindMenuToggle() {
+        if (!this.menuToggle || !this.snb || !this.snbOverlay) return;
+
+        this.menuToggle.addEventListener("click", () => {
+            this.snb.classList.toggle("open");
+            this.snbOverlay.classList.toggle("show");
         });
-    });
-    
-  });
-  window.addEventListener('load', ()=>{
-    const date = document.querySelector('.date');
-    if (!date) return;
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+        this.snbOverlay.addEventListener("click", () => {
+            this.closeSnb();
+        });
 
-    date.textContent = `${year}-${month}-${day}`;
-  })
+        window.addEventListener("resize", () => {
+            if (window.innerWidth > 1024) {
+                this.closeSnb();
+            }
+        });
+    },
 
+    closeSnb() {
+        if (this.snb) this.snb.classList.remove("open");
+        if (this.snbOverlay) this.snbOverlay.classList.remove("show");
+    },
 
+    bindSnbAccordion() {
+        if (!this.sections.length || !this.titles.length) return;
 
+        this.sections.forEach((section) => {
+            if (section.querySelector("li.active")) {
+                section.classList.add("open");
+            }
+        });
 
+        this.titles.forEach((title) => {
+            title.addEventListener("click", () => {
+                const section = title.closest(".snb-section");
+                if (section) {
+                    section.classList.toggle("open");
+                }
+            });
+        });
+    },
 
+    renderTodayDate() {
+        if (!this.date) return;
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        this.date.textContent = `${year}-${month}-${day}`;
+    },
+
+    openModal(title = "신규 등록") {
+        if (!this.modal || !this.modalTitle) return;
+
+        this.modalTitle.innerText = title;
+        this.modal.classList.add("show");
+    },
+
+    closeModal() {
+        if (!this.modal) return;
+        this.modal.classList.remove("show");
+    },
+
+    bindModalOutsideClick() {
+        document.addEventListener("click", (e) => {
+            if (!this.modal || !this.modalBox) return;
+
+            if (this.modal.classList.contains("show") && e.target === this.modal) {
+                this.closeModal();
+            }
+        });
+    },
+
+    bindModalEscapeKey() {
+        document.addEventListener("keydown", (e) => {
+            if (!this.modal) return;
+
+            if (e.key === "Escape" && this.modal.classList.contains("show")) {
+                this.closeModal();
+            }
+        });
+    },
+
+    logout() {
+        if (!confirm("로그아웃 하시겠습니까?")) return;
+
+        if (typeof contextPath === "undefined") {
+            location.href = "/logout";
+            return;
+        }
+
+        location.href = contextPath + "/logout";
+    },
+
+    forceLogoutBySessionExpired() {
+        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+
+        if (typeof contextPath === "undefined") {
+            location.href = "/logout";
+            return;
+        }
+
+        location.href = contextPath + "/logout";
+    },
+
+    initSessionAutoLogout() {
+        const enableAutoLogout = document.body?.dataset?.autoLogout === "true";
+        if (!enableAutoLogout) return;
+
+        if (typeof sessionTimeoutSeconds === "undefined" || !sessionTimeoutSeconds) return;
+
+        this.bindUserActivityReset();
+        this.resetSessionTimers();
+    },
+
+    bindUserActivityReset() {
+        const events = ["click", "keydown", "mousemove", "scroll", "touchstart"];
+
+        let throttle = false;
+
+        const resetHandler = () => {
+            if (throttle) return;
+
+            throttle = true;
+            this.resetSessionTimers();
+
+            setTimeout(() => {
+                throttle = false;
+            }, 1000);
+        };
+
+        events.forEach((eventName) => {
+            window.addEventListener(eventName, resetHandler, { passive: true });
+        });
+    },
+
+    resetSessionTimers() {
+        this.clearSessionTimers();
+
+        const totalMs = sessionTimeoutSeconds * 1000;
+        const warningMs = Math.max(totalMs - 60000, 0);
+
+        this.warningTimer = setTimeout(() => {
+            alert("1분 후 세션이 만료됩니다.");
+        }, warningMs);
+
+        this.logoutTimer = setTimeout(() => {
+            this.forceLogoutBySessionExpired();
+        }, totalMs);
+    },
+
+    clearSessionTimers() {
+        if (this.warningTimer) {
+            clearTimeout(this.warningTimer);
+            this.warningTimer = null;
+        }
+
+        if (this.logoutTimer) {
+            clearTimeout(this.logoutTimer);
+            this.logoutTimer = null;
+        }
+    }
+};
+
+// 전역 함수 유지
 function openModal(title = "신규 등록") {
-  document.getElementById("modalTitle").innerText = title;
-  document.getElementById("commonModal").classList.add("show");
+    CommonUI.openModal(title);
 }
 
 function closeModal() {
-  document.getElementById("commonModal").classList.remove("show");
+    CommonUI.closeModal();
 }
-
-document.addEventListener("click", function (e) {
-    const modal = document.getElementById("commonModal");
-    const modalBox = document.querySelector(".modal-box");
-
-    if (!modal || !modalBox) return;
-
-    if (modal.classList.contains("show") && e.target === modal) {
-        closeModal();
-    }
-});
-
-// ESC 키로 모달 닫기
-document.addEventListener("keydown", function (e) {
-    const modal = document.getElementById("commonModal");
-
-    if (!modal) return;
-
-    if (e.key === "Escape" && modal.classList.contains("show")) {
-        closeModal();
-    }
-});
 
 function logout() {
-    if (!confirm("로그아웃 하시겠습니까?")) return;
-
-    window.location.href = contextPath + "/logout";
+    CommonUI.logout();
 }
-
-setTimeout(() => {
-    alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-    logout();
-}, 1000 * 60 * 30);

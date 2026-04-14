@@ -59,10 +59,14 @@
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
 		</div>
 
+		<script>
+    		const contextPath = '${pageContext.request.contextPath}';
+		</script>
+
 		<div class="header-right">
 			<div class="header-chip date"></div>
-			<div class="header-chip">${dto.user_name}</div>
-			<div class="header-chip">${dto.user_role}</div>
+			<div class="header-chip">${dto.user_name}님</div>
+			<button class="btn logout-btn" onclick="logout()">로그아웃</button>
 		</div>
 		<button type="button" class="menu-toggle" id="menuToggle">☰</button>
 	</header>
@@ -80,7 +84,7 @@
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
 					<li><a href="./master">기준관리</a></li>
-					<li><a href="./BOM">BOM</a></li>
+					<li><a href="./bom">BOM</a></li>
 					<li><a href="./process">공정</a></li>
 					<li class="active"><a href="/slowstarter/machine">설비</a></li>
 				</ul>
@@ -124,6 +128,7 @@
 				</ul>
 			</div>
 		</aside>
+		<div class="snb-overlay" id="snbOverlay"></div>
 		<main class="content">
 			<div class="page-head">
 				<div class="page-head-left">

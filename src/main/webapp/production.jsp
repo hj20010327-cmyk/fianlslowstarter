@@ -15,69 +15,78 @@
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index.html" class="logo"><span class="logo-mark">AM</span><span>AUTO
-					MES</span></a>
+
+			<a href="./index" class="logo"> <span class="logo-mark">AM</span>
+				<span>AUTO MES</span>
+			</a>
+
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
 		</div>
+
+		<script>
+    		const contextPath = '${pageContext.request.contextPath}';
+		</script>
+
 		<div class="header-right">
 			<div class="header-chip date"></div>
-			<div class="header-chip">${dto.user_name}</div>
-			<div class="header-chip">${dto.user_role}</div>
+			<div class="header-chip">${dto.user_name}님</div>
+			<button class="btn logout-btn" onclick="logout()">로그아웃</button>
 		</div>
 		<button type="button" class="menu-toggle" id="menuToggle">☰</button>
 	</header>
+
 	<div class="layout">
 		<aside class="snb" id="snb">
 			<div class="snb-section">
 				<div class="snb-title">MAIN</div>
 				<ul class="snb-menu">
-					<li><a href="./index.html">대시보드</a></li>
+					<li><a href="./index">대시보드</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master.html">기준관리</a></li>
-					<li><a href="./bom.html">BOM</a></li>
-					<li><a href="./process.html">공정</a></li>
+					<li><a href="./master">기준관리</a></li>
+					<li><a href="./bom">BOM</a></li>
+					<li><a href="./process">공정</a></li>
+					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">생산관리</div>
 				<ul class="snb-menu">
-					<li><a href="./workorder.html">작업지시 <span
-							class="menu-badge">4</span></a></li>
-					<li><a href="./plan.html">생산계획 <span class="menu-badge">2</span></a></li>
+					<li><a href="/slowstarter/workorder">작업지시</a></li>
+					<li><a href="/slowstarter/plan">생산계획</a></li>
 				</ul>
 			</div>
 			<div class="snb-section">
 				<div class="snb-title">재고관리</div>
 				<ul class="snb-menu">
-					<li><a href="./stock.html">재고</a></li>
-					<li><a href="./product.html">완제품</a></li>
-					<li><a href="./item.html">자재</a></li>
+					<li><a href="./stock">재고</a></li>
+					<li><a href="./product">완제품</a></li>
+					<li><a href="./item">자재</a></li>
 				</ul>
 			</div>
 
 			<div class="snb-section">
 				<div class="snb-title">품질관리</div>
 				<ul class="snb-menu">
-					<li><a href="./quality.html">품질<span class="menu-badge">2</span></a></li>
+					<li><a href="qualityList">품질</a></li>
 				</ul>
 			</div>
 			<div class="snb-section">
 				<div class="snb-title">리포트</div>
 				<ul class="snb-menu">
-					<li><a href="./report.html">리포트</a></li>
-					<li class="active"><a href="./production.html">생산실적</a></li>
+					<li><a href="./report">리포트</a></li>
+					<li class="active"><a href="./production">생산실적</a></li>
 				</ul>
 			</div>
 			<div class="snb-section">
 				<div class="snb-title">시스템</div>
 				<ul class="snb-menu">
-					<li><a href="./board.jsp">게시판</a></li>
+					<li><a href="./board">게시판</a></li>
 					<li><a href="./user">사용자관리</a></li>
 					<li><a href="./mypage">마이페이지</a></li>
 				</ul>

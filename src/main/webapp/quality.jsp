@@ -216,7 +216,7 @@
     </style>
 
     <script>
-        const QUALITY_PATH = "${pageContext.request.contextPath}/quality";
+        const QUALITY_PATH = "${pageContext.request.contextPath}/qualityList";
 
         window.addEventListener('load', () => {
             const dateEl = document.querySelector('.header-chip.date');

@@ -27,9 +27,9 @@ public class PlanService {
 		return a;
 	}
 	
-	public List searchList(String planCode, String status) {
+	public List searchList(String planCode, String status, String dueDate) {
 	    PlanDAO dao = new PlanDAO();
-	    return dao.searchList(planCode, status);
+	    return dao.searchList(planCode, status, dueDate);
 	}
 
 	public List selectPage(int startRow, int endRow) {
@@ -41,14 +41,14 @@ public class PlanService {
 	    return dao.getTotalCount();
 	}
 	
-	public List<PlanDTO> searchPage(String planCode, String status, int startRow, int endRow) {
+	public List<PlanDTO> searchPage(String planCode, String status,String dueDate, int startRow, int endRow) {
 	    PlanDAO dao = new PlanDAO();
-	    return dao.searchPage(planCode, status, startRow, endRow);
+	    return dao.searchPage(planCode, status, dueDate,startRow, endRow);
 	}
 
-	public int getSearchCount(String planCode, String status) {
+	public int getSearchCount(String planCode, String status, String dueDate) {
 	    PlanDAO dao = new PlanDAO();
-	    return dao.getSearchCount(planCode, status);
+	    return dao.getSearchCount(planCode, status, dueDate);
 	}
 	
 	

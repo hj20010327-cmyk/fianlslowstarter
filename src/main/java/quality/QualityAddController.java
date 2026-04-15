@@ -2,56 +2,68 @@ package quality;
 
 import java.io.IOException;
 import java.sql.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import login.LoginDTO;
 
 @WebServlet("/quality/add")
 public class QualityAddController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // 한글 처리
         request.setCharacterEncoding("utf-8");
+        response.setContentType("text/html; charset=utf-8;");
+
+        // 로그인 세션 가져오기
+        HttpSession session = request.getSession();
+        LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
+
+        // 관리자 / 슈퍼바이저만 등록 가능
+        if (loginUser == null ||
+            (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
+            response.sendRedirect(request.getContextPath() + "/qualityList");
+            return;
+        }
 
         try {
+            // 전달받은 값을 DTO에 담기
             QualityDTO dto = new QualityDTO();
-            
-            // 1. 파라미터 수집 및 DTO 세팅
-            dto.setQuality_code(request.getParameter("quality_code"));
-            
-            // 숫자로 변환할 때 값이 비어있으면 에러가 날 수 있으므로 체크
-            String qtyStr = request.getParameter("inspect_qty");
-            if (qtyStr != null && !qtyStr.isEmpty()) {
-                dto.setQuality_qty(Integer.parseInt(qtyStr));
-            }
 
-            dto.setQc_status(request.getParameter("qc_status"));
-            
-            String dateStr = request.getParameter("inspect_date");
-            if(dateStr != null && !dateStr.isEmpty()) {
-                dto.setInspect_date(Date.valueOf(dateStr));
-            }
-            
-            // JSP의 textarea 혹은 input name이 "remarks"인지 꼭 확인하세요!
-            dto.setRemarks(request.getParameter("remarks"));
+            dto.setQuality_code(request.getParameter("quality_code"));                 // 검사번호
+            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));   // 검사일자
+            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty"))); // 검사수량
+            dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));       // 양품수량
+            dto.setQc_status(request.getParameter("qc_status"));                       // 검사상태
+            dto.setProd_key(Integer.parseInt(request.getParameter("prod_key")));       // 생산 KEY
+            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));       // 담당자 KEY
 
-            // 2. 서비스 호출
+            // 등록 모달에서 입력칸을 뺀 값들은 기본값 처리
+            dto.setDefect_qty(0);        // 불량수량 기본값
+            dto.setDefect_reason(null);  // 불량사유 없음
+
+            // 서비스 호출해서 DB 등록
             QualityService service = new QualityService();
-            int result = service.getaddquality(dto); // 성공 여부를 숫자로 받으면 좋습니다.
+            int result = service.addquality(dto);
 
-            // 3. 목록으로 이동 (경로 주의!)
-            // 보통 목록 페이지 주소가 "/quality"라면 아래처럼 수정해야 할 수도 있습니다.
-            // 작성하신 코드의 /qualityList가 실제 서블릿 주소와 맞는지 확인하세요.
-            response.sendRedirect(request.getContextPath() + "/quality");
+            // 등록 결과 확인용
+            System.out.println("품질 등록 result : " + result);
+
+            // 등록 후 목록으로 이동
+            response.sendRedirect(request.getContextPath() + "/qualityList");
 
         } catch (Exception e) {
             e.printStackTrace();
-            // 에러 발생 시 사용자에게 알림을 주거나 에러 페이지로 이동
-            response.sendRedirect(request.getContextPath() + "/quality/add?error=true");
+            response.getWriter().println("<script>alert('품질 등록 중 오류가 발생했습니다.'); history.back();</script>");
         }
     }
 }

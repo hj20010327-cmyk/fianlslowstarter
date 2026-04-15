@@ -25,7 +25,7 @@ public class ProcessController extends HttpServlet {
 		String keyword = request.getParameter("keyword");
 		
 		// 페이징 
-		int size = 5; 
+		int size = 10; 
 		int page = 1; 
 		int keycode = 0; 
 		
@@ -55,10 +55,12 @@ public class ProcessController extends HttpServlet {
 		map.put("size", size);
 		map.put("page", page);
 		
+		
 		request.setAttribute("map",map);
 		request.setAttribute("list", map.get("list"));
 		
 		System.out.println("sequence_no = " + request.getParameter("sequence_no"));
+		
 		
 		RequestDispatcher rd = request.getRequestDispatcher("/process.jsp");
 		rd.forward(request, response);
@@ -174,7 +176,7 @@ public class ProcessController extends HttpServlet {
 			
 			System.out.println("update된 열 : " + result);
 			
-			response.sendRedirect("");
+			response.sendRedirect("/slowstarter/process");
 			
 			
 		} catch(Exception e) {

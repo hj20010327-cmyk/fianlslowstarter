@@ -35,8 +35,8 @@ public class ProcessDAO {
 
 		try (Connection conn = getConn();
 				PreparedStatement ps = new LoggableStatement(conn, " SELECT * FROM (SELECT rownum AS rnum, p.*  "
-						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status, "
-						+ "			( SELECT i.item_name FROM tb_item i WHERE i.item_key = p.item_key) AS process_item_key  "
+						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status,p.item_key,  "
+						+ "			( SELECT i.item_name FROM tb_item i WHERE i.item_key = p.item_key) AS item_name  "
 						+ "				FROM tb_process p ORDER BY p.process_key ) p "
 						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ");) {
 			ps.setInt(1, processDTO.getEnd());
@@ -55,7 +55,8 @@ public class ProcessDAO {
 					dto.setSequence_no(rs.getInt("sequence_no"));
 					dto.setProcess_desc(rs.getString("process_desc"));
 					dto.setStatus(rs.getString("status"));
-					dto.setProcess_item_key(rs.getString("process_item_key"));
+					dto.setItem_key(rs.getInt("Item_key"));
+					dto.setItem_name(rs.getString("Item_name"));
 
 					list.add(dto);
 				}
@@ -77,7 +78,7 @@ public class ProcessDAO {
 		try (Connection conn = getConn();
 				PreparedStatement ps = new LoggableStatement(conn, "SELECT * FROM (SELECT rownum AS rnum, p.*  "
 						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status, "
-						+ "			i.item_name As process_item_key From tb_process p  "
+						+ "			i.item_name As Item_name From tb_process p  "
 						+ "			left join tb_item i on p.item_key = i.item_key  "
 						+ "			where 1=1 and (? = 0 or p.process_key = ? ) "
 						+ "			and (? is null or p.process_name like '%' || ? || '%' )   "
@@ -103,7 +104,8 @@ public class ProcessDAO {
 					dto.setSequence_no(rs.getInt("sequence_no"));
 					dto.setProcess_desc(rs.getString("process_desc"));
 					dto.setStatus(rs.getString("status"));
-					dto.setProcess_item_key(rs.getString("process_item_key"));
+					dto.setItem_key(rs.getInt("item_key"));
+					dto.setItem_name(rs.getString("item_name"));
 					
 					list.add(dto);
 

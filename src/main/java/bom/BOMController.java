@@ -30,7 +30,7 @@ public class BOMController extends HttpServlet {
 		String keyword = request.getParameter("keyword");
 		
 		//페이징
-		int size = 5; 
+		int size = 10; 
 		int page = 1; 
 		int keycode = 0; 
 		
@@ -105,16 +105,28 @@ public class BOMController extends HttpServlet {
 		String QTY = request.getParameter("QTY");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
-		String bom_item_key = request.getParameter("bom_item_key");
+		String Bitem_key = request.getParameter("item_key");
+		String Bparent_item_key = request.getParameter("parent_item_key");
+		
+		int item_key = 0; 
+		if (Bitem_key != null && !Bitem_key.trim().isEmpty()) {
+			item_key = Integer.parseInt(Bitem_key.trim());
+		}
+		
+		int parent_item_key = 0; 
+		if (Bparent_item_key != null && !Bparent_item_key.trim().isEmpty()) {
+			parent_item_key = Integer.parseInt(Bparent_item_key.trim());
+		}
 		
 		// DTO실행
 		BOMDTO bomDTO = new BOMDTO(); 
 		
-		
 		bomDTO.setBom_code(bom_code);
 		bomDTO.setQTY(qty);
 		bomDTO.setRemark(remark);
-		bomDTO.setBom_item_key(bom_item_key);
+		bomDTO.setItem_key(item_key);
+		bomDTO.setParent_item_key(parent_item_key);
+		
 		
 		// service & DTO
 		BOMService bomservice = new BOMService(); 
@@ -137,7 +149,18 @@ public class BOMController extends HttpServlet {
 		String QTY = request.getParameter("QTY");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
-		String bom_item_key = request.getParameter("bom_item_key");
+		String Bitem_key = request.getParameter("item_key");
+		String Bparent_item_key = request.getParameter("parent_item_key");
+		
+		int item_key = 0; 
+		if (Bitem_key != null && !Bitem_key.trim().isEmpty()) {
+			item_key = Integer.parseInt(Bitem_key.trim());
+		}
+		
+		int parent_item_key = 0; 
+		if (Bparent_item_key != null && !Bparent_item_key.trim().isEmpty()) {
+			parent_item_key = Integer.parseInt(Bparent_item_key.trim());
+		}
 		
 		try {
 			BOMDTO bomDTO = new BOMDTO();
@@ -149,7 +172,8 @@ public class BOMController extends HttpServlet {
 			bomDTO.setBom_code(bom_code);
 			bomDTO.setQTY(qty);
 			bomDTO.setRemark(remark);
-			bomDTO.setBom_item_key(bom_item_key);
+			bomDTO.setItem_key(item_key);
+			bomDTO.setParent_item_key(parent_item_key);
 			
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);

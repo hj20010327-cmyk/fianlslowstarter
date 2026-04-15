@@ -1,53 +1,48 @@
-/* window.onload 는 페이지가 로딩된 후 실행하고 싶을 때 
-버튼 클릭용만은 필요 없음 */
-
-window.onload = function(){
- 	console.log(document.getElementById('commonModal'));
-}
-
-function openModal(title, el = null) {
-  const modal = document.getElementById('commonModal');
-
-  // 제목 변경
-  document.getElementById('modalTitle').innerText = title;
-
   // 👉 수정 모드일 때만 값 세팅
-  if (el) {
-    const code = el.dataset.code;
-    const name = el.dataset.name;
-    const qty = el.dataset.qty;
-    const remark = el.dataset.remark;
-    
-    console.log(code, name, qty, remark);
-    
-	document.querySelector('input[name="bom_key"]').value = key;
-    document.querySelector('input[name="bom_code"]').value = code;
-    document.querySelector('input[name="bom_item_key"]').value = name;
-    document.querySelector('input[name="QTY"]').value = qty;
-    document.querySelector('textarea[name="remark"]').value = remark;
-    
-    
-
-    document.querySelector('input[name="cmd"]').value = 'update';
-  } else {
-    // 👉 신규 등록일 때 초기화
-    document.querySelector('input[name="bom_code"]').value = '';
-    document.querySelector('input[name="bom_item_key"]').value = '';
-    document.querySelector('input[name="QTY"]').value = '';
-    document.querySelector('textarea[name="remark"]').value = '';
-
-    document.querySelector('input[name="cmd"]').value = 'insert';
+  
+  function openInsertModal(){
+  	
+  	document.getElementById("modalTitle").innerText = "BOM 신규 등록"; 
+  	document.getElementById("processForm").reset(); 
+  	
+  	// 반드시 id.로 직접 주기 
+  	document.getElementById("cmd").value = "insert";
+  	
+  	document.getElementById("bom_key").value= ""; 
+  	document.getElementById("bom_code").value= ""; 
+  	document.getElementById("qty").value= ""; 
+  	document.getElementById("remark").value= ""; 
+  	document.getElementById("item_key").value= ""; 
+  	document.getElementById("parent_item_key").value= ""; 
+  	
+  	document.getElementById("commonModal").classList.add("show");
   }
-
-  // 모달 열기
-  modal.classList.add('show');
-}
-
-console.log("bom.js loaded");
-console.log("1");
-
-console.log(document.getElementById('commonModal'));
-
-console.log("2");
+  
+ 
+	function openEditModal(bom_key, bom_code, qty, remark, item_key, parent_item_key){
+		document.getElementById("modalTitle").innerText = "BOM 수정";
+		document.getElementById("processForm").action = "process";
+		
+		document.getElementById("cmd").value = "update";
+		document.getElementById("process_key").value = process_key; 
+		document.getElementById("process_code").value = process_code;
+		document.getElementById("qty").value = qty; 
+		document.getElementById("remark").value = remark; 
+		document.getElementById("item_key").value = item_key; 
+		document.getElementById("parent_item_key").value = parent_item_key; 
+		
+		document.getElementById("commonModal").classList.add("show");
+		
+	}
+	
+	function closeModal(){
+		document.getElementById("commonModal").classList.remove("show");
+	}
+	
+	
+	document.getElementById("processForm").addEventListener("submit", function(){
+		console.log("cmd=", document.getElementById("cmd").value);
+		console.log("process_key = ", document.getElementById("process_key").value);
+	});
 
 

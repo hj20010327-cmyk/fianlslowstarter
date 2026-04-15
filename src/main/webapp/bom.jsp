@@ -33,7 +33,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -137,11 +137,14 @@
 					<div class="card">
 						<div class="section-title">
 							<h2>BOM관리 목록</h2>
-							<span>
-								<button type="submit" class="btn" value="삭제"
-									style="background: #4a90e2; color: white;">삭제</button> <input
-								type="hidden" name="cmd" value="delete">
-							</span>
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<span>
+									<button type="submit" class="btn" value="삭제"
+										style="background: #4a90e2; color: white;">삭제</button> <input
+									type="hidden" name="cmd" value="delete">
+								</span>
+							</c:if>
 						</div>
 
 						<div class="table-wrap">
@@ -150,9 +153,10 @@
 									<tr>
 										<th>선택</th>
 										<th>BOM코드</th>
+										<th>완제품명</th>
+										<th>자재명</th>
 										<th>수량</th>
 										<th>비고</th>
-										<th>제품명</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -161,17 +165,21 @@
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-											<td class="clickable"
-												onclick="openModal('BOM 수정',this)"
-												data-key="${bom.bom_key}"
-												data-code="${bom.bom_code}"
-												data-name="<c:out value='${bom.bom_item_key}' />"
-												data-qty="${bom.QTY}"
-												data-remark="<c:out value='${bom.remark}' />">
-												${bom.bom_code}</td>
+											<td>
+											<a href="javascript:void(0);"
+												onclick="openEditModal('${bom.bom_key}',
+											'${bom.bom_code}',
+											'${bom.QTY}',
+											'${bom.remark}',
+											'${bom.item_key}',
+											'${bom.parent_item_key}'
+											)">
+											${bom.bom_code}
+											</a></td>
+											<td>${bom.parent_item_name}</td>
+											<td>${bom.item_name}</td>
 											<td>${bom.QTY}</td>
 											<td>${bom.remark}</td>
-											<td>${bom.bom_item_key}</td>
 										</tr>
 									</c:forEach>
 
@@ -201,7 +209,7 @@
 								<div class="pagination">
 									<c:forEach var="i" begin="${start_section}"
 										end="${end_section}">
-										<a href="bom?page=${i}&size=5"> <c:if
+										<a href="bom?page=${i}&size=10"> <c:if
 												test="${map.page eq i }">
 												<strong>${i}</strong>
 											</c:if> <c:if test="${map.page != i}">
@@ -252,7 +260,7 @@
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
-			<form method="post" action="bom">
+			<form id="processForm" method="post" action="bom">
 
 				<!-- 헤더 -->
 				<div class="modal-header">
@@ -274,39 +282,43 @@
 
 
 						<div class="form-group">
-							<label>코드</label> <input type="text" name="bom_code"
-								class="input" placeholder="코드 입력" />
-						</div>
-
-
-
-						<div class="form-group">
-							<label>제품명</label> <input type="text" class="input"
-								name="bom_item_key" placeholder="제품명 입력" />
+							<label>BOM코드</label> 
+							<input type="text" name="bom_code" id="bom_code" 
+							class="input" placeholder="코드 입력" />
 						</div>
 
 
 						<div class="form-group">
-							<label>소요량</label> <input type="number" class="input" name="QTY"
-								placeholder="수량 입력" />
+							<label>소요량</label> 
+							<input type="number" name="QTY" id="QTY"  
+							class="input" placeholder="수량 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>버전</label> <input type="text" class="input"
+							<label>버전</label> 
+							<input type="text" class="input"
 								placeholder="예: V1" />
 						</div>
 
-						<div class="form-group">
-							<label>사용여부</label> <select class="select">
-								<option>사용</option>
-								<option>미사용</option>
-							</select>
-						</div>
 
 						<div class="form-group" style="grid-column: span 2;">
 							<label>비고</label>
 							<textarea name="remark" class="textarea" placeholder="추가 설명 입력"></textarea>
 						</div>
+						
+
+						<div class="form-group">
+							<label>완제품명</label> 
+							<input type="text" class="input"
+								name="parent_item_key" placeholder="완제품명 입력" />
+						</div>
+						
+						<div class="form-group">
+							<label>자재명</label> 
+							<input type="text" class="input"
+								name="item_key" placeholder="제품명 입력" />
+						</div>
+						
 					</div>
 				</div>
 
@@ -314,7 +326,8 @@
 				<div class="modal-footer">
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
-					<input type="hidden" name="cmd" value="insert">
+					<input type="hidden" name="cmd" id="cmd">
+					<input type="hidden" name="bom_key" id="bom_key">
 				</div>
 
 			</form>
@@ -323,6 +336,6 @@
 	</div>
 
 
-	
+
 </body>
 </html>

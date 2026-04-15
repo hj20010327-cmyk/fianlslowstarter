@@ -161,7 +161,7 @@
 /* ===== 리포트 KPI 고정 ===== */
 .kpi-grid.report-kpi-grid {
     display: grid !important;
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     gap: 12px !important;
     margin-bottom: 16px !important;
 }
@@ -215,18 +215,13 @@
 /* 반응형 */
 @media (max-width: 1300px) {
     .kpi-grid.report-kpi-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
     }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 875px) {
     .kpi-grid.report-kpi-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
 }
 
-@media (max-width: 640px) {
-    .kpi-grid.report-kpi-grid {
-        grid-template-columns: 1fr !important;
-    }
-}

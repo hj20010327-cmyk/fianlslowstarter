@@ -9,31 +9,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class DaschboardController
- */
+import login.LoginDTO;
+
 @WebServlet("/index")
 public class DashboardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-	private DashboardService service = new DashboardService();
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		 request.setCharacterEncoding("utf-8");
+    DashboardService service = new DashboardService();
 
-	        HttpSession session = request.getSession(false);
-	        if (session == null || session.getAttribute("dto") == null) {
-	            response.sendRedirect(request.getContextPath() + "/login.jsp");
-	            return;
-	        }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	        DashboardDTO dashboard = service.getDashboardData();
-	        request.setAttribute("dashboard", dashboard);
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("dto") == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
 
-	        request.getRequestDispatcher("/index.jsp").forward(request, response);
-		
-	}
+        LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
+
+        DashboardDTO dashboard = service.getDashboard(loginUser);
+        request.setAttribute("dashboard", dashboard);
+
+        request.getRequestDispatcher("/index.jsp").forward(request, response);
+    }
 
 
 }

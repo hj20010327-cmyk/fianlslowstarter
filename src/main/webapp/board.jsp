@@ -328,134 +328,121 @@
 		<div class="snb-overlay" id="snbOverlay"></div>
 		
 <main class="content">
-	<section class="page-header board-header">
-		<div>
-			<h1>게시판</h1>
-			<p>공지사항 및 업무 관련 내용을 확인할 수 있습니다.</p>
-		</div>
-		<div class="board-actions">
-			<button type="button" class="btn-write">글쓰기</button>
-		</div>
-	</section>
+			<section class="page-header board-header">
+				<div>
+					<h1>게시판</h1>
+					<p>공지사항 및 업무 관련 내용을 확인할 수 있습니다.</p>
+				</div>
+				<div class="board-actions">
+					<button type="button" class="btn-write"
+						onclick="location.href='${pageContext.request.contextPath}/board?action=writeForm'">
+						글쓰기
+					</button>
+				</div>
+			</section>
 
-	<section class="board-wrap">
-		<div class="board-top">
-			<div class="board-info">
-				<span>전체 <strong>128</strong>건</span>
-			</div>
+			<section class="board-wrap">
+				<div class="board-top">
+					<div class="board-info">
+						<span>전체 <strong>${totalCount}</strong>건</span>
+					</div>
 
-			<form action="./board" method="get" class="board-search">
-				<select name="searchType">
-					<option value="title">제목</option>
-					<option value="writer">작성자</option>
-					<option value="content">내용</option>
-				</select>
-				<input type="text" name="keyword" placeholder="검색어를 입력하세요" />
-				<button type="submit">검색</button>
-			</form>
-		</div>
+					<form action="${pageContext.request.contextPath}/board" method="get" class="board-search">
+						<input type="hidden" name="action" value="list" />
+						<select name="searchType">
+							<option value="title" ${searchType == 'title' ? 'selected' : ''}>제목</option>
+							<option value="writer" ${searchType == 'writer' ? 'selected' : ''}>작성자</option>
+							<option value="content" ${searchType == 'content' ? 'selected' : ''}>내용</option>
+						</select>
+						<input type="text" name="keyword" value="${keyword}" placeholder="검색어를 입력하세요" />
+						<button type="submit">검색</button>
+					</form>
+				</div>
 
-		<div class="board-table-wrap">
-			<table class="board-table">
-				<colgroup>
-					<col style="width: 10%">
-					<col style="width: 48%">
-					<col style="width: 12%">
-					<col style="width: 12%">
-					<col style="width: 9%">
-					<col style="width: 9%">
-				</colgroup>
-				<thead>
-					<tr>
-						<th>번호</th>
-						<th>제목</th>
-						<th>작성자</th>
-						<th>작성일</th>
-						<th>조회</th>
-						<th>상태</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="notice-row">
-						<td><span class="notice-badge">공지</span></td>
-						<td class="title">
-							<a href="./boardDetail?board_key=1">[필독] 게시판 이용 안내드립니다.</a>
-						</td>
-						<td>관리자</td>
-						<td>2026-04-14</td>
-						<td>152</td>
-						<td><span class="status-text fixed">고정</span></td>
-					</tr>
+				<div class="board-table-wrap">
+					<table class="board-table">
+						<colgroup>
+							<col style="width: 10%">
+							<col style="width: 48%">
+							<col style="width: 12%">
+							<col style="width: 12%">
+							<col style="width: 9%">
+							<col style="width: 9%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>제목</th>
+								<th>작성자</th>
+								<th>작성일</th>
+								<th>조회</th>
+								<th>상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:choose>
+								<c:when test="${not empty boardList}">
+									<c:forEach var="b" items="${boardList}">
+										<tr class="${b.board_type == '공지' ? 'notice-row' : ''}">
+											<td>
+												<c:choose>
+													<c:when test="${b.board_type == '공지'}">
+														<span class="notice-badge">공지</span>
+													</c:when>
+													<c:otherwise>
+														${b.board_key}
+													</c:otherwise>
+												</c:choose>
+											</td>
+											<td class="title">
+												<a href="${pageContext.request.contextPath}/board?action=detail&board_key=${b.board_key}">
+													${b.title}
+												</a>
+											</td>
+											<td>${b.user_name}</td>
+											<td><fmt:formatDate value="${b.created_at}" pattern="yyyy-MM-dd"/></td>
+											<td>${b.view_count}</td>
+											<td>
+												<c:choose>
+													<c:when test="${b.board_type == '공지'}">
+														<span class="status-text fixed">고정</span>
+													</c:when>
+													<c:otherwise>
+														<span class="status-text normal">일반</span>
+													</c:otherwise>
+												</c:choose>
+											</td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<tr>
+										<td colspan="6">등록된 게시글이 없습니다.</td>
+									</tr>
+								</c:otherwise>
+							</c:choose>
+						</tbody>
+					</table>
+				</div>
 
-					<tr>
-						<td>27</td>
-						<td class="title">
-							<a href="./boardDetail?board_key=27">4월 설비 점검 일정 공유드립니다.</a>
-						</td>
-						<td>관리자</td>
-						<td>2026-04-14</td>
-						<td>34</td>
-						<td><span class="status-text normal">일반</span></td>
-					</tr>
+				<div class="pagination">
+					<c:if test="${page > 1}">
+						<a href="${pageContext.request.contextPath}/board?action=list&page=${page - 1}&searchType=${searchType}&keyword=${keyword}">&laquo;</a>
+					</c:if>
 
-					<tr>
-						<td>26</td>
-						<td class="title">
-							<a href="./boardDetail?board_key=26">생산계획 수정 관련 공지사항입니다.</a>
-						</td>
-						<td>김대리</td>
-						<td>2026-04-13</td>
-						<td>21</td>
-						<td><span class="status-text normal">일반</span></td>
-					</tr>
+					<c:forEach var="i" begin="1" end="${totalPage}">
+						<a href="${pageContext.request.contextPath}/board?action=list&page=${i}&searchType=${searchType}&keyword=${keyword}"
+						   class="${page == i ? 'active' : ''}">
+							${i}
+						</a>
+					</c:forEach>
 
-					<tr>
-						<td>25</td>
-						<td class="title">
-							<a href="./boardDetail?board_key=25">작업지시 등록 오류 확인 부탁드립니다.</a>
-						</td>
-						<td>이주임</td>
-						<td>2026-04-13</td>
-						<td>18</td>
-						<td><span class="status-text normal">일반</span></td>
-					</tr>
-
-					<tr>
-						<td>24</td>
-						<td class="title">
-							<a href="./boardDetail?board_key=24">금주 생산 일정 회의 내용 정리</a>
-						</td>
-						<td>박사원</td>
-						<td>2026-04-12</td>
-						<td>26</td>
-						<td><span class="status-text normal">일반</span></td>
-					</tr>
-
-					<tr>
-						<td>23</td>
-						<td class="title">
-							<a href="./boardDetail?board_key=23">설비 이상 발생 시 보고 절차 안내</a>
-						</td>
-						<td>관리자</td>
-						<td>2026-04-12</td>
-						<td>45</td>
-						<td><span class="status-text normal">일반</span></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<div class="pagination">
-			<a href="./board?page=1">&laquo;</a>
-			<a href="./board?page=1" class="active">1</a>
-			<a href="./board?page=2">2</a>
-			<a href="./board?page=3">3</a>
-			<a href="./board?page=4">4</a>
-			<a href="./board?page=5">5</a>
-			<a href="./board?page=2">&raquo;</a>
-		</div>
-	</section>
-</main>
+					<c:if test="${page < totalPage}">
+						<a href="${pageContext.request.contextPath}/board?action=list&page=${page + 1}&searchType=${searchType}&keyword=${keyword}">&raquo;</a>
+					</c:if>
+				</div>
+			</section>
+		</main>
 	</div>
 </body>
 </html>

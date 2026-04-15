@@ -19,8 +19,12 @@ function openInsertModal(){
 function openEditModal(process_key, process_code, process_name, sequence_no, process_desc, status, item_key){
 
 	document.getElementById("modalTitle").innerText = "Process 수정"; 
+	
 	document.getElementById("processForm").reset(); 
-	document.querySelector("input[name='cmd']").value = "update";
+
+	// 💥 reset 이후에 반드시 다시 세팅
+	document.getElementById("cmd").value = "update";
+	document.getElementById("process_key").value = process_key;
 
 	document.getElementById("process_code").value = process_code;
 	document.getElementById("sequence_no").value = sequence_no;

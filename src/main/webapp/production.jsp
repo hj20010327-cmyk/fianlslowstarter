@@ -116,7 +116,6 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>기준 조건을 선택하세요</span>
 				</div>
 
 				<form action="${pageContext.request.contextPath}/production"

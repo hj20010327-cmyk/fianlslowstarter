@@ -127,42 +127,23 @@
 				<div class="card report-kpi-grid">
 					<div class="card-label">총 계획수량</div>
 					<div class="card-value">
-						<fmt:formatNumber value="${summary.totalPlanQty}" pattern="#,##0" />
+						<fmt:formatNumber value="${summary.totalPlanQty}" pattern="#,##0" /><span style="font-size: 20px">EA</span>
 					</div>
-					<div class="card-meta">생산계획 기준 수량</div>
-				</div>
-
-				<div class="card report-kpi-grid">
-					<div class="card-label">총 작업지시수량</div>
-					<div class="card-value">
-						<fmt:formatNumber value="${summary.totalOrderQty}" pattern="#,##0" />
-					</div>
-					<div class="card-meta">작업지시 등록 수량</div>
-				</div>
-
-				<div class="card report-kpi-grid">
-					<div class="card-label">총 생산투입수량</div>
-					<div class="card-value">
-						<fmt:formatNumber value="${summary.totalInputQty}" pattern="#,##0" />
-					</div>
-					<div class="card-meta">생산 투입 기준</div>
 				</div>
 
 				<div class="card report-kpi-grid">
 					<div class="card-label">총 양품수량</div>
 					<div class="card-value">
-						<fmt:formatNumber value="${summary.totalGoodQty}" pattern="#,##0" />
+						<fmt:formatNumber value="${summary.totalGoodQty}" pattern="#,##0" /><span style="font-size: 20px">EA</span>
 					</div>
-					<div class="card-meta">실생산 양품 수량</div>
 				</div>
 
 				<div class="card report-kpi-grid">
 					<div class="card-label">총 불량수량</div>
 					<div class="card-value">
 						<fmt:formatNumber value="${summary.totalDefectQty}"
-							pattern="#,##0" />
+							pattern="#,##0" /><span style="font-size: 20px">EA</span>
 					</div>
-					<div class="card-meta">실생산 불량 수량</div>
 				</div>
 
 				<div class="card report-kpi-grid">
@@ -172,17 +153,8 @@
 							pattern="0.00" />
 						%
 					</div>
-					<div class="card-meta">양품수량 ÷ 계획수량</div>
 				</div>
 
-				<div class="card report-kpi-grid">
-					<div class="card-label">수율</div>
-					<div class="card-value">
-						<fmt:formatNumber value="${summary.yieldRate}" pattern="0.00" />
-						%
-					</div>
-					<div class="card-meta">양품수량 ÷ 투입수량</div>
-				</div>
 
 				<div class="card report-kpi-grid">
 					<div class="card-label">불량률</div>
@@ -190,7 +162,6 @@
 						<fmt:formatNumber value="${summary.defectRate}" pattern="0.00" />
 						%
 					</div>
-					<div class="card-meta">불량수량 ÷ 투입수량</div>
 				</div>
 			</section>
 
@@ -249,7 +220,6 @@
 				<div class="card">
 					<div class="section-title">
 						<h2>불량 사유별 집계</h2>
-						<span>품질검사 기준</span>
 					</div>
 
 					<div class="table-wrap">
@@ -289,7 +259,6 @@
 			<div class="card" style="margin-top: 20px;">
 				<div class="section-title">
 					<h2>품목별 계획 / 실적 현황</h2>
-					<span>ITEM 기준 집계</span>
 				</div>
 
 				<div class="table-wrap">

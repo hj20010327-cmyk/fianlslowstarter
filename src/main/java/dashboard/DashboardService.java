@@ -1,11 +1,12 @@
 package dashboard;
 
+import login.LoginDTO;
+
 public class DashboardService {
 
-	private DashboardDAO dao = new DashboardDAO();
+	DashboardDAO dao = new DashboardDAO();
 
-	public DashboardDTO getDashboardData() {
-		return dao.getDashboardData();
-	}
-
+    public DashboardDTO getDashboard(LoginDTO loginUser) {
+        return dao.selectDashboard(loginUser);
+    }
 }

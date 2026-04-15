@@ -3,235 +3,257 @@ package dashboard;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import login.LoginDTO;
+
 public class DashboardDAO {
 
-    private DataSource getDataSource() throws Exception {
+	private DataSource getDataSource() throws Exception {
         Context ctx = new InitialContext();
         return (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
     }
 
-    public DashboardDTO getDashboardData() {
+    public DashboardDTO selectDashboard(LoginDTO loginUser) {
         DashboardDTO dto = new DashboardDTO();
 
-        dto.setTodayProductionQty(getTodayProductionQty());
-        dto.setTodayDefectQty(getTodayDefectQty());
-        dto.setLowStockCount(getLowStockCount());
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        dto.setWorkorderTotal(getWorkorderTotal());
-        dto.setWorkorderInProgress(getWorkorderInProgress());
-        dto.setWorkorderWaiting(getWorkorderWaiting());
+        boolean isWorker = "작업자".equals(loginUser.getUser_role());
 
-        dto.setQualityPassRate(getQualityPassRate());
-        dto.setEquipmentRunRate(getEquipmentRunRate());
+        try {
+            conn = getDataSource().getConnection();
 
-        dto.setWeekLabels(getWeekLabels());
-        dto.setWeekProductionQtys(getWeekProductionQtys());
+            // 오늘 생산량
+            if (isWorker) {
+                ps = conn.prepareStatement(
+                    "SELECT NVL(SUM(GOOD_QTY), 0) AS QTY " +
+                    "FROM TB_PRODUCTION " +
+                    "WHERE TRUNC(PROD_DATE)=TRUNC(SYSDATE) " +
+                    "AND WORK_USER_KEY = ?"
+                );
+                ps.setInt(1, loginUser.getUser_key());
+            } else {
+                ps = conn.prepareStatement(
+                    "SELECT NVL(SUM(GOOD_QTY), 0) AS QTY " +
+                    "FROM TB_PRODUCTION " +
+                    "WHERE TRUNC(PROD_DATE)=TRUNC(SYSDATE)"
+                );
+            }
+
+            rs = ps.executeQuery();
+            if (rs.next()) dto.setTodayProdQty(rs.getInt("QTY"));
+            rs.close(); ps.close();
+
+            // 오늘 작업지시 수
+            if (isWorker) {
+                ps = conn.prepareStatement(
+                    "SELECT COUNT(*) AS CNT " +
+                    "FROM TB_WORK_ORDER " +
+                    "WHERE TRUNC(WORK_DATE)=TRUNC(SYSDATE) " +
+                    "AND WORK_USER_KEY = ?"
+                );
+                ps.setInt(1, loginUser.getUser_key());
+            } else {
+                ps = conn.prepareStatement(
+                    "SELECT COUNT(*) AS CNT " +
+                    "FROM TB_WORK_ORDER " +
+                    "WHERE TRUNC(WORK_DATE)=TRUNC(SYSDATE)"
+                );
+            }
+
+            rs = ps.executeQuery();
+            if (rs.next()) dto.setTodayWorkorderCnt(rs.getInt("CNT"));
+            rs.close(); ps.close();
+
+            // 오늘 불량
+            if (isWorker) {
+                ps = conn.prepareStatement(
+                    "SELECT NVL(SUM(q.DEFECT_QTY), 0) AS QTY " +
+                    "FROM TB_QUALITY q " +
+                    "JOIN TB_PRODUCTION p ON q.PROD_KEY = p.PROD_KEY " +
+                    "WHERE TRUNC(q.INSPECT_DATE)=TRUNC(SYSDATE) " +
+                    "AND p.WORK_USER_KEY = ?"
+                );
+                ps.setInt(1, loginUser.getUser_key());
+            } else {
+                ps = conn.prepareStatement(
+                    "SELECT NVL(SUM(DEFECT_QTY), 0) AS QTY " +
+                    "FROM TB_QUALITY " +
+                    "WHERE TRUNC(INSPECT_DATE)=TRUNC(SYSDATE)"
+                );
+            }
+
+            rs = ps.executeQuery();
+            if (rs.next()) dto.setTodayDefectQty(rs.getInt("QTY"));
+            rs.close(); ps.close();
+
+            // 재고 부족
+            ps = conn.prepareStatement(
+                "SELECT COUNT(*) AS CNT " +
+                "FROM TB_STOCK " +
+                "WHERE CURRENT_QTY <= SAFE_QTY"
+            );
+            rs = ps.executeQuery();
+            if (rs.next()) dto.setLowStockCnt(rs.getInt("CNT"));
+            rs.close(); ps.close();
+
+            // 최근 7일 생산량
+            if (isWorker) {
+                ps = conn.prepareStatement(
+                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+                    "NVL((SELECT SUM(GOOD_QTY) " +
+                    "     FROM TB_PRODUCTION " +
+                    "     WHERE TRUNC(PROD_DATE)=DT " +
+                    "       AND WORK_USER_KEY = ?), 0) AS PROD_QTY " +
+                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+                    "ORDER BY DT"
+                );
+                ps.setInt(1, loginUser.getUser_key());
+            } else {
+                ps = conn.prepareStatement(
+                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+                    "NVL((SELECT SUM(GOOD_QTY) " +
+                    "     FROM TB_PRODUCTION " +
+                    "     WHERE TRUNC(PROD_DATE)=DT), 0) AS PROD_QTY " +
+                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+                    "ORDER BY DT"
+                );
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                dto.getProdLabels().add(rs.getString("DAY_LABEL"));
+                dto.getProdData().add(rs.getInt("PROD_QTY"));
+            }
+            rs.close(); ps.close();
+
+            // 최근 7일 불량
+            if (isWorker) {
+                ps = conn.prepareStatement(
+                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+                    "NVL((SELECT SUM(q.DEFECT_QTY) " +
+                    "     FROM TB_QUALITY q " +
+                    "     JOIN TB_PRODUCTION p ON q.PROD_KEY = p.PROD_KEY " +
+                    "     WHERE TRUNC(q.INSPECT_DATE)=DT " +
+                    "       AND p.WORK_USER_KEY = ?), 0) AS DEFECT_QTY " +
+                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+                    "ORDER BY DT"
+                );
+                ps.setInt(1, loginUser.getUser_key());
+            } else {
+                ps = conn.prepareStatement(
+                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+                    "NVL((SELECT SUM(DEFECT_QTY) " +
+                    "     FROM TB_QUALITY " +
+                    "     WHERE TRUNC(INSPECT_DATE)=DT), 0) AS DEFECT_QTY " +
+                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+                    "ORDER BY DT"
+                );
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                dto.getDefectLabels().add(rs.getString("DAY_LABEL"));
+                dto.getDefectData().add(rs.getInt("DEFECT_QTY"));
+            }
+            rs.close(); ps.close();
+
+            // 🔥 작업지시 목록 (품목명 + 사용자 이름 포함)
+            String sql =
+                "SELECT w.WORK_ORDER_CODE, w.ORDER_QTY, w.WORK_DATE, " +
+                "       ou.USER_NAME AS ORDER_USER_NAME, " +
+                "       wu.USER_NAME AS WORK_USER_NAME, " +
+                "       i.ITEM_NAME " +
+                "FROM TB_WORK_ORDER w " +
+                "JOIN TB_PLAN p ON w.PLAN_KEY = p.PLAN_KEY " +
+                "JOIN TB_ITEM i ON p.ITEM_KEY = i.ITEM_KEY " +
+                "JOIN TB_USER ou ON w.ORDER_USER_KEY = ou.USER_KEY " +
+                "JOIN TB_USER wu ON w.WORK_USER_KEY = wu.USER_KEY " +
+                "WHERE TRUNC(w.WORK_DATE)=TRUNC(SYSDATE) ";
+
+            if (isWorker) {
+                sql += "AND w.WORK_USER_KEY = ? ";
+            }
+
+            sql += "ORDER BY w.WORK_ORDER_KEY DESC";
+
+            ps = conn.prepareStatement(sql);
+
+            if (isWorker) {
+                ps.setInt(1, loginUser.getUser_key());
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                DashboardWorkorderDTO w = new DashboardWorkorderDTO();
+
+                w.setWork_order_code(rs.getString("WORK_ORDER_CODE"));
+                w.setOrder_qty(rs.getInt("ORDER_QTY"));
+                w.setWork_date(rs.getDate("WORK_DATE"));
+
+                w.setOrder_user_name(rs.getString("ORDER_USER_NAME"));
+                w.setWork_user_name(rs.getString("WORK_USER_NAME"));
+
+                w.setItem_name(rs.getString("ITEM_NAME"));
+
+                dto.getWorkorderList().add(w);
+            }
+            rs.close(); ps.close();
+
+            // 부족 재고 목록
+            ps = conn.prepareStatement(
+                "SELECT I.ITEM_CODE, I.ITEM_NAME, S.CURRENT_QTY, S.SAFE_QTY " +
+                "FROM TB_STOCK S " +
+                "JOIN TB_ITEM I ON S.ITEM_KEY = I.ITEM_KEY " +
+                "WHERE S.CURRENT_QTY <= S.SAFE_QTY " +
+                "ORDER BY I.ITEM_KEY"
+            );
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                DashboardStockDTO s = new DashboardStockDTO();
+                s.setItem_code(rs.getString("ITEM_CODE"));
+                s.setItem_name(rs.getString("ITEM_NAME"));
+                s.setCurrent_qty(rs.getInt("CURRENT_QTY"));
+                s.setSafe_qty(rs.getInt("SAFE_QTY"));
+                dto.getLowStockList().add(s);
+            }
+            rs.close(); ps.close();
+
+            // 최근 공지
+            ps = conn.prepareStatement(
+                "SELECT BOARD_KEY, TITLE, CREATED_AT, VIEW_COUNT " +
+                "FROM ( " +
+                "    SELECT BOARD_KEY, TITLE, CREATED_AT, VIEW_COUNT " +
+                "    FROM TB_BOARD " +
+                "    WHERE STATUS = 'Y' AND BOARD_TYPE = '공지' " +
+                "    ORDER BY BOARD_KEY DESC " +
+                ") WHERE ROWNUM <= 3"
+            );
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                DashboardNoticeDTO n = new DashboardNoticeDTO();
+                n.setBoard_key(rs.getInt("BOARD_KEY"));
+                n.setTitle(rs.getString("TITLE"));
+                n.setCreated_at(rs.getDate("CREATED_AT"));
+                n.setView_count(rs.getInt("VIEW_COUNT"));
+                dto.getNoticeList().add(n);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
 
         return dto;
-    }
-
-    // 오늘 생산량: 양품 기준
-    public int getTodayProductionQty() {
-        String sql = "SELECT NVL(SUM(GOOD_QTY), 0) AS qty "
-                   + "FROM TB_PRODUCTION "
-                   + "WHERE TRUNC(PROD_DATE) = TRUNC(SYSDATE)";
-        return getIntValue(sql, "qty");
-    }
-
-    // 오늘 불량 수량: 품질 테이블 기준
-    public int getTodayDefectQty() {
-        String sql = "SELECT NVL(SUM(DEFECT_QTY), 0) AS defect_qty "
-                   + "FROM TB_QUALITY "
-                   + "WHERE TRUNC(INSPECT_DATE) = TRUNC(SYSDATE)";
-        return getIntValue(sql, "defect_qty");
-    }
-
-    // 재고 부족 품목 수: 현재재고 <= 안전재고
-    public int getLowStockCount() {
-        String sql = "SELECT COUNT(*) AS cnt "
-                   + "FROM TB_STOCK "
-                   + "WHERE CURRENT_QTY <= SAFE_QTY";
-        return getIntValue(sql, "cnt");
-    }
-
-    // 오늘 작업지시 총 건수
-    public int getWorkorderTotal() {
-        String sql = "SELECT COUNT(*) AS cnt "
-                   + "FROM TB_WORK_ORDER "
-                   + "WHERE TRUNC(WORK_DATE) = TRUNC(SYSDATE)";
-        return getIntValue(sql, "cnt");
-    }
-
-    // 오늘 작업지시 중 생산실적이 하나라도 연결된 건 -> 진행중
-    public int getWorkorderInProgress() {
-        String sql = "SELECT COUNT(DISTINCT w.WORK_ORDER_KEY) AS cnt "
-                   + "FROM TB_WORK_ORDER w "
-                   + "JOIN TB_PRODUCTION p ON w.WORK_ORDER_KEY = p.WORK_ORDER_KEY "
-                   + "WHERE TRUNC(w.WORK_DATE) = TRUNC(SYSDATE)";
-        return getIntValue(sql, "cnt");
-    }
-
-    // 대기 = 총 건수 - 진행중
-    public int getWorkorderWaiting() {
-        int total = getWorkorderTotal();
-        int inProgress = getWorkorderInProgress();
-        int waiting = total - inProgress;
-        return waiting < 0 ? 0 : waiting;
-    }
-
-    // 품질 합격률 = (검사수량 - 불량수량) / 검사수량 * 100
-    public double getQualityPassRate() {
-        String sql = "SELECT CASE "
-                   + "         WHEN NVL(SUM(INSPECT_QTY), 0) = 0 THEN 0 "
-                   + "         ELSE ROUND(((SUM(INSPECT_QTY) - NVL(SUM(DEFECT_QTY), 0)) / SUM(INSPECT_QTY)) * 100, 1) "
-                   + "       END AS rate "
-                   + "FROM TB_QUALITY "
-                   + "WHERE TRUNC(INSPECT_DATE) = TRUNC(SYSDATE)";
-        return getDoubleValue(sql, "rate");
-    }
-
-    // 설비 가동률 = MACHINE_STATUS가 '가동중'인 비율
-    public double getEquipmentRunRate() {
-        String sql = "SELECT CASE "
-                   + "         WHEN COUNT(*) = 0 THEN 0 "
-                   + "         ELSE ROUND((SUM(CASE WHEN MACHINE_STATUS = '가동중' THEN 1 ELSE 0 END) / COUNT(*)) * 100, 1) "
-                   + "       END AS rate "
-                   + "FROM TB_MACHINE";
-        return getDoubleValue(sql, "rate");
-    }
-
-    public List<String> getWeekLabels() {
-        List<String> list = new ArrayList<String>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getDataSource().getConnection();
-
-            String sql = "SELECT TO_CHAR(dt, 'MM/DD') AS day_label "
-                       + "FROM ( "
-                       + "    SELECT TRUNC(SYSDATE) - 6 + LEVEL - 1 AS dt "
-                       + "    FROM dual "
-                       + "    CONNECT BY LEVEL <= 7 "
-                       + ") "
-                       + "ORDER BY dt";
-
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(rs.getString("day_label"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, ps, conn);
-        }
-
-        return list;
-    }
-
-    // 최근 7일 양품 생산량
-    public List<Integer> getWeekProductionQtys() {
-        List<Integer> list = new ArrayList<Integer>();
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getDataSource().getConnection();
-
-            String sql = "SELECT qty "
-                       + "FROM ( "
-                       + "    SELECT dt, "
-                       + "           NVL((SELECT SUM(GOOD_QTY) "
-                       + "                FROM TB_PRODUCTION "
-                       + "                WHERE TRUNC(PROD_DATE) = dt), 0) AS qty "
-                       + "    FROM ( "
-                       + "        SELECT TRUNC(SYSDATE) - 6 + LEVEL - 1 AS dt "
-                       + "        FROM dual "
-                       + "        CONNECT BY LEVEL <= 7 "
-                       + "    ) "
-                       + ") "
-                       + "ORDER BY dt";
-
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(rs.getInt("qty"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, ps, conn);
-        }
-
-        return list;
-    }
-
-    private int getIntValue(String sql, String columnName) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        int value = 0;
-
-        try {
-            conn = getDataSource().getConnection();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                value = rs.getInt(columnName);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, ps, conn);
-        }
-
-        return value;
-    }
-
-    private double getDoubleValue(String sql, String columnName) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        double value = 0;
-
-        try {
-            conn = getDataSource().getConnection();
-            ps = conn.prepareStatement(sql);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                value = rs.getDouble(columnName);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(rs, ps, conn);
-        }
-
-        return value;
-    }
-
-    private void close(ResultSet rs, PreparedStatement ps, Connection conn) {
-        try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-        try { if (ps != null) ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-        try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
     }
 }

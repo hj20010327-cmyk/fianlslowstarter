@@ -47,28 +47,30 @@ public class MachineAddController extends HttpServlet {
 		}
 
 		// 파라미터 받기
-//		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
-		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
-		int processKey = Integer.parseInt(request.getParameter("processKey"));
-		String machineStatus = request.getParameter("machineStatus");
+		String buyDateStr = request.getParameter("buyDate");
 		String remark = request.getParameter("remark");
-		Date buyDate = Date.valueOf(request.getParameter("buyDate"));
-		Date lastCheckDate = Date.valueOf(request.getParameter("lastCheckDate"));
-//		Date Create_at = Date.valueOf(request.getParameter("Create_at")); 
-		System.out.println("machineCode :" + machineCode);
+
+		if (machineName == null || machineName.trim().equals("")) {
+		    response.sendRedirect("/slowstarter/machine");
+		    return;
+		}
+
+		Date buyDate = null;
+		if (buyDateStr != null && !buyDateStr.trim().equals("")) {
+		    buyDate = Date.valueOf(buyDateStr);
+		}
+
 
 		// DTO에 담기
 		MachineDTO dto = new MachineDTO();
-//		  	dto.setMachineKey(machineKey);
-		dto.setMachineCode(machineCode);
 		dto.setMachineName(machineName);
-		dto.setProcessKey(processKey);
-		dto.setRemark(remark);
-		dto.setMachineStatus(machineStatus);
 		dto.setBuyDate(buyDate);
-		dto.setLastCheckDate(lastCheckDate);
-//		    dto.setCreatedAt(Create_at);
+		dto.setRemark(remark);
+
+		// 등록 시 기본값
+		dto.setMachineStatus("점검중");
+		dto.setLastCheckDate(null);
 
 		// service 호출
 		MachineService machineService = new MachineService();

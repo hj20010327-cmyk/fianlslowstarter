@@ -75,48 +75,50 @@ public class MachineDAO {
 	}
 	
 	public int insertmachine(MachineDTO machineDTO) {
-		
-		int result = -1;
 
-		try {
-			// DB연결
-			Context ctx = new InitialContext();
-			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-			conn = dataFactory.getConnection();
+	    int result = -1;
 
-			// 2. SQL 준비
-			String query = "INSERT INTO tb_machine(" +
-		               "machine_key, machine_code, machine_name, process_key, machine_status, " +
-		               "buy_date, last_check_date, remark, status, created_at) " +
-		               "VALUES(seq_machine.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, 'Y', SYSDATE)";
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
 
-			
-			ps = conn.prepareStatement(query);
-			
-//			MachineDTO dto = new MachineDTO();
-			ps.setString(1,  machineDTO.getMachineCode());
-			ps.setString(2,  machineDTO.getMachineName());
-			ps.setInt(3,  machineDTO.getProcessKey());
-			ps.setString(4,  machineDTO.getMachineStatus());
-			ps.setDate(5,  machineDTO.getBuyDate());
-			ps.setDate(6,  machineDTO.getLastCheckDate());
-			ps.setString(7,  machineDTO.getRemark());
+	        String query =
+	        	    "INSERT INTO tb_machine ( " +
+	        	    "    machine_key, machine_code, machine_name, process_key, machine_status, " +
+	        	    "    buy_date, last_check_date, remark, status, created_at " +
+	        	    ") " +
+	        	    "SELECT " +
+	        	    "    seq_machine.NEXTVAL, " +
+	        	    "    'MC-' || LPAD(seq_machine.CURRVAL, 3, '0'), " +
+	        	    "    ?, " +
+	        	    "    1, " +   // 기본 공정값
+	        	    "    '점검중', " +
+	        	    "    ?, " +
+	        	    "    NULL, " +
+	        	    "    ?, " +
+	        	    "    'Y', " +
+	        	    "    SYSDATE " +
+	        	    "FROM dual";
 
-			// SQL 실행 및 결과 확보
-			result = ps.executeUpdate();
-			System.out.println("insert의 결과:" + result);
+	        ps = conn.prepareStatement(query);
 
-			// 결과 활용
-			return result;
+	        ps.setString(1, machineDTO.getMachineName());
+	        ps.setDate(2, machineDTO.getBuyDate());
+	        ps.setString(3, machineDTO.getRemark());
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}  finally {
-			closeAll();
-		}
+	        result = ps.executeUpdate();
+	        System.out.println("insert의 결과:" + result);
 
-		return result;
+	        return result;
 
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeAll();
+	    }
+
+	    return result;
 	}
 
 	public int updatemachine(MachineDTO machineDTO) {
@@ -133,7 +135,6 @@ public class MachineDAO {
 			String query = "UPDATE tb_machine SET " +
 		               "machine_code = ?, " +
 		               "machine_name = ?, " +
-		               "process_key = ?, " +
 		               "machine_status = ?, " +
 		               "buy_date = ?, " +
 		               "last_check_date = ?, " +
@@ -141,14 +142,15 @@ public class MachineDAO {
 		               "WHERE machine_key = ?";
 			ps = conn.prepareStatement(query);
 //			MachineDTO dto = new MachineDTO(); �̰� �ϸ� �ȵ� 
+			ps = conn.prepareStatement(query);
+
 			ps.setString(1, machineDTO.getMachineCode());
 			ps.setString(2, machineDTO.getMachineName());
-			ps.setInt(3, machineDTO.getProcessKey());
-			ps.setString(4, machineDTO.getMachineStatus());
-			ps.setDate(5, machineDTO.getBuyDate());
-			ps.setDate(6, machineDTO.getLastCheckDate());
-			ps.setString(7, machineDTO.getRemark());
-			ps.setInt(8, machineDTO.getMachineKey());
+			ps.setString(3, machineDTO.getMachineStatus());
+			ps.setDate(4, machineDTO.getBuyDate());
+			ps.setDate(5, machineDTO.getLastCheckDate());
+			ps.setString(6, machineDTO.getRemark());
+			ps.setInt(7, machineDTO.getMachineKey());
 
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -463,6 +465,7 @@ public class MachineDAO {
 
 	    return count;
 	}
+	
 	// finally 의 close가 너무 반복되서 함수로 빼버림 
 		private void closeAll() {
 			if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }

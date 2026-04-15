@@ -8,9 +8,13 @@ public class BOMDTO {
 	private String bom_code;
 	private int QTY;
 	private String remark;
-	private String bom_item_key;
+	private int item_key;
+	private int parent_item_key;
+	private String item_name;
+	private String parent_item_name;
 	
-	int size = 5; 
+	
+	int size = 10; 
 	int page = 1; 
 	
 	int start = 0; 
@@ -23,10 +27,12 @@ public class BOMDTO {
 	@Override
 	public String toString() {
 		return "BOMDTO [bom_key=" + bom_key + ", bom_code=" + bom_code + ", QTY=" + QTY + ", remark=" + remark
-				+ ", bom_item_key=" + bom_item_key + ", size=" + size + ", page=" + page + ", start=" + start + ", end="
-				+ end + ", keycode=" + keycode + ", keyword=" + keyword + ", item_code=" + item_code + ", item_name="
-				+ item_name + ", spec=" + spec + ", unit=" + unit + ", price=" + price + ", safe_qty=" + safe_qty + "]";
+				+ ", item_key=" + item_key + ", parent_item_key=" + parent_item_key + ", item_name=" + item_name
+				+ ", parent_item_name=" + parent_item_name + ", size=" + size + ", page=" + page + ", start=" + start
+				+ ", end=" + end + ", keycode=" + keycode + ", keyword=" + keyword + "]";
 	}
+	
+	
 	public int getBom_key() {
 		return bom_key;
 	}
@@ -51,11 +57,29 @@ public class BOMDTO {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
-	public String getBom_item_key() {
-		return bom_item_key;
+	public int getItem_key() {
+		return item_key;
 	}
-	public void setBom_item_key(String bom_item_key) {
-		this.bom_item_key = bom_item_key;
+	public void setItem_key(int item_key) {
+		this.item_key = item_key;
+	}
+	public int getParent_item_key() {
+		return parent_item_key;
+	}
+	public void setParent_item_key(int parent_item_key) {
+		this.parent_item_key = parent_item_key;
+	}
+	public String getItem_name() {
+		return item_name;
+	}
+	public void setItem_name(String item_name) {
+		this.item_name = item_name;
+	}
+	public String getParent_item_name() {
+		return parent_item_name;
+	}
+	public void setParent_item_name(String parent_item_name) {
+		this.parent_item_name = parent_item_name;
 	}
 	public int getSize() {
 		return size;
@@ -92,53 +116,6 @@ public class BOMDTO {
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
-	}
-	
-	
-	private String item_code; 
-	private String item_name; 
-	private String spec;
-	private String unit; 
-	private int price; 
-	private int safe_qty; 
-	
-	
-	
-	public String getItem_code() {
-		return item_code;
-	}
-	public void setItem_code(String item_code) {
-		this.item_code = item_code;
-	}
-	public String getItem_name() {
-		return item_name;
-	}
-	public void setItem_name(String item_name) {
-		this.item_name = item_name;
-	}
-	public String getSpec() {
-		return spec;
-	}
-	public void setSpec(String spec) {
-		this.spec = spec;
-	}
-	public String getUnit() {
-		return unit;
-	}
-	public void setUnit(String unit) {
-		this.unit = unit;
-	}
-	public int getPrice() {
-		return price;
-	}
-	public void setPrice(int price) {
-		this.price = price;
-	}
-	public int getSafe_qty() {
-		return safe_qty;
-	}
-	public void setSafe_qty(int safe_qty) {
-		this.safe_qty = safe_qty;
 	}
 	
 	

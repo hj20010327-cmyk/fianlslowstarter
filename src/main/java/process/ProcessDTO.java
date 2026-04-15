@@ -10,10 +10,10 @@ public class ProcessDTO {
 	private String process_desc;
 	private String status; 
 	private int item_key;
-	private String process_item_key;
+	private String item_name;
 	
 	
-	int size = 5; 
+	int size = 10; 
 	int page = 1; 
 	
 	int start = 0; 
@@ -24,14 +24,16 @@ public class ProcessDTO {
 	
 	
 	
+	
 	@Override
 	public String toString() {
 		return "ProcessDTO [process_key=" + process_key + ", process_code=" + process_code + ", process_name="
 				+ process_name + ", sequence_no=" + sequence_no + ", process_desc=" + process_desc + ", status="
-				+ status + ", item_key=" + item_key + ", process_item_key=" + process_item_key + ", size=" + size
-				+ ", page=" + page + ", start=" + start + ", end=" + end + ", keycode=" + keycode + ", keyword="
-				+ keyword + "]";
+				+ status + ", item_key=" + item_key + ", item_name=" + item_name + ", size=" + size + ", page=" + page
+				+ ", start=" + start + ", end=" + end + ", keycode=" + keycode + ", keyword=" + keyword + "]";
 	}
+	
+	
 	public int getProcess_key() {
 		return process_key;
 	}
@@ -74,11 +76,11 @@ public class ProcessDTO {
 	public void setItem_key(int item_key) {
 		this.item_key = item_key;
 	}
-	public String getProcess_item_key() {
-		return process_item_key;
+	public String getItem_name() {
+		return item_name;
 	}
-	public void setProcess_item_key(String process_item_key) {
-		this.process_item_key = process_item_key;
+	public void setItem_name(String item_name) {
+		this.item_name = item_name;
 	}
 	public int getSize() {
 		return size;
@@ -115,7 +117,8 @@ public class ProcessDTO {
 	}
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
-	} 
+	}
+	
 	
 	
 	

@@ -136,11 +136,15 @@
 					<div class="card">
 						<div class="section-title">
 							<h2>공정관리 목록</h2>
-							<span>
-								<button type="submit" class="btn" value="삭제"
-									style="background: #4a90e2; color: white;">삭제</button> <input
-								type="hidden" name="cmd" value="delete">
-							</span>
+							<!-- 관리자용 -->
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<span>
+									<button type="submit" class="btn" value="삭제"
+										style="background: #4a90e2; color: white;">삭제</button> <input
+									type="hidden" name="cmd" value="delete">
+								</span>
+							</c:if>
 						</div>
 
 						<div class="table-wrap">
@@ -163,8 +167,12 @@
 
 											<td><input type="checkbox" name="process_key"
 												value="${process.process_key}"></td>
-											<td><a href="javascript:void(0);"
-												onclick="openEditModal(
+											<!-- 관리자용 -->
+												<td>
+											<c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<a href="javascript:void(0);"
+													onclick="openEditModal(
 												'${process.process_key}',		
 												'${process.process_code}',		
 												'${process.process_name}',		
@@ -173,12 +181,18 @@
 												'${process.status}',		
 												'${process.item_key}'		
 												)">
-													${ process.process_code }</a></td>
+														${ process.process_code }</a>
+											</c:if>
+											<c:if
+												test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+												${ process.process_code }
+											</c:if>
+											</td>
 											<td>${ process.process_name }</td>
 											<td>${ process.sequence_no }</td>
 											<td>${ process.process_desc }</td>
 											<td>${ process.status }</td>
-											<td>${ process.item_key }</td>
+											<td>${ process.item_name }</td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -206,7 +220,7 @@
 								<div class="pagination">
 									<c:forEach var="i" begin="${start_section}"
 										end="${end_section}">
-										<a href="process?page=${i}&size=5"> <c:if
+										<a href="process?page=${i}&size=10"> <c:if
 												test="${map.page eq i}">
 												<strong>${i}</strong>
 											</c:if> <c:if test="${map.page != i}">
@@ -277,14 +291,14 @@
 
 
 						<div class="form-group">
-							<label>코드</label> <input type="text" name="process_code"
-								id="process_code" class="input" placeholder="코드 입력" />
+							<label>공정 코드</label> <input type="text" name="process_code"
+								id="process_code" class="input" placeholder="자동입력" />
 						</div>
 
 
 						<div class="form-group">
-							<label>제품명</label> <input type="number" name="item_key"
-								id="item-key" class="input" placeholder="제품명 입력" />
+							<label>공정명</label> <input type="text" name="process_name"
+								id="process_name" class="input" placeholder="제품명 입력" />
 
 						</div>
 
@@ -306,6 +320,22 @@
 								<option value="N">미사용</option>
 							</select>
 						</div>
+
+						<div class="form-group">
+							<label>제품명</label> <select id="item_key" name="item_key"
+								class="select">
+								<option value="">선택하세요</option>
+								<c:forEach var="item" items="${map.list}">
+									<option value="${item.item_key}">${item.item_name}</option>
+								</c:forEach>
+
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>제품 코드</label> <input type="number" name="item_key"
+								id="item_key" class="input" placeholder="코드 입력" />
+						</div>
 					</div>
 				</div>
 
@@ -313,8 +343,8 @@
 				<div class="modal-footer">
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
-					<input type="hidden" name="cmd" id="cmd">  
-					<input type="hidden" name="process_key" id="process_key">
+					<input type="hidden" name="cmd" id="cmd"> <input
+						type="hidden" name="process_key" id="process_key">
 				</div>
 
 			</form>

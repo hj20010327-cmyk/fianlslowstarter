@@ -163,7 +163,7 @@ public class PlanDAO {
 		return result;
 	}
     
-    public List<PlanDTO> searchList(String planCode, String status) {
+    public List<PlanDTO> searchList(String planCode, String status, String dueDate) {
         List<PlanDTO> list = new ArrayList<PlanDTO>();
 
         try {
@@ -180,6 +180,9 @@ public class PlanDAO {
             if (status != null && !status.trim().equals("")) {
                 query += " and plan_status = ?";
             }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                query += " and due_date < TO_DATE(?, 'YYYY-MM-DD') + 1";
+            }
 
             query += " order by plan_key";
 
@@ -193,6 +196,9 @@ public class PlanDAO {
 
             if (status != null && !status.trim().equals("")) {
                 ps.setString(idx++, status);
+            }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                ps.setString(idx++, dueDate);
             }
 
             rs = ps.executeQuery();
@@ -291,7 +297,7 @@ public class PlanDAO {
         return count;
     }
     
-    public List<PlanDTO> searchPage(String planCode, String status, int startRow, int endRow) {
+    public List<PlanDTO> searchPage(String planCode, String status,String dueDate, int startRow, int endRow) {
         List<PlanDTO> list = new ArrayList<PlanDTO>();
 
         try {
@@ -311,6 +317,9 @@ public class PlanDAO {
             if (status != null && !status.trim().equals("")) {
                 query += " AND plan_status = ?";
             }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                query += " AND due_date < TO_DATE(?, 'YYYY-MM-DD') + 1";
+            }
 
             query += " ORDER BY plan_key " +
                      "  ) A WHERE ROWNUM <= ? " +
@@ -326,6 +335,9 @@ public class PlanDAO {
 
             if (status != null && !status.trim().equals("")) {
                 ps.setString(idx++, status);
+            }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                ps.setString(idx++, dueDate);
             }
 
             ps.setInt(idx++, endRow);
@@ -358,7 +370,7 @@ public class PlanDAO {
         return list;
     }
     
-    public int getSearchCount(String planCode, String status) {
+    public int getSearchCount(String planCode, String status,String dueDate) {
         int count = 0;
 
         try {
@@ -375,6 +387,9 @@ public class PlanDAO {
             if (status != null && !status.trim().equals("")) {
                 query += " AND plan_status = ?";
             }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                query += " AND due_date < TO_DATE(?, 'YYYY-MM-DD') + 1";
+            }
 
             ps = conn.prepareStatement(query);
 
@@ -386,6 +401,9 @@ public class PlanDAO {
 
             if (status != null && !status.trim().equals("")) {
                 ps.setString(idx++, status);
+            }
+            if (dueDate != null && !dueDate.trim().equals("")) {
+                ps.setString(idx++, dueDate);
             }
 
             rs = ps.executeQuery();

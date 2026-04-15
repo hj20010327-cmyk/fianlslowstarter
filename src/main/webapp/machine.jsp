@@ -40,12 +40,29 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+
 .running {
-    color: green;
+	color: green;
 }
 
 .stop {
-    color: red;
+	color: red;
+}
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.search-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
 }
 </style>
 <body>
@@ -60,7 +77,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -136,10 +153,10 @@
 					<p>설비 상태 및 운영 정보를 관리합니다.</p>
 				</div>
 				<div class="page-actions">
-				<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-					<button class="btn primary" type="button"
-						onclick="openInsertModal()">설비 등록</button>
-				</c:if>
+					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+						<button class="btn primary" type="button"
+							onclick="openInsertModal()">설비 등록</button>
+					</c:if>
 				</div>
 			</div>
 
@@ -157,14 +174,21 @@
 							placeholder="설비명 입력" />
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
-							<option value="" <c:if test="${empty machineStatus}">selected</c:if>>전체</option>
-    						<option value="가동중" <c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
-    						<option value="점검중" <c:if test="${machineStatus == '점검중'}">selected</c:if>>점검중</option>
-
+							<option value=""
+								<c:if test="${empty machineStatus}">selected</c:if>>전체</option>
+							<option value="가동중"
+								<c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
+							<option value="점검중"
+								<c:if test="${machineStatus == '점검중'}">selected</c:if>>점검중</option>
 						</select>
-
+						<div class="search-item">
+							<span class="search-label">마지막 점검일</span> <input
+								class="input date-input" type="date" name="lastCheckDate"
+								value="${lastCheckDate}" />
+						</div>
 						<!-- 조회 버튼 → MachineListController로 이동 -->
 						<button class="btn primary" type="submit">조회</button>
+						<a href="/slowstarter/machine?page=1" class="btn">초기화</a>
 					</div>
 				</form>
 			</section>
@@ -175,9 +199,10 @@
 						<div class="section-title">
 							<h2>설비 목록</h2>
 							<!--  안내 메시지용  -->
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-							<span>설비명을 클릭하면 수정할 수 있습니다.</span>
-							<button type="submit" class="btn">삭제</button>
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<span>설비코드를 클릭하면 수정할 수 있습니다.</span>
+								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
 						<div class="table-wrap">
@@ -185,25 +210,26 @@
 							<table>
 								<tr>
 									<th>선택</th>
-									<th>설비 번호</th>
-									<th>설비 명</th>
 									<th>설비 코드</th>
+									<th>설비 명</th>
 									<th>설비 상태</th>
 									<th>공정 번호</th>
+									<th>마지막 점검일</th>
+									<th>비고</th>
 								</tr>
 
-								
+
 								<c:forEach var="m" items="${list}">
 									<tr>
 										<td><input type="checkbox" name="machineKey"
 											value="${m.machineKey}"></td>
-										<td>${m.machineKey}</td>
+
 										<td>
-										<!-- 관리자, 슈퍼바이저 일때 설비명 누르면 모달창 열리게 -->
-										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-										<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
-										<a href="javascript:void(0);"
-											onclick="openEditModal(
+											<!-- 관리자, 슈퍼바이저 일때 설비명 누르면 모달창 열리게 --> <c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
+												<a href="javascript:void(0);"
+													onclick="openEditModal(
 		   									'${m.machineKey}',
 		   									'${m.machineCode}',
 		   									'${m.machineName}',
@@ -213,36 +239,34 @@
 		   									'${m.lastCheckDate}',
 		   									'${m.remark}'
 	   										)">
-												${m.machineName} </a>
-											</c:if>
-											<!--  작업자 일때 설비명 눌러도 반응 x -->
-											<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저') }">
+													${m.machineCode} </a>
+											</c:if> <!--  작업자 일때 설비명 눌러도 반응 x --> <c:if
+												test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저') }">
 												${m.machineName}
 											</c:if>
 										</td>
-										<td>${m.machineCode}</td>
-										  <td>
-            <c:if test="${m.machineStatus eq '가동중'}">
-                <span class="running">가동중</span>
-            </c:if>
-
-            <c:if test="${m.machineStatus eq '점검중'}">
-                <span class="stop">점검중</span>
-            </c:if>
-        </td>
+										<td>${m.machineName}</td>
+										<td><c:if test="${m.machineStatus eq '가동중'}">
+												<span class="running">가동중</span>
+											</c:if> <c:if test="${m.machineStatus eq '점검중'}">
+												<span class="stop">점검중</span>
+											</c:if></td>
 										<td>${m.processKey}</td>
+										<td>${m.lastCheckDate}</td>
+										<td>${m.remark}</td>
 									</tr>
 								</c:forEach>
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-										<c:if test="${page == i}">
-											<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}" class="active">${i}</a>
-										</c:if>
-										
-										<c:if test="${page != i}">
-											<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}">${i}</a>
-										</c:if>
+									<c:if test="${page == i}">
+										<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}"
+											class="active">${i}</a>
+									</c:if>
+
+									<c:if test="${page != i}">
+										<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}">${i}</a>
+									</c:if>
 								</c:forEach>
 							</div>
 						</div>
@@ -367,10 +391,10 @@
 
 		function openEditModal(machineKey, machineCode, machineName,
 				processKey, machineStatus, buyDate, lastCheckDate, remark) {
-			
+
 			console.log("buyDate:", buyDate);
-		    console.log("lastCheckDate:", lastCheckDate);
-			
+			console.log("lastCheckDate:", lastCheckDate);
+
 			document.getElementById("modalTitle").innerText = "설비 수정";
 			document.getElementById("machineForm").action = "/slowstarter/machine/update";
 
@@ -380,7 +404,8 @@
 			document.getElementById("processKey").value = processKey;
 			document.getElementById("machineStatus").value = machineStatus;
 			document.getElementById("buyDate").value = buyDate.substring(0, 10);
-			document.getElementById("lastCheckDate").value = lastCheckDate.substring(0, 10);
+			document.getElementById("lastCheckDate").value = lastCheckDate
+					.substring(0, 10);
 			if (remark == 'null') {
 				document.getElementById("remark").value = '';
 			} else {

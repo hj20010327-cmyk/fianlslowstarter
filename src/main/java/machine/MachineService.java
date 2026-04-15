@@ -26,9 +26,9 @@ public class MachineService {
 		int a = machineDAO.deletemachine(machineDTO);
 		return a;
 	}
-	public List searchList(String name, String status) {
+	public List searchList(String name, String status, String lastCheckDate) {
 	    MachineDAO dao = new MachineDAO();
-	    return dao.searchList(name, status);
+	    return dao.searchList(name, status,lastCheckDate);
 	}
 	public List selectPage(int startRow, int endRow) {
 	    MachineDAO dao = new MachineDAO();
@@ -38,14 +38,14 @@ public class MachineService {
 	    MachineDAO dao = new MachineDAO();
 	    return dao.getTotalCount();
 	}
-	public List<MachineDTO> searchPage(String name, String status, int startRow, int endRow) {
+	public List<MachineDTO> searchPage(String name, String status,String lastCheckDate, int startRow, int endRow) {
 	    MachineDAO dao = new MachineDAO();
-	    return dao.searchPage(name, status, startRow, endRow);
+	    return dao.searchPage(name, status,lastCheckDate, startRow, endRow);
 	}
 
-	public int getSearchCount(String name, String status) {
+	public int getSearchCount(String name, String status,String lastCheckDate) {
 	    MachineDAO dao = new MachineDAO();
-	    return dao.getSearchCount(name, status);
+	    return dao.getSearchCount(name, status,lastCheckDate);
 	}
 	
 	

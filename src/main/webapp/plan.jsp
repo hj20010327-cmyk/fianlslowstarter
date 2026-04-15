@@ -40,6 +40,22 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.search-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
 </style>
 <body>
 	<header class="header">
@@ -53,7 +69,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -146,14 +162,21 @@
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
 						<input class="input" type="text" name="planCode"
-							placeholder="계획 코드 입력" /> 
-						<select class="select" name="status">
-    <option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
-    <option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
-    <option value="진행중" <c:if test="${status == '진행중'}">selected</c:if>>진행중</option>
-    <option value="완료" <c:if test="${status == '완료'}">selected</c:if>>완료</option>
+							placeholder="계획 코드 입력" /> <select class="select" name="status">
+							<option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
+							<option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
+							<option value="진행중"
+								<c:if test="${status == '진행중'}">selected</c:if>>진행중</option>
+							<option value="완료" <c:if test="${status == '완료'}">selected</c:if>>완료</option>
 						</select>
+
+						<div class="search-item">
+							<span class="search-label">마감일</span> <input class="input"
+								type="date" name="dueDate" value="${dueDate}" />
+						</div>
+
 						<button class="btn primary" type="submit">조회</button>
+						<a href="/slowstarter/plan?page=1" class="btn">초기화</a>
 					</div>
 				</form>
 			</section>
@@ -218,12 +241,12 @@
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${page == i}">
-										<a href="plan?page=${i}&planCode=${planCode}&status=${status}"
+										<a href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}"
 											class="active">${i}</a>
 									</c:if>
 
 									<c:if test="${page != i}">
-										<a href="plan?page=${i}&planCode=${planCode}&status=${status}">${i}</a>
+										<a href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}">${i}</a>
 									</c:if>
 								</c:forEach>
 							</div>

@@ -201,7 +201,7 @@
 							<!--  안내 메시지용  -->
 							<c:if
 								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-								<span>설비코드를 클릭하면 수정할 수 있습니다.</span>
+								<span>설비 정보를 클릭하면 수정할 수 있습니다.</span>
 								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
@@ -213,7 +213,6 @@
 									<th>설비 코드</th>
 									<th>설비 명</th>
 									<th>설비 상태</th>
-									<th>공정 번호</th>
 									<th>마지막 점검일</th>
 									<th>비고</th>
 								</tr>
@@ -251,7 +250,6 @@
 											</c:if> <c:if test="${m.machineStatus eq '점검중'}">
 												<span class="stop">점검중</span>
 											</c:if></td>
-										<td>${m.processKey}</td>
 										<td>${m.lastCheckDate}</td>
 										<td>${m.remark}</td>
 									</tr>
@@ -321,7 +319,7 @@
 
 							<div class="form-group">
 								<label>설비 코드</label> <input type="text" class="input"
-									id="machineCode" name="machineCode" placeholder="설비 코드 입력" />
+									id="machineCode" name="machineCode" placeholder="자동 생성 예정" />
 							</div>
 
 							<div class="form-group">

@@ -22,6 +22,7 @@ public class PlanListController extends HttpServlet {
 
 		String planCode = request.getParameter("planCode");
 		String status = request.getParameter("status");
+		String dueDate = request.getParameter("dueDate");
 
 		String pageStr = request.getParameter("page");
 		int page = 1;
@@ -37,13 +38,14 @@ public class PlanListController extends HttpServlet {
 		List<PlanDTO> list;
 		int totalCount = 0;
 
-		if ((planCode == null || planCode.isEmpty()) && 
-			(status == null || status.isEmpty())) {
+		if ((planCode == null || planCode.isEmpty())
+		        && (status == null || status.isEmpty())
+		        && (dueDate == null || dueDate.isEmpty())) {
 		    list = service.selectPage(startRow, endRow);
 		    totalCount = service.getTotalCount();
 		} else {
-		    list = service.searchPage(planCode, status, startRow, endRow);
-		    totalCount = service.getSearchCount(planCode, status);
+		    list = service.searchPage(planCode, status,dueDate, startRow, endRow);
+		    totalCount = service.getSearchCount(planCode, status, dueDate);
 		}
 		
 	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
@@ -52,6 +54,7 @@ public class PlanListController extends HttpServlet {
 		request.setAttribute("page", page);
 		request.setAttribute("planCode", planCode);
 		request.setAttribute("status", status);
+		request.setAttribute("dueDate", dueDate);
 		request.setAttribute("totalPage", totalPage);
 
 		request.getRequestDispatcher("/plan.jsp").forward(request, response);

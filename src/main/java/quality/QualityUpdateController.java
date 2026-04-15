@@ -51,7 +51,7 @@ public class QualityUpdateController extends HttpServlet {
             e.printStackTrace();
         }
 
-        // 5. 작업 완료 후 목록 주소(qualityList)로 이동
-        response.sendRedirect(request.getContextPath() + "/qualityList");
+       
+        response.sendRedirect(request.getContextPath() + "/quality");
     }
 }

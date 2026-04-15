@@ -15,12 +15,12 @@
     <link rel="stylesheet" href="./asset/css/page.css" />
 
     <style>
-        /* 검색 조건 요소들을 왼쪽으로 정렬하고 간격을 조절합니다 */
+        /* 검색창 요소들을 왼쪽으로 나란히 정렬 */
         .search-row {
             display: flex;
-            justify-content: flex-start; /* 왼쪽 정렬 */
+            justify-content: flex-start;
             align-items: center;
-            gap: 10px; /* 요소 사이의 간격 */
+            gap: 10px;
         }
 
         .pagination { 
@@ -31,7 +31,6 @@
             margin-bottom: 10px; 
             gap: 8px; 
         }
-
         .pagination a { 
             padding: 10px 15px; 
             border: 1px solid #dee2e6; 
@@ -41,19 +40,16 @@
             font-size: 14px; 
             transition: all 0.2s; 
         }
-
         .pagination a.active { 
             background-color: #0d6efd; 
             color: white; 
             border-color: #0d6efd; 
             font-weight: bold; 
         }
-
         .table-wrap table td, 
         .table-wrap table th { 
             text-align: center; 
         }
-
         .clickable-cell {
             cursor: pointer;
         }
@@ -117,7 +113,8 @@
             <div class="snb-section">
                 <div class="snb-title">품질관리</div>
                 <ul class="snb-menu">
-                    <li><a href="qualityList">품질</a></li>
+                    <li><a href="quality">품질</a></li>
+                    <li><a href="${pageContext.request.contextPath}/quality">품질</a></li>
                 </ul>
             </div>
             <div class="snb-section">
@@ -181,7 +178,7 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th onclick="toggleAllCheckboxes()" style="cursor:pointer;">선택</th>
+                                        <th style="width: 50px;"><input type="checkbox" id="selectAll" onclick="toggleAllCheckboxes(this)"></th>
                                         <th>번호</th>
                                         <th>품목 코드</th>
                                         <th>완제품명</th>
@@ -192,15 +189,14 @@
                                 </thead>
                                 <tbody>
                                     <c:forEach var="pDto" items="${list}">
-                                        <c:set var="params" value="'${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}'" />
                                         <tr>
                                             <td><input type="checkbox" name="codes" value="${pDto.product_key}" class="product-checkbox"></td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_key}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.item_code}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.product_name}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.spec}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${pDto.unit}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">${pDto.product_key}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">${pDto.item_code}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">${pDto.product_name}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">${pDto.spec}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">${pDto.unit}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal('${pDto.product_key}', '${pDto.item_code}', '${pDto.product_name}', '${pDto.spec}', '${pDto.unit}', '${pDto.price}')">
                                                 <fmt:formatNumber value="${pDto.price}" type="number" />원
                                             </td>
                                         </tr>
@@ -280,64 +276,75 @@
     </div>
 
     <script>
+        // 숫자 콤마 포맷팅
         function comma(str) {
             str = String(str);
             return str.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
         }
-
         function uncomma(str) {
             str = String(str);
             return str.replace(/[^\d]+/g, '');
         }
-
         function inputNumberFormat(obj) {
             obj.value = comma(uncomma(obj.value));
         }
 
+        // 서버 전송 전 콤마 제거
         function prepareSubmit() {
             const priceInput = document.getElementById("modal_price");
             priceInput.value = uncomma(priceInput.value);
         }
 
-        function toggleAllCheckboxes() {
+        // 전체 선택/해제
+        function toggleAllCheckboxes(source) {
             const checkboxes = document.querySelectorAll('.product-checkbox');
-            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-            checkboxes.forEach(cb => cb.checked = !allChecked);
+            checkboxes.forEach(cb => cb.checked = source.checked);
         }
 
+        // 삭제 유효성 검사
         function validateDelete() {
             const checkedCount = document.querySelectorAll('.product-checkbox:checked').length;
-            if (checkedCount === 0) { alert("삭제할 항목을 선택해주세요."); return false; }
+            if (checkedCount === 0) { 
+                alert("삭제할 항목을 선택해주세요."); 
+                return false; 
+            }
             return confirm(checkedCount + "개의 항목을 삭제하시겠습니까?");
         }
 
+        // 등록 모달 열기
         function openInsertModal() {
             document.getElementById("modal_cmd").value = "insert";
             document.getElementById("modalTitle").innerText = "신규 완제품 등록";
             document.getElementById("modalSubmitBtn").innerText = "등록";
+            
+            // 폼 초기화
+            document.getElementById("productForm").reset();
             document.getElementById("modal_product_key").value = "0";
-            document.getElementById("modal_item_code").value = "";
-            document.getElementById("modal_product_name").value = "";
-            document.getElementById("modal_spec").value = "";
             document.getElementById("modal_unit").value = "EA";
-            document.getElementById("modal_price").value = "";
+            
             document.getElementById("commonModal").classList.add("show");
         }
 
+        // 수정 모달 열기
         function openUpdateModal(key, code, name, spec, unit, price) {
             document.getElementById("modal_cmd").value = "update";
             document.getElementById("modalTitle").innerText = "완제품 정보 수정 (" + code + ")";
             document.getElementById("modalSubmitBtn").innerText = "수정";
+            
             document.getElementById("modal_product_key").value = key;
             document.getElementById("modal_item_code").value = code;
             document.getElementById("modal_product_name").value = name;
             document.getElementById("modal_spec").value = (spec === 'null' || spec === undefined || spec === '') ? "" : spec;
             document.getElementById("modal_unit").value = unit;
             document.getElementById("modal_price").value = comma(price);
+            
             document.getElementById("commonModal").classList.add("show");
         }
 
-        function closeModal() { document.getElementById("commonModal").classList.remove("show"); }
+        // 모달 닫기
+        function closeModal() { 
+            document.getElementById("commonModal").classList.remove("show"); 
+        }
     </script>
 </body>
 </html>

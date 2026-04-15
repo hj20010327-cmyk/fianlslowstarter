@@ -21,6 +21,7 @@ public class MachineListController extends HttpServlet {
 	    // 파라미터 받기
 	    String name = request.getParameter("machineName");
 	    String status = request.getParameter("machineStatus");
+	    String lastCheckDate = request.getParameter("lastCheckDate");
 	    
 	    String pageStr = request.getParameter("page");
 
@@ -39,14 +40,16 @@ public class MachineListController extends HttpServlet {
 		int totalCount = 0;
 		
 		  // 조건 여부에 따라 분기
-		if ((name == null || name.isEmpty()) && (status == null || status.isEmpty())) {
+		if ((name == null || name.isEmpty())
+			&& (status == null || status.isEmpty())
+			&& (lastCheckDate == null || lastCheckDate.isEmpty())) {
 		    // 검색 조건 없으면 전체 페이징
 		    list = service.selectPage(startRow, endRow);
 		    totalCount = service.getTotalCount();
 		} else {
 		    // 검색 조건 있으면 검색 + 페이징
-		    list = service.searchPage(name, status, startRow, endRow);
-		    totalCount = service.getSearchCount(name, status);
+		    list = service.searchPage(name, status,lastCheckDate, startRow, endRow);
+		    totalCount = service.getSearchCount(name, status, lastCheckDate);
 		}
 	    
 	    
@@ -60,6 +63,7 @@ public class MachineListController extends HttpServlet {
 		// 검색값 유지용
         request.setAttribute("machineName", name);
         request.setAttribute("machineStatus", status);
+        request.setAttribute("lastCheckDate", lastCheckDate);
 		
 		request.getRequestDispatcher("/machine.jsp").forward(request, response);
 		

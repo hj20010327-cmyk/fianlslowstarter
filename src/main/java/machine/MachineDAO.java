@@ -269,7 +269,7 @@ public class MachineDAO {
 	    return count;
 	}
 	
-	public List<MachineDTO> searchList(String machineName, String machineStatus) {
+	public List<MachineDTO> searchList(String machineName, String machineStatus,String lastCheckDate) {
 	    List<MachineDTO> list = new ArrayList<MachineDTO>();
 
 	    try {
@@ -337,7 +337,7 @@ public class MachineDAO {
 	    return list;
 	}
 	
-	public List<MachineDTO> searchPage(String machineName, String machineStatus, int startRow, int endRow) {
+	public List<MachineDTO> searchPage(String machineName, String machineStatus,String lastCheckDate, int startRow, int endRow) {
 	    List<MachineDTO> list = new ArrayList<>();
 
 	    try {
@@ -357,6 +357,12 @@ public class MachineDAO {
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
 	            query += " AND machine_status = ?";
 	        }
+	        if (lastCheckDate != null && !lastCheckDate.trim().equals("")) {
+	            query += " AND last_check_date < TO_DATE(?, 'YYYY-MM-DD') +1";
+	        }
+	        
+	        
+	       
 
 	        query += " ORDER BY machine_key " +
 	                 "  ) A WHERE ROWNUM <= ? " +
@@ -372,6 +378,9 @@ public class MachineDAO {
 
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
 	            ps.setString(idx++, machineStatus);
+	        }
+	        if (lastCheckDate != null && !lastCheckDate.trim().equals("")) {
+	            ps.setString(idx++, lastCheckDate);
 	        }
 
 	        ps.setInt(idx++, endRow);
@@ -404,7 +413,7 @@ public class MachineDAO {
 	    return list;
 	}
 	
-	public int getSearchCount(String machineName, String machineStatus) {
+	public int getSearchCount(String machineName, String machineStatus,String lastCheckDate) {
 	    int count = 0;
 
 	    try {
@@ -421,6 +430,9 @@ public class MachineDAO {
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
 	            query += " AND machine_status = ?";
 	        }
+	        if (lastCheckDate != null && !lastCheckDate.trim().equals("")) {
+	            query += " AND last_check_date < TO_DATE(?, 'YYYY-MM-DD')+1";
+	        }
 
 	        ps = conn.prepareStatement(query);
 
@@ -432,6 +444,9 @@ public class MachineDAO {
 
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
 	            ps.setString(idx++, machineStatus);
+	        }
+	        if (lastCheckDate != null && !lastCheckDate.trim().equals("")) {
+	            ps.setString(idx++, lastCheckDate);
 	        }
 
 	        rs = ps.executeQuery();

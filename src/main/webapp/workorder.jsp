@@ -40,6 +40,22 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.search-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.search-label {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 4px;
+}
 </style>
 <body>
 	<header class="header">
@@ -53,7 +69,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -132,8 +148,8 @@
 				</div>
 				<div class="page-actions">
 					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-					<button class="btn primary" type="button"
-						onclick="openInsertModal()">신규 등록</button>
+						<button class="btn primary" type="button"
+							onclick="openInsertModal()">신규 등록</button>
 					</c:if>
 				</div>
 			</div>
@@ -149,7 +165,14 @@
 						<input class="input" type="text" name="workOrderCode"
 							placeholder="작업지시 코드 입력" /> <input class="input" type="text"
 							name="planKey" placeholder="계획 키 입력" />
+
+						<div class="search-item">
+							<span class="search-label">작업일</span> <input class="input"
+								type="date" name="workDate" value="${workDate}" />
+						</div>
+
 						<button class="btn primary" type="submit">조회</button>
+						<a href="/slowstarter/workorder?page=1" class="btn">초기화</a>
 					</div>
 				</form>
 			</section>
@@ -159,9 +182,10 @@
 					<form action="/slowstarter/workorder/delete" method="post">
 						<div class="section-title">
 							<h2>작업지시 목록</h2>
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-							<span>작업코드를 클릭하면 수정할 수 있습니다.</span>
-							<button type="submit" class="btn">삭제</button>
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<span>작업코드를 클릭하면 수정할 수 있습니다.</span>
+								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
 
@@ -174,6 +198,7 @@
 									<th>작업일</th>
 									<th>수량</th>
 									<th>지시자</th>
+									<th>작업자</th>
 								</tr>
 
 								<c:forEach var="w" items="${list}">
@@ -181,11 +206,11 @@
 										<td><input type="checkbox" name="work_order_key"
 											value="${w.work_order_key}"></td>
 										<td>
-										<!--  관리자/슈퍼바이저는 클릭하면 수정모달 열리게 -->
-										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-										<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
-										<a href="javascript:void(0);"
-											onclick="openEditModal(
+											<!--  관리자/슈퍼바이저는 클릭하면 수정모달 열리게 --> <c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<!-- javascript:void(0) 이거는 아무동작하지말라고 넣음-->
+												<a href="javascript:void(0);"
+													onclick="openEditModal(
 													'${w.work_order_key}',
 													'${w.work_order_code}',
 													'${w.order_user_key}',
@@ -194,19 +219,19 @@
 													'${w.work_date}',
 													'${w.plan_key}'
 												)">
-												${w.work_order_code} </a>
-										</c:if>
-										<!--  작업자는 안 열림 -->
-										<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+													${w.work_order_code} </a>
+											</c:if> <!--  작업자는 안 열림 --> <c:if
+												test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
 											${w.work_order_code}
 										</c:if>
-									</td>
-										
-										
+										</td>
+
+
 										<td>${w.plan_code}</td>
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
 										<td>${w.order_user_name}</td>
+										<td>${w.work_user_key}</td>
 									</tr>
 								</c:forEach>
 							</table>

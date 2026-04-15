@@ -12,66 +12,95 @@ public class ProductDAO {
         return dataFactory.getConnection();
     }
 
-    // 매개변수를 3개로 맞춰서 Controller에서의 에러를 방지합니다.
+    // 1. 목록 조회: 품목코드(ITEM_CODE) 검색 조건 추가 및 5개 강제 제한 유지
     public List<ProductDTO> selectAll(int startRow, int endRow, String keyword) {
         List<ProductDTO> list = new ArrayList<>();
-        // 페이징 1페이지 고정이므로 start/endRow는 쿼리에서 일단 제외하고 검색어만 처리합니다.
-        String sql = "SELECT * FROM TB_PRODUCT WHERE PRODUCT_NAME LIKE ? ORDER BY PRODUCT_KEY ASC";
+        // 품목명, 스펙 외에 ITEM_CODE 검색 조건을 추가했습니다.
+        String sql = "SELECT * FROM ( "
+                   + "  SELECT ROWNUM AS rn, t.* FROM ( "
+                   + "    SELECT ITEM_KEY AS product_key, ITEM_CODE, ITEM_NAME AS product_name, SPEC, UNIT, PRICE "
+                   + "    FROM TB_item "
+                   + "    WHERE ITEM_KEY <= 5 " 
+                   + "    AND (ITEM_NAME LIKE ? OR SPEC LIKE ? OR ITEM_CODE LIKE ?) "
+                   + "    ORDER BY ITEM_KEY ASC " 
+                   + "  ) t "
+                   + ") WHERE rn BETWEEN ? AND ?";
         
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                ProductDTO dto = new ProductDTO();
-                dto.setProduct_key(rs.getInt("PRODUCT_KEY"));
-                dto.setProduct_name(rs.getString("PRODUCT_NAME"));
-                dto.setSpec(rs.getString("SPEC"));
-                dto.setUnit(rs.getString("UNIT"));
-                dto.setRemarks(rs.getString("REMARKS"));
-                list.add(dto);
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            String search = "%" + (keyword == null ? "" : keyword) + "%";
+            ps.setString(1, search); 
+            ps.setString(2, search);
+            ps.setString(3, search); // 품목코드 검색 파라미터 추가
+            ps.setInt(4, startRow); 
+            ps.setInt(5, endRow);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ProductDTO dto = new ProductDTO();
+                    dto.setProduct_key(rs.getInt("product_key"));
+                    dto.setItem_code(rs.getString("ITEM_CODE"));
+                    dto.setProduct_name(rs.getString("product_name"));
+                    dto.setSpec(rs.getString("SPEC"));
+                    dto.setUnit(rs.getString("UNIT"));
+                    dto.setPrice(rs.getInt("PRICE"));
+                    list.add(dto);
+                }
             }
         } catch (Exception e) { e.printStackTrace(); }
         return list;
     }
 
-    // 전체 개수 조회 (페이징 UI를 위해 필요)
+    // 2. 전체 개수 조회: 버튼 [1] 고정을 위해 5 반환 유지
     public int getTotalCount(String keyword) {
-        String sql = "SELECT COUNT(*) FROM TB_PRODUCT WHERE PRODUCT_NAME LIKE ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1);
-        } catch (Exception e) { e.printStackTrace(); }
-        return 0;
+        return 5; 
     }
 
+    // 3. 등록 (나중에 시연용)
     public int insert(ProductDTO dto) {
-        String sql = "INSERT INTO TB_PRODUCT (PRODUCT_KEY, PRODUCT_NAME, SPEC, UNIT, REMARKS) VALUES (SEQ_PRODUCT.NEXTVAL, ?, ?, ?, ?)";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, dto.getProduct_name());
-            ps.setString(2, dto.getSpec());
-            ps.setString(3, dto.getUnit());
-            ps.setString(4, dto.getRemarks());
-            return ps.executeUpdate();
-        } catch (Exception e) { e.printStackTrace(); return 0; }
+        int result = 0;
+        long nextVal = 0;
+        String sqlSeq = "SELECT SEQ_ITEM.NEXTVAL FROM DUAL";
+        String sqlInsert = "INSERT INTO TB_item (ITEM_KEY, ITEM_CODE, ITEM_NAME, SPEC, UNIT, PRICE, STATUS) "
+                         + "VALUES (?, ?, ?, ?, ?, ?, 'Y')"; // 코드를 직접 입력받도록 수정 가능
+
+        try (Connection conn = getConnection()) {
+            try (PreparedStatement psSeq = conn.prepareStatement(sqlSeq);
+                 ResultSet rs = psSeq.executeQuery()) {
+                if (rs.next()) nextVal = rs.getLong(1);
+            }
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlInsert)) {
+                ps.setLong(1, nextVal);
+                ps.setString(2, dto.getItem_code()); // 입력받은 품목코드 사용
+                ps.setString(3, dto.getProduct_name());
+                ps.setString(4, dto.getSpec());
+                ps.setString(5, dto.getUnit());
+                ps.setInt(6, dto.getPrice());
+                result = ps.executeUpdate();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return result;
     }
 
+    // 4. 수정: 품목 코드(ITEM_CODE)도 수정 가능하도록 SQL 반영
     public int update(ProductDTO dto) {
-        String sql = "UPDATE TB_PRODUCT SET PRODUCT_NAME=?, SPEC=?, UNIT=?, REMARKS=? WHERE PRODUCT_KEY=?";
+        // ITEM_CODE 수정 구문을 추가했습니다.
+        String sql = "UPDATE TB_item SET ITEM_CODE=?, ITEM_NAME=?, SPEC=?, UNIT=?, PRICE=? WHERE ITEM_KEY=?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, dto.getProduct_name());
-            ps.setString(2, dto.getSpec());
-            ps.setString(3, dto.getUnit());
-            ps.setString(4, dto.getRemarks());
-            ps.setInt(5, dto.getProduct_key());
+            ps.setString(1, dto.getItem_code()); // 품목 코드 수정 반영
+            ps.setString(2, dto.getProduct_name());
+            ps.setString(3, dto.getSpec());
+            ps.setString(4, dto.getUnit());
+            ps.setInt(5, dto.getPrice());
+            ps.setInt(6, dto.getProduct_key());
             return ps.executeUpdate();
         } catch (Exception e) { e.printStackTrace(); return 0; }
     }
 
+    // 5. 삭제
     public int delete(String ids) {
         if (ids == null || ids.isEmpty()) return 0;
-        String sql = "DELETE FROM TB_PRODUCT WHERE PRODUCT_KEY IN (" + ids + ")";
+        String sql = "DELETE FROM TB_item WHERE ITEM_KEY IN (" + ids + ")";
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement()) {
             return stmt.executeUpdate(sql);
         } catch (Exception e) { e.printStackTrace(); return 0; }

@@ -82,6 +82,10 @@ public class ProcessController extends HttpServlet {
 		} else if(cmd.equals("delete")) {
 			delete(request, response);
 		}
+		
+		System.out.println("cmd = " + request.getParameter("cmd"));
+		System.out.println("process_key = " + request.getParameter("process_key"));
+		System.out.println("item_key = " + request.getParameter("item_key"));
 	}
 	
 	protected void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -99,8 +103,12 @@ public class ProcessController extends HttpServlet {
 		String process_desc = request.getParameter("process_desc");
 		String status = request.getParameter("status");
 		String Pitem_key = request.getParameter("item_key");
-		int item_key = Integer.parseInt(Pitem_key);
 		
+		
+		int item_key = 0; 
+		if (Pitem_key != null && !Pitem_key.trim().isEmpty()) { 
+			item_key = Integer.parseInt(Pitem_key.trim()); 
+		}
 		
 		// DTO 실행
 		ProcessDTO processDTO = new ProcessDTO(); 
@@ -132,11 +140,19 @@ public class ProcessController extends HttpServlet {
 		String process_code = request.getParameter("process_code");
 		String process_name = request.getParameter("process_name");
 		String Sequence = request.getParameter("sequence_no");
-		int sequence_no = Integer.parseInt(Sequence);
 		String process_desc = request.getParameter("process_desc");
 		String status = request.getParameter("status");
 		String Pitem_key = request.getParameter("item_key");
-		int item_key = Integer.parseInt(Pitem_key);
+
+		int item_key = 0;
+		if(Pitem_key != null && !Pitem_key.trim().isEmpty()){
+			item_key = Integer.parseInt(Pitem_key.trim());
+		}
+		
+		int sequence_no = 0;
+		if(Sequence != null && !Sequence.trim().isEmpty()){
+			sequence_no = Integer.parseInt(Sequence);
+		}
 		
 		try {
 			
@@ -145,6 +161,7 @@ public class ProcessController extends HttpServlet {
 			request.setCharacterEncoding("utf-8");
 			response.setContentType("text/html; charset=utf-8");
 			
+			processDTO.setProcess_key(process_key);
 			processDTO.setProcess_code(process_code);
 			processDTO.setProcess_name(process_name);
 			processDTO.setSequence_no(sequence_no);

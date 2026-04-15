@@ -4,8 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -45,7 +44,9 @@ public class LoginDAO {
 				String user_email = rs.getString("user_email");
 				String status = rs.getString("status");
 				String emp_no = rs.getString("emp_no");
+				int user_key = rs.getInt("user_key");
 				
+				dto.setUser_key(user_key);
 				dto.setUser_id(id);
 				dto.setUser_name(user_name);
 				dto.setUser_role(user_role);

@@ -32,7 +32,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -159,11 +159,11 @@
 								<tbody>
 									<c:forEach var="process" items="${map.list}">
 										<tr>
-										
-										
+
+
 											<td><input type="checkbox" name="process_key"
 												value="${process.process_key}"></td>
-											<td> <a href="javascript:void(0);" 
+											<td><a href="javascript:void(0);"
 												onclick="openEditModal(
 												'${process.process_key}',		
 												'${process.process_code}',		
@@ -172,8 +172,8 @@
 												'${process.process_desc}',		
 												'${process.status}',		
 												'${process.item_key}'		
-												)"> 
-												${ process.process_code }</a></td>
+												)">
+													${ process.process_code }</a></td>
 											<td>${ process.process_name }</td>
 											<td>${ process.sequence_no }</td>
 											<td>${ process.process_desc }</td>
@@ -251,13 +251,13 @@
 			</section>
 		</main>
 	</div>
-	
-		<!-- ===== 공통 모달 ===== -->
+
+	<!-- ===== 공통 모달 ===== -->
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
 			<form id="processForm" method="post" action="process">
-			
+
 
 				<!-- 헤더 -->
 				<div class="modal-header">
@@ -270,42 +270,38 @@
 					<div class="form-grid">
 
 						<div class="form-group">
-							<label>등록일</label> 
-							<input type="text" class="input"
+							<label>등록일</label> <input type="text" class="input"
 								value="<%=new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date())%>"
 								readonly />
 						</div>
 
 
 						<div class="form-group">
-							<label>코드</label> 
-							<input type="text" name="process_code" id="process_code"
-								class="input" placeholder="코드 입력" />
+							<label>코드</label> <input type="text" name="process_code"
+								id="process_code" class="input" placeholder="코드 입력" />
 						</div>
 
 
 						<div class="form-group">
-							<label>제품명</label> 
-							<input type="number" name="item_key" id="item-key"
-								class="input" placeholder="제품명 입력" />
-								
+							<label>제품명</label> <input type="number" name="item_key"
+								id="item-key" class="input" placeholder="제품명 입력" />
+
 						</div>
 
 
 						<div class="form-group">
-							<label>공정 설명</label> 
-							<input type="text" name="process_desc" id="process_desc"
-								class="input" placeholder="공정 설명 입력" />
+							<label>공정 설명</label> <input type="text" name="process_desc"
+								id="process_desc" class="input" placeholder="공정 설명 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>공정 번호</label> 
-							<input type="number" class="input" name="sequence_no" id="sequence_no"
-								placeholder="예: 1" />
+							<label>공정 번호</label> <input type="number" class="input"
+								name="sequence_no" id="sequence_no" placeholder="예: 1" />
 						</div>
 
 						<div class="form-group">
-							<label>사용여부</label> <select class="select" name="status" id="status">
+							<label>사용여부</label> <select class="select" name="status"
+								id="status">
 								<option value="Y">사용</option>
 								<option value="N">미사용</option>
 							</select>
@@ -317,14 +313,15 @@
 				<div class="modal-footer">
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
-					<input type="hidden" name="cmd" value="insert">
+					<input type="hidden" name="cmd" id="cmd">  
+					<input type="hidden" name="process_key" id="process_key">
 				</div>
 
 			</form>
 
 		</div>
 	</div>
-	
+
 </body>
 
 </html>

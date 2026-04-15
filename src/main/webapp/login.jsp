@@ -41,11 +41,11 @@
 			<form class="auth-form" method="post" action="login">
 				<div class="auth-row">
 					<label>아이디</label><input name="id" class="auth-input" type="text"
-						placeholder="아이디 입력" />
+						placeholder="아이디 입력" value="william" />
 				</div>
 				<div class="auth-row">
 					<label>비밀번호</label><input name="pw" class="auth-input"
-						type="password" placeholder="비밀번호 입력" />
+						type="password" placeholder="비밀번호 입력" value="Qwer1234@" />
 				</div>
 				<c:if test="${not empty error}">
 				<div style=color:red;>${error}</div>

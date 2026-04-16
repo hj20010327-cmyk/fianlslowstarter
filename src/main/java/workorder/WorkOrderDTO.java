@@ -13,6 +13,9 @@ public class WorkOrderDTO {
 	private String plan_code;
 	private String order_user_name;
 	private String work_user_name;
+	private int plan_qty;
+	private Date plan_date;
+	private String item_name;
 	public int getWork_order_key() {
 		return work_order_key;
 	}
@@ -80,14 +83,35 @@ public class WorkOrderDTO {
 	public void setWork_user_name(String work_user_name) {
 		this.work_user_name = work_user_name;
 	}
+	
+	public int getPlan_qty() {
+		return plan_qty;
+	}
+	public void setPlan_qty(int plan_qty) {
+		this.plan_qty = plan_qty;
+	}
+	public Date getPlan_date() {
+		return plan_date;
+	}
+	public void setPlan_date(Date plan_date) {
+		this.plan_date = plan_date;
+	}
+	public String getItem_name() {
+		return item_name;
+	}
+	public void setItem_name(String item_name) {
+		this.item_name = item_name;
+	}
 	@Override
 	public String toString() {
 		return "WorkOrderDTO [work_order_key=" + work_order_key + ", order_user_key=" + order_user_key
 				+ ", work_user_key=" + work_user_key + ", work_order_code=" + work_order_code + ", order_qty="
 				+ order_qty + ", work_date=" + work_date + ", created_at=" + created_at + ", plan_key=" + plan_key
 				+ ", plan_code=" + plan_code + ", order_user_name=" + order_user_name + ", work_user_name="
-				+ work_user_name + "]";
+				+ work_user_name + ", plan_qty=" + plan_qty + ", plan_date=" + plan_date + ", item_name=" + item_name
+				+ "]";
 	}
+	
 	
 	
 

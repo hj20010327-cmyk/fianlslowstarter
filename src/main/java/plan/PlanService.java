@@ -50,6 +50,10 @@ public class PlanService {
 	    PlanDAO dao = new PlanDAO();
 	    return dao.getSearchCount(planCode, status, dueDate);
 	}
+	public List<PlanDTO> selectItemList() {
+		PlanDAO dao = new PlanDAO();
+		return dao.selectItemList();
+	}
 	
 	
 }

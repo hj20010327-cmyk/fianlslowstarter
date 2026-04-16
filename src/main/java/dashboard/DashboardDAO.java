@@ -30,21 +30,11 @@ public class DashboardDAO {
             conn = getDataSource().getConnection();
 
             // 오늘 생산량
-            if (isWorker) {
-                ps = conn.prepareStatement(
-                    "SELECT NVL(SUM(GOOD_QTY), 0) AS QTY " +
-                    "FROM TB_PRODUCTION " +
-                    "WHERE TRUNC(PROD_DATE)=TRUNC(SYSDATE) " +
-                    "AND WORK_USER_KEY = ?"
-                );
-                ps.setInt(1, loginUser.getUser_key());
-            } else {
-                ps = conn.prepareStatement(
-                    "SELECT NVL(SUM(GOOD_QTY), 0) AS QTY " +
-                    "FROM TB_PRODUCTION " +
-                    "WHERE TRUNC(PROD_DATE)=TRUNC(SYSDATE)"
-                );
-            }
+            ps = conn.prepareStatement(
+            	    "SELECT NVL(SUM(GOOD_QTY), 0) AS QTY " +
+            	    "FROM TB_PRODUCTION " +
+            	    "WHERE TRUNC(PROD_DATE)=TRUNC(SYSDATE)"
+            	);
 
             rs = ps.executeQuery();
             if (rs.next()) dto.setTodayProdQty(rs.getInt("QTY"));
@@ -72,22 +62,11 @@ public class DashboardDAO {
             rs.close(); ps.close();
 
             // 오늘 불량
-            if (isWorker) {
-                ps = conn.prepareStatement(
-                    "SELECT NVL(SUM(q.DEFECT_QTY), 0) AS QTY " +
-                    "FROM TB_QUALITY q " +
-                    "JOIN TB_PRODUCTION p ON q.PROD_KEY = p.PROD_KEY " +
-                    "WHERE TRUNC(q.INSPECT_DATE)=TRUNC(SYSDATE) " +
-                    "AND p.WORK_USER_KEY = ?"
-                );
-                ps.setInt(1, loginUser.getUser_key());
-            } else {
-                ps = conn.prepareStatement(
-                    "SELECT NVL(SUM(DEFECT_QTY), 0) AS QTY " +
-                    "FROM TB_QUALITY " +
-                    "WHERE TRUNC(INSPECT_DATE)=TRUNC(SYSDATE)"
-                );
-            }
+            ps = conn.prepareStatement(
+            	    "SELECT NVL(SUM(DEFECT_QTY), 0) AS QTY " +
+            	    "FROM TB_QUALITY " +
+            	    "WHERE TRUNC(INSPECT_DATE)=TRUNC(SYSDATE)"
+            	);
 
             rs = ps.executeQuery();
             if (rs.next()) dto.setTodayDefectQty(rs.getInt("QTY"));
@@ -104,27 +83,14 @@ public class DashboardDAO {
             rs.close(); ps.close();
 
             // 최근 7일 생산량
-            if (isWorker) {
-                ps = conn.prepareStatement(
-                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
-                    "NVL((SELECT SUM(GOOD_QTY) " +
-                    "     FROM TB_PRODUCTION " +
-                    "     WHERE TRUNC(PROD_DATE)=DT " +
-                    "       AND WORK_USER_KEY = ?), 0) AS PROD_QTY " +
-                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
-                    "ORDER BY DT"
-                );
-                ps.setInt(1, loginUser.getUser_key());
-            } else {
-                ps = conn.prepareStatement(
-                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
-                    "NVL((SELECT SUM(GOOD_QTY) " +
-                    "     FROM TB_PRODUCTION " +
-                    "     WHERE TRUNC(PROD_DATE)=DT), 0) AS PROD_QTY " +
-                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
-                    "ORDER BY DT"
-                );
-            }
+            ps = conn.prepareStatement(
+            	    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+            	    "NVL((SELECT SUM(GOOD_QTY) " +
+            	    "     FROM TB_PRODUCTION " +
+            	    "     WHERE TRUNC(PROD_DATE)=DT), 0) AS PROD_QTY " +
+            	    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+            	    "ORDER BY DT"
+            	);
 
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -134,28 +100,14 @@ public class DashboardDAO {
             rs.close(); ps.close();
 
             // 최근 7일 불량
-            if (isWorker) {
-                ps = conn.prepareStatement(
-                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
-                    "NVL((SELECT SUM(q.DEFECT_QTY) " +
-                    "     FROM TB_QUALITY q " +
-                    "     JOIN TB_PRODUCTION p ON q.PROD_KEY = p.PROD_KEY " +
-                    "     WHERE TRUNC(q.INSPECT_DATE)=DT " +
-                    "       AND p.WORK_USER_KEY = ?), 0) AS DEFECT_QTY " +
-                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
-                    "ORDER BY DT"
-                );
-                ps.setInt(1, loginUser.getUser_key());
-            } else {
-                ps = conn.prepareStatement(
-                    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
-                    "NVL((SELECT SUM(DEFECT_QTY) " +
-                    "     FROM TB_QUALITY " +
-                    "     WHERE TRUNC(INSPECT_DATE)=DT), 0) AS DEFECT_QTY " +
-                    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
-                    "ORDER BY DT"
-                );
-            }
+            ps = conn.prepareStatement(
+            	    "SELECT TO_CHAR(DT, 'MM/DD') AS DAY_LABEL, " +
+            	    "NVL((SELECT SUM(DEFECT_QTY) " +
+            	    "     FROM TB_QUALITY " +
+            	    "     WHERE TRUNC(INSPECT_DATE)=DT), 0) AS DEFECT_QTY " +
+            	    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+            	    "ORDER BY DT"
+            	);
 
             rs = ps.executeQuery();
             while (rs.next()) {
@@ -164,7 +116,7 @@ public class DashboardDAO {
             }
             rs.close(); ps.close();
 
-            // 🔥 작업지시 목록 (품목명 + 사용자 이름 포함)
+            // 작업지시 목록 (품목명 + 사용자 이름 포함)
             String sql =
                 "SELECT w.WORK_ORDER_CODE, w.ORDER_QTY, w.WORK_DATE, " +
                 "       ou.USER_NAME AS ORDER_USER_NAME, " +

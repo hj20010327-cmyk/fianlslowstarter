@@ -1,64 +1,128 @@
 package mypage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MypageDTO {
 
+	private List<MypageWorkorderDTO> myWorkOrders = new ArrayList<>();
 	private String user_id;
-	private String user_name;
-	private String user_email;
-	private String user_phone;
-	private String user_pw;
-	private String emp_no;
-	private String user_role;
-	
-	public String getUser_id() {
-		return user_id;
+    private String user_name;
+    private String user_email;
+    private String user_phone;
+    private String user_pw;
+    private String emp_no;
+    private String user_role;
+    private int workOrderPage;
+    private int workOrderPageSize;
+    private int workOrderTotalCount;
+    private int workOrderTotalPage;
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getUser_role() {
+        return user_role;
+    }
+
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
+    }
+
+    public String getEmp_no() {
+        return emp_no;
+    }
+
+    public void setEmp_no(String emp_no) {
+        this.emp_no = emp_no;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public String getUser_email() {
+        return user_email;
+    }
+
+    public void setUser_email(String user_email) {
+        this.user_email = user_email;
+    }
+
+    public String getUser_phone() {
+        return user_phone;
+    }
+
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
+    }
+
+    public String getUser_pw() {
+        return user_pw;
+    }
+
+    public void setUser_pw(String user_pw) {
+        this.user_pw = user_pw;
+    }
+
+    public List<MypageWorkorderDTO> getMyWorkOrders() {
+        return myWorkOrders;
+    }
+
+    public void setMyWorkOrders(List<MypageWorkorderDTO> myWorkOrders) {
+        this.myWorkOrders = myWorkOrders;
+    }
+
+	public int getWorkOrderPage() {
+		return workOrderPage;
 	}
-	public void setUser_id(String user_id) {
-		this.user_id = user_id;
+
+	public void setWorkOrderPage(int workOrderPage) {
+		this.workOrderPage = workOrderPage;
 	}
-	
-	public String getUser_role() {
-		return user_role;
+
+	public int getWorkOrderPageSize() {
+		return workOrderPageSize;
 	}
-	public void setUser_role(String user_role) {
-		this.user_role = user_role;
+
+	public void setWorkOrderPageSize(int workOrderPageSize) {
+		this.workOrderPageSize = workOrderPageSize;
 	}
-	public String getEmp_no() {
-		return emp_no;
+
+	public int getWorkOrderTotalCount() {
+		return workOrderTotalCount;
 	}
-	public void setEmp_no(String emp_no) {
-		this.emp_no = emp_no;
+
+	public void setWorkOrderTotalCount(int workOrderTotalCount) {
+		this.workOrderTotalCount = workOrderTotalCount;
 	}
-	public String getUser_name() {
-		return user_name;
+
+	public int getWorkOrderTotalPage() {
+		return workOrderTotalPage;
 	}
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
+
+	public void setWorkOrderTotalPage(int workOrderTotalPage) {
+		this.workOrderTotalPage = workOrderTotalPage;
 	}
-	public String getUser_email() {
-		return user_email;
-	}
-	public void setUser_email(String user_email) {
-		this.user_email = user_email;
-	}
-	public String getUser_phone() {
-		return user_phone;
-	}
-	public void setUser_phone(String user_phone) {
-		this.user_phone = user_phone;
-	}
-	public String getUser_pw() {
-		return user_pw;
-	}
-	public void setUser_pw(String user_pw) {
-		this.user_pw = user_pw;
-	}
+
 	@Override
 	public String toString() {
-		return "MypageDTO [user_id=" + user_id + ", user_name=" + user_name + ", user_email=" + user_email
-				+ ", user_phone=" + user_phone + ", user_pw=" + user_pw + ", emp_no=" + emp_no + ", user_role="
-				+ user_role + "]";
+		return "MypageDTO [myWorkOrders=" + myWorkOrders + ", user_id=" + user_id + ", user_name=" + user_name
+				+ ", user_email=" + user_email + ", user_phone=" + user_phone + ", user_pw=" + user_pw + ", emp_no="
+				+ emp_no + ", user_role=" + user_role + ", workOrderPage=" + workOrderPage + ", workOrderPageSize="
+				+ workOrderPageSize + ", workOrderTotalCount=" + workOrderTotalCount + ", workOrderTotalPage="
+				+ workOrderTotalPage + "]";
 	}
+
 	
 	
 }

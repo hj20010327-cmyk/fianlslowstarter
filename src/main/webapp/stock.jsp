@@ -9,143 +9,171 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AUTO MES | 재고관리</title>
-    
+
     <script src="./asset/js/common.js" defer></script>
     <link rel="stylesheet" href="./asset/css/common.css" />
     <link rel="stylesheet" href="./asset/css/page.css" />
 
     <style>
-        .pagination { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-top: 25px; 
-            margin-bottom: 10px; 
-            gap: 8px; 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            gap: 8px;
         }
 
-        .pagination a { 
-            padding: 10px 15px; 
-            border: 1px solid #dee2e6; 
-            text-decoration: none; 
-            color: #495057; 
-            border-radius: 5px; 
-            font-size: 14px; 
-            transition: all 0.2s; 
+        .pagination a {
+            padding: 10px 15px;
+            border: 1px solid #dee2e6;
+            text-decoration: none;
+            color: #495057;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
-        .pagination a.active { 
-            background-color: #0d6efd; 
-            color: white; 
-            border-color: #0d6efd; 
-            font-weight: bold; 
+        .pagination a.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            font-weight: bold;
         }
 
-        .table-wrap table td, 
-        .table-wrap table th { 
-            text-align: center; 
+        .table-wrap table td,
+        .table-wrap table th {
+            text-align: center;
         }
 
-        /* 클릭 가능한 데이터 셀에만 포인터 표시 */
         .clickable-cell {
             cursor: pointer;
         }
+
         .clickable-cell:hover {
             background-color: #f8f9fa;
+        }
+
+        /* 품질관리처럼 검색 조건 한 줄 정렬 */
+        .search-inline-wrap {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            flex-wrap: nowrap;
+        }
+
+        .search-inline-item {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-inline-btns {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            flex: 0 0 auto;
+        }
+
+        .search-inline-item .input,
+        .search-inline-item .select {
+            width: 100%;
         }
     </style>
 </head>
 
 <body>
-   <header class="header">
-		<div class="header-left">
+    <header class="header">
+        <div class="header-left">
+            <a href="./index" class="logo">
+                <span class="logo-mark">AM</span>
+                <span>AUTO MES</span>
+            </a>
+            <div class="header-title">자동차 콤프레셔 제조 MES</div>
+        </div>
 
-			<a href="./index" class="logo"> <span class="logo-mark">AM</span>
-				<span>AUTO MES</span>
-			</a>
+        <script>
+            const contextPath = '${pageContext.request.contextPath}';
+        </script>
 
-			<div class="header-title">자동차 콤프레셔 제조 MES</div>
-		</div>
+        <div class="header-right">
+            <div class="header-chip date"></div>
+            <div class="header-chip">${dto.user_name}님</div>
+            <button class="btn logout-btn" onclick="logout()">로그아웃</button>
+        </div>
+        <button type="button" class="menu-toggle" id="menuToggle">☰</button>
+    </header>
 
-		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
-		</script>
+    <div class="layout">
+        <aside class="snb" id="snb">
+            <div class="snb-section">
+                <div class="snb-title">MAIN</div>
+                <ul class="snb-menu">
+                    <li><a href="./index">대시보드</a></li>
+                </ul>
+            </div>
 
-		<div class="header-right">
-			<div class="header-chip date"></div>
-			<div class="header-chip">${dto.user_name}님</div>
-			<button class="btn logout-btn" onclick="logout()">로그아웃</button>
-		</div>
-		<button type="button" class="menu-toggle" id="menuToggle">☰</button>
-	</header>
+            <div class="snb-section">
+                <div class="snb-title">기준관리</div>
+                <ul class="snb-menu">
+                    <li><a href="./master">기준관리</a></li>
+                    <li><a href="./bom">BOM</a></li>
+                    <li><a href="./process">공정</a></li>
+                    <li><a href="/slowstarter/machine">설비</a></li>
+                </ul>
+            </div>
 
-	<div class="layout">
-		<aside class="snb" id="snb">
-			<div class="snb-section">
-				<div class="snb-title">MAIN</div>
-				<ul class="snb-menu">
-					<li><a href="./index">대시보드</a></li>
-				</ul>
-			</div>
+            <div class="snb-section">
+                <div class="snb-title">생산관리</div>
+                <ul class="snb-menu">
+                    <li><a href="/slowstarter/workorder">작업지시</a></li>
+                    <li><a href="/slowstarter/plan">생산계획</a></li>
+                </ul>
+            </div>
 
-			<div class="snb-section">
-				<div class="snb-title">기준관리</div>
-				<ul class="snb-menu">
-					<li><a href="./master">기준관리</a></li>
-					<li><a href="./bom">BOM</a></li>
-					<li><a href="./process">공정</a></li>
-					<li><a href="/slowstarter/machine">설비</a></li>
-				</ul>
-			</div>
+            <!-- 재고관리 메뉴 : 구조는 그대로 두고 글씨만 추가 -->
+            <div class="snb-section">
+                <div class="snb-title">재고관리</div>
+                <ul class="snb-menu">
+                    <li class="active"><a href="./stock">재고</a></li>
+                    <li><a href="#">완제품</a></li>
+                    <li><a href="#">자재</a></li>
+                </ul>
+            </div>
 
-			<div class="snb-section">
-				<div class="snb-title">생산관리</div>
-				<ul class="snb-menu">
-					<li><a href="/slowstarter/workorder">작업지시</a></li>
-					<li><a href="/slowstarter/plan">생산계획</a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">재고관리</div>
-				<ul class="snb-menu">
-					<li class="active"><a href="./stock">재고</a></li>
-					<li><a href="./product">완제품</a></li>
-					<li><a href="./item">자재</a></li>
-				</ul>
-			</div>
+            <div class="snb-section">
+                <div class="snb-title">품질관리</div>
+                <ul class="snb-menu">
+                    <li><a href="qualityList">품질</a></li>
+                </ul>
+            </div>
 
-			<div class="snb-section">
-				<div class="snb-title">품질관리</div>
-				<ul class="snb-menu">
-					<li><a href="qualityList">품질</a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">리포트</div>
-				<ul class="snb-menu">
-					<li><a href="./report">리포트</a></li>
-					<li><a href="./production">생산실적</a></li>
-				</ul>
-			</div>
-			<div class="snb-section">
-				<div class="snb-title">시스템</div>
-				<ul class="snb-menu">
-					<li><a href="./board">게시판</a></li>
-					<li><a href="./user">사용자관리</a></li>
-					<li><a href="./mypage">마이페이지</a></li>
-				</ul>
-			</div>
-		</aside>
-		
-		<div class="snb-overlay" id="snbOverlay"></div>
+            <div class="snb-section">
+                <div class="snb-title">리포트</div>
+                <ul class="snb-menu">
+                    <li><a href="./report">리포트</a></li>
+                    <li><a href="./production">생산실적</a></li>
+                </ul>
+            </div>
+
+            <div class="snb-section">
+                <div class="snb-title">시스템</div>
+                <ul class="snb-menu">
+                    <li><a href="./board">게시판</a></li>
+                    <li><a href="./user">사용자관리</a></li>
+                    <li><a href="./mypage">마이페이지</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <div class="snb-overlay" id="snbOverlay"></div>
 
         <main class="content">
             <div class="page-head">
                 <div class="page-head-left">
                     <h1>재고관리</h1>
-                    <p>전체 재고 현황 및 LOT 정보를 관리합니다.</p>
+                    <p>재고 / 완제품 / 자재 통합 재고를 관리합니다.</p>
                 </div>
-                
+
                 <div class="page-actions">
                     <c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
                         <button class="btn primary" type="button" onclick="openInsertModal()">신규 재고 등록</button>
@@ -153,126 +181,155 @@
                 </div>
             </div>
 
-            <section class="card">
-                <div class="section-title"><h2>검색 조건</h2></div>
-                <form action="stock" method="get">
+            <!-- 검색 조건 -->
+            <section class="card" style="margin-bottom: 20px">
+                <div class="section-title">
+                    <h2>검색 조건</h2>
+                    <span>구분과 LOT 번호로 검색할 수 있습니다.</span>
+                </div>
+
+                <form action="${pageContext.request.contextPath}/stock" method="get">
                     <input type="hidden" name="p" value="1">
-                    <div class="search-row">
-                        <input class="input" type="text" name="keyword" placeholder="LOT 번호 입력" value="${param.keyword}" />
-                        <button class="btn primary" type="submit">조회</button>
+
+                    <div class="search-inline-wrap">
+                        <div class="search-inline-item">
+                            <select class="select" name="itemType">
+                                <option value="all" ${itemType eq 'all' ? 'selected' : ''}>전체</option>
+                                <option value="product" ${itemType eq 'product' ? 'selected' : ''}>완제품</option>
+                                <option value="item" ${itemType eq 'item' ? 'selected' : ''}>자재</option>
+                            </select>
+                        </div>
+
+                        <div class="search-inline-item">
+                            <input class="input" type="text" name="keyword" placeholder="LOT 번호 입력" value="${keyword}" />
+                        </div>
+
+                        <div class="search-inline-btns">
+                            <button class="btn primary" type="submit">조회</button>
+                            <a href="${pageContext.request.contextPath}/stock" class="btn">초기화</a>
+                        </div>
                     </div>
                 </form>
             </section>
 
+            <!-- 재고 목록 -->
             <section class="panel-grid">
-                <div class="card" style="flex: 7;">
-                    <form id="deleteForm" action="stock" method="post" onsubmit="return validateDelete();">
-                        <input type="hidden" name="cmd" value="delete"> 
+                <div class="card">
+                    <form id="deleteForm" action="${pageContext.request.contextPath}/stock" method="post" onsubmit="return validateDelete();">
+                        <input type="hidden" name="cmd" value="delete">
+
                         <div class="section-title">
                             <h2>재고 목록</h2>
-                            <span>DB 실시간 데이터</span>
+                            <span>처음에는 전체 데이터가 나오고, 구분 선택 시 완제품 / 자재만 볼 수 있습니다.</span>
                             <c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-                                <button type="submit" class="btn danger-outline">삭제</button>
+                                <button type="submit" class="btn">삭제</button>
                             </c:if>
                         </div>
-                        
+
                         <div class="table-wrap">
                             <table>
                                 <thead>
                                     <tr>
                                         <th onclick="toggleAllCheckboxes()" style="cursor:pointer;">선택</th>
-                                        <th style="cursor:default;">번호</th>
-                                        <th style="cursor:default;">LOT 번호</th>
-                                        <th style="cursor:default;">입고수량</th>
-                                        <th style="cursor:default;">출고수량</th>
-                                        <th style="cursor:default;">현재고</th>
-                                        <th style="cursor:default;">안전재고</th>
-                                        <th style="cursor:default;">최근 업데이트</th>
+                                        <th>번호</th>
+                                        <th>구분</th>
+                                        <th>품목코드</th>
+                                        <th>품목명</th>
+                                        <th>LOT 번호</th>
+                                        <th>현재고</th>
+                                        <th>안전재고</th>
+                                        <th>최근 업데이트</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <c:forEach var="dto" items="${list}">
-                                        <c:set var="params" value="'${dto.stock_key}', '${dto.lot}', '${dto.in_qty}', '${dto.out_qty}', '${dto.safe_qty}', '${dto.item_key}'" />
+                                    <c:forEach var="s" items="${list}">
+                                        <c:set var="params" value="'${s.stock_key}', '${s.lot}', '${s.current_qty}', '${s.safe_qty}', '${s.item_key}'" />
                                         <tr>
                                             <td>
-                                                <input type="checkbox" name="codes" value="${dto.stock_key}" class="stock-checkbox">
+                                                <input type="checkbox" name="codes" value="${s.stock_key}" class="stock-checkbox">
                                             </td>
-                                            
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.stock_key}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.lot}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.in_qty}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.out_qty}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.current_qty}</td>
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${dto.safe_qty}</td>
+
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.stock_key}</td>
+
+                                            <!-- ★ 수정 : 전체면 재고, 완제품 선택이면 완제품, 자재 선택이면 자재 -->
                                             <td class="clickable-cell" onclick="openUpdateModal(${params})">
-                                                <fmt:formatDate value="${dto.updated_at}" pattern="yyyy-MM-dd HH:mm"/>
+                                                <c:choose>
+                                                    <c:when test="${itemType eq 'all'}">재고</c:when>
+                                                    <c:when test="${itemType eq 'product'}">완제품</c:when>
+                                                    <c:when test="${itemType eq 'item'}">자재</c:when>
+                                                    <c:otherwise>${s.item_type}</c:otherwise>
+                                                </c:choose>
+                                            </td>
+
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_code}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_name}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.lot}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.current_qty}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.safe_qty}</td>
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">
+                                                <fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm"/>
                                             </td>
                                         </tr>
                                     </c:forEach>
-                                    
+
                                     <c:if test="${empty list}">
-                                        <tr><td colspan="8" style="padding:40px; color:#999;">데이터가 없습니다.</td></tr>
+                                        <tr>
+                                            <td colspan="9" style="padding:40px; color:#999;">데이터가 없습니다.</td>
+                                        </tr>
                                     </c:if>
                                 </tbody>
                             </table>
-                            
+
                             <div class="pagination">
-                                <c:set var="totalCount" value="${totalCount != null ? totalCount : 0}" /> 
-                                <fmt:parseNumber var="totalPage" value="${(totalCount + 9) / 10}" integerOnly="true" />
-                                
                                 <c:forEach var="i" begin="1" end="${totalPage > 0 ? totalPage : 1}">
-                                    <a href="stock?p=${i}&keyword=${param.keyword}" class="${(param.p == i || (empty param.p && i == 1)) ? 'active' : ''}">${i}</a>
+                                    <a href="${pageContext.request.contextPath}/stock?p=${i}&keyword=${keyword}&itemType=${itemType}"
+                                       class="${currentPage == i ? 'active' : ''}">
+                                        ${i}
+                                    </a>
                                 </c:forEach>
                             </div>
                         </div>
                     </form>
                 </div>
-
-                <div class="card" style="flex: 3;">
-                    <div class="section-title"><h2>요약 / 상태</h2></div>
-                    <ul class="summary-list">
-                        <li>
-                            <div><strong>총 관리 LOT</strong><p>${totalCount}건</p></div> 
-                            <span class="badge ok">정상</span>
-                        </li>
-                        <li>
-                            <div><strong>재고 부족</strong><p>안전재고 미달 품목</p></div> 
-                            <span class="badge danger">주의</span>
-                        </li>
-                    </ul>
-                </div>
             </section>
         </main>
 
+        <!-- 등록 / 수정 모달 -->
         <div id="commonModal" class="modal">
             <div class="modal-box">
-                <form id="stockForm" action="stock" method="post">
+                <form id="stockForm" action="${pageContext.request.contextPath}/stock" method="post">
                     <input type="hidden" name="cmd" id="modal_cmd" value="insert">
                     <input type="hidden" name="stock_key" id="modal_stock_key" value="0">
-                    
+
                     <div class="modal-header">
                         <h3 id="modalTitle">신규 재고 등록</h3>
                         <button type="button" class="modal-close" onclick="closeModal()">×</button>
                     </div>
+
                     <div class="modal-body">
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
-                                <label>LOT 번호</label> <input type="text" class="input" name="lot" id="modal_lot" required />
+                                <label>LOT 번호</label>
+                                <input type="text" class="input" name="lot" id="modal_lot" required />
                             </div>
+
                             <div class="form-group">
-                                <label>입고수량</label> <input type="number" class="input" name="in_qty" id="modal_in_qty" value="0" />
+                                <label>현재고</label>
+                                <input type="number" class="input" name="current_qty" id="modal_current_qty" value="0" />
                             </div>
+
                             <div class="form-group">
-                                <label>출고수량</label> <input type="number" class="input" name="out_qty" id="modal_out_qty" value="0" />
+                                <label>안전재고</label>
+                                <input type="number" class="input" name="safe_qty" id="modal_safe_qty" value="0" />
                             </div>
-                            <div class="form-group">
-                                <label>안전재고</label> <input type="number" class="input" name="safe_qty" id="modal_safe_qty" value="0" />
-                            </div>
+
                             <div class="form-group" style="grid-column: span 2;">
-                                <label>품목번호 (item_key) <small style="color:red;">* 필수</small></label> <input type="number" class="input" name="item_key" id="modal_item_key" required />
+                                <label>품목번호 (item_key)</label>
+                                <input type="number" class="input" name="item_key" id="modal_item_key" required />
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn" onclick="closeModal()">취소</button>
                         <button type="submit" class="btn primary">저장</button>
@@ -299,32 +356,34 @@
         }
 
         function openInsertModal() {
-            const form = document.getElementById("stockForm");
             document.getElementById("modal_cmd").value = "insert";
             document.getElementById("modalTitle").innerText = "신규 재고 등록";
             document.getElementById("modal_stock_key").value = "0";
             document.getElementById("modal_lot").value = "";
-            document.getElementById("modal_in_qty").value = "0";
-            document.getElementById("modal_out_qty").value = "0";
+            document.getElementById("modal_current_qty").value = "0";
             document.getElementById("modal_safe_qty").value = "0";
             document.getElementById("modal_item_key").value = "";
             document.getElementById("commonModal").classList.add("show");
         }
 
-        function openUpdateModal(key, lot, inQty, outQty, safeQty, itemKey) {
-            const form = document.getElementById("stockForm");
+        function openUpdateModal(key, lot, currentQty, safeQty, itemKey) {
             document.getElementById("modal_cmd").value = "update";
             document.getElementById("modalTitle").innerText = "재고 정보 수정";
             document.getElementById("modal_stock_key").value = key;
             document.getElementById("modal_lot").value = lot;
-            document.getElementById("modal_in_qty").value = inQty;
-            document.getElementById("modal_out_qty").value = outQty;
+            document.getElementById("modal_current_qty").value = currentQty;
             document.getElementById("modal_safe_qty").value = safeQty;
             document.getElementById("modal_item_key").value = itemKey;
             document.getElementById("commonModal").classList.add("show");
         }
 
-        function closeModal() { document.getElementById("commonModal").classList.remove("show"); }
+        function closeModal() {
+            document.getElementById("commonModal").classList.remove("show");
+        }
+
+        function logout() {
+            location.href = './logout';
+        }
     </script>
 </body>
 </html>

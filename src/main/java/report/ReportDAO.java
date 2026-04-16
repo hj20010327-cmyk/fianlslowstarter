@@ -28,29 +28,28 @@ public class ReportDAO {
 			conn = getDataSource().getConnection();
 
 			String sql = ""
-					+ "SELECT                                                                 "
-					+ "    NVL(SUM(P.PLAN_QTY), 0) AS TOTAL_PLAN_QTY,                        "
-					+ "    NVL(SUM(W.ORDER_QTY), 0) AS TOTAL_ORDER_QTY,                      "
-					+ "    NVL(SUM(PR.INPUT_QTY), 0) AS TOTAL_INPUT_QTY,                     "
-					+ "    NVL(SUM(PR.GOOD_QTY), 0) AS TOTAL_GOOD_QTY,                       "
-					+ "    NVL(SUM(PR.DEFECT_QTY), 0) AS TOTAL_DEFECT_QTY,                   "
-					+ "    ROUND(CASE                                                         "
-					+ "        WHEN NVL(SUM(P.PLAN_QTY), 0) = 0 THEN 0                       "
-					+ "        ELSE SUM(PR.GOOD_QTY) / SUM(P.PLAN_QTY) * 100                 "
-					+ "    END, 2) AS ACHIEVEMENT_RATE,                                       "
-					+ "    ROUND(CASE                                                         "
-					+ "        WHEN NVL(SUM(PR.INPUT_QTY), 0) = 0 THEN 0                     "
-					+ "        ELSE SUM(PR.GOOD_QTY) / SUM(PR.INPUT_QTY) * 100               "
-					+ "    END, 2) AS YIELD_RATE,                                             "
-					+ "    ROUND(CASE                                                         "
-					+ "        WHEN NVL(SUM(PR.INPUT_QTY), 0) = 0 THEN 0                     "
-					+ "        ELSE SUM(PR.DEFECT_QTY) / SUM(PR.INPUT_QTY) * 100             "
-					+ "    END, 2) AS DEFECT_RATE                                             "
-					+ "FROM TB_PLAN P                                                         "
-					+ "LEFT JOIN TB_WORK_ORDER W ON P.PLAN_KEY = W.PLAN_KEY                  "
-					+ "LEFT JOIN TB_PRODUCTION PR ON W.WORK_ORDER_KEY = PR.WORK_ORDER_KEY    "
-					+ "WHERE P.PLAN_DATE BETWEEN TO_DATE(?, 'YYYY-MM-DD')                    "
-					+ "AND TO_DATE(?, 'YYYY-MM-DD') + 0.99999                                ";
+				    + "SELECT                                                                 "
+				    + "    NVL(SUM(P.PLAN_QTY), 0) AS TOTAL_PLAN_QTY,                        "
+				    + "    NVL(SUM(W.ORDER_QTY), 0) AS TOTAL_ORDER_QTY,                      "
+				    + "    NVL(SUM(PR.GOOD_QTY), 0) AS TOTAL_GOOD_QTY,                       "
+				    + "    NVL(SUM(PR.DEFECT_QTY), 0) AS TOTAL_DEFECT_QTY,                   "
+				    + "    ROUND(CASE                                                         "
+				    + "        WHEN NVL(SUM(P.PLAN_QTY), 0) = 0 THEN 0                       "
+				    + "        ELSE SUM(PR.GOOD_QTY) / SUM(P.PLAN_QTY) * 100                 "
+				    + "    END, 2) AS ACHIEVEMENT_RATE,                                      "
+				    + "    ROUND(CASE                                                         "
+				    + "        WHEN NVL(SUM(PR.GOOD_QTY + PR.DEFECT_QTY), 0) = 0 THEN 0      "
+				    + "        ELSE SUM(PR.GOOD_QTY) / SUM(PR.GOOD_QTY + PR.DEFECT_QTY) * 100 "
+				    + "    END, 2) AS YIELD_RATE,                                            "
+				    + "    ROUND(CASE                                                         "
+				    + "        WHEN NVL(SUM(PR.GOOD_QTY + PR.DEFECT_QTY), 0) = 0 THEN 0      "
+				    + "        ELSE SUM(PR.DEFECT_QTY) / SUM(PR.GOOD_QTY + PR.DEFECT_QTY) * 100 "
+				    + "    END, 2) AS DEFECT_RATE                                            "
+				    + "FROM TB_PLAN P                                                        "
+				    + "LEFT JOIN TB_WORK_ORDER W ON P.PLAN_KEY = W.PLAN_KEY                 "
+				    + "LEFT JOIN TB_PRODUCTION PR ON W.WORK_ORDER_KEY = PR.WORK_ORDER_KEY   "
+				    + "WHERE P.PLAN_DATE BETWEEN TO_DATE(?, 'YYYY-MM-DD')                   "
+				    + "AND TO_DATE(?, 'YYYY-MM-DD') + 0.99999";                               
 
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, startDate);
@@ -62,7 +61,6 @@ public class ReportDAO {
 				dto = new ReportSummaryDTO();
 				dto.setTotalPlanQty(rs.getInt("TOTAL_PLAN_QTY"));
 				dto.setTotalOrderQty(rs.getInt("TOTAL_ORDER_QTY"));
-				dto.setTotalInputQty(rs.getInt("TOTAL_INPUT_QTY"));
 				dto.setTotalGoodQty(rs.getInt("TOTAL_GOOD_QTY"));
 				dto.setTotalDefectQty(rs.getInt("TOTAL_DEFECT_QTY"));
 				dto.setAchievementRate(rs.getDouble("ACHIEVEMENT_RATE"));
@@ -93,7 +91,6 @@ public class ReportDAO {
 					+ "    TO_CHAR(P.PLAN_DATE, 'YYYY-MM-DD') AS WORK_DAY,                    "
 					+ "    SUM(P.PLAN_QTY) AS PLAN_QTY,                                       "
 					+ "    NVL(SUM(W.ORDER_QTY), 0) AS ORDER_QTY,                             "
-					+ "    NVL(SUM(PR.INPUT_QTY), 0) AS INPUT_QTY,                            "
 					+ "    NVL(SUM(PR.GOOD_QTY), 0) AS GOOD_QTY,                              "
 					+ "    NVL(SUM(PR.DEFECT_QTY), 0) AS DEFECT_QTY,                          "
 					+ "    ROUND(CASE                                                          "
@@ -119,7 +116,6 @@ public class ReportDAO {
 				dto.setWorkDay(rs.getString("WORK_DAY"));
 				dto.setPlanQty(rs.getInt("PLAN_QTY"));
 				dto.setOrderQty(rs.getInt("ORDER_QTY"));
-				dto.setInputQty(rs.getInt("INPUT_QTY"));
 				dto.setGoodQty(rs.getInt("GOOD_QTY"));
 				dto.setDefectQty(rs.getInt("DEFECT_QTY"));
 				dto.setAchievementRate(rs.getDouble("ACH_RATE"));

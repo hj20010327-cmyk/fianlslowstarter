@@ -21,5 +21,9 @@ public class ProductionService {
     public int updateProduction(ProductionDTO dto) {
         return productionDAO.updateProduction(dto);
     }
+    
+    public List<ProductionOptionDTO> getProductionOptions() {
+        return productionDAO.selectProductionOptions();
+    }
 	
 }

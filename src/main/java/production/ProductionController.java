@@ -43,13 +43,15 @@ public class ProductionController extends HttpServlet {
         try {
             List<ProductionDTO> list = productionService.getProductionList(startDate, endDate, keyword, status);
             ProductionSummaryDTO summary = productionService.getProductionSummary(startDate, endDate, keyword, status);
-
+            List<ProductionOptionDTO> optionList = productionService.getProductionOptions();
+            
             request.setAttribute("list", list);
             request.setAttribute("summary", summary);
             request.setAttribute("startDate", startDate);
             request.setAttribute("endDate", endDate);
             request.setAttribute("keyword", keyword);
             request.setAttribute("status", status);
+            request.setAttribute("optionList", optionList);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -43,20 +43,15 @@ public class QualityAddController extends HttpServlet {
             dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));   // 검사일자
             dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty"))); // 검사수량
             dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));       // 양품수량
+            dto.setDefect_qty(Integer.parseInt(request.getParameter("defect_qty")));   // 불량수량
+            dto.setDefect_reason(request.getParameter("defect_reason"));               // 불량사유
             dto.setQc_status(request.getParameter("qc_status"));                       // 검사상태
             dto.setProd_key(Integer.parseInt(request.getParameter("prod_key")));       // 생산 KEY
             dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));       // 담당자 KEY
 
-            // 등록 모달에서 입력칸을 뺀 값들은 기본값 처리
-            dto.setDefect_qty(0);        // 불량수량 기본값
-            dto.setDefect_reason(null);  // 불량사유 없음
-
             // 서비스 호출해서 DB 등록
             QualityService service = new QualityService();
             int result = service.addquality(dto);
-
-            // 등록 결과 확인용
-            System.out.println("품질 등록 result : " + result);
 
             // 등록 후 목록으로 이동
             response.sendRedirect(request.getContextPath() + "/qualityList");

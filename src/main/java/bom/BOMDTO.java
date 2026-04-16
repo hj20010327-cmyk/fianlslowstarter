@@ -6,7 +6,7 @@ public class BOMDTO {
 	
 	private int bom_key;
 	private String bom_code;
-	private int QTY;
+	private int qty;
 	private String remark;
 	private int item_key;
 	private int parent_item_key;
@@ -24,9 +24,11 @@ public class BOMDTO {
 	String keyword;
 	
 	
+	
+	
 	@Override
 	public String toString() {
-		return "BOMDTO [bom_key=" + bom_key + ", bom_code=" + bom_code + ", QTY=" + QTY + ", remark=" + remark
+		return "BOMDTO [bom_key=" + bom_key + ", bom_code=" + bom_code + ", qty=" + qty + ", remark=" + remark
 				+ ", item_key=" + item_key + ", parent_item_key=" + parent_item_key + ", item_name=" + item_name
 				+ ", parent_item_name=" + parent_item_name + ", size=" + size + ", page=" + page + ", start=" + start
 				+ ", end=" + end + ", keycode=" + keycode + ", keyword=" + keyword + "]";
@@ -45,11 +47,11 @@ public class BOMDTO {
 	public void setBom_code(String bom_code) {
 		this.bom_code = bom_code;
 	}
-	public int getQTY() {
-		return QTY;
+	public int getQty() {
+		return qty;
 	}
-	public void setQTY(int qTY) {
-		QTY = qTY;
+	public void setQty(int qty) {
+		this.qty = qty;
 	}
 	public String getRemark() {
 		return remark;
@@ -117,6 +119,8 @@ public class BOMDTO {
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
+	
+	
 	
 	
 }

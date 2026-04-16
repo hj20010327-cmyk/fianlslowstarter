@@ -160,12 +160,11 @@
 				</div>
 			</section>
 
-			<section class="grid-bottom">
 				<div class="card">
 					<div class="section-title">
 						<c:choose>
 							<c:when test="${dto.user_role eq '작업자'}">
-								<h2>내 작업지시</h2>
+								<h2>오늘 나의 작업지시</h2>
 							</c:when>
 							<c:otherwise>
 								<h2>오늘 작업지시</h2>
@@ -200,9 +199,11 @@
 					</table>
 				</div>
 
-				<div class="card">
+			<section class="grid-bottom">
+				<div class="card" style="margin-top: 20px;">
 					<div class="section-title">
 						<h2>재고 부족 품목</h2>
+						<a href="./stock" style="font-size:14px; color:gray">더보기</a>
 					</div>
 					<ul class="status-list">
 						<c:forEach var="s" items="${dashboard.lowStockList}">
@@ -211,16 +212,16 @@
 						</c:forEach>
 					</ul>
 				</div>
-			</section>
 
 			<div class="card" style="margin-top: 20px;">
 				<div class="section-title">
 					<h2>최근 공지</h2>
+						<a href="./board" style="font-size:14px; color:gray">더보기</a>
 				</div>
-				<a href="./board">
-					<ul class="notice-list">
-						<c:forEach var="n" items="${dashboard.noticeList}">
-							<li>
+				<ul class="notice-list">
+					<c:forEach var="n" items="${dashboard.noticeList}">
+						<li>
+							<a href="./board?action=detail&board_key=${n.board_key}">
 								<div>
 									<strong>${n.title}</strong>
 									<p>
@@ -228,11 +229,12 @@
 										/ 조회수 ${n.view_count}
 									</p>
 								</div>
-							</li>
-						</c:forEach>
-					</ul>
-				</a>
+							</a>
+						</li>
+					</c:forEach>
+				</ul>
 			</div>
+			</section>
 		</main>
 	</div>
 

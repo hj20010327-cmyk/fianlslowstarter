@@ -12,14 +12,14 @@ import javax.servlet.http.HttpSession;
 @WebServlet("/mypage")
 public class MypageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-	MypageService service = new MypageService();
+
+    MypageService service = new MypageService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("utf-8");
+    	request.setCharacterEncoding("utf-8");
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loginUserId") == null) {
@@ -28,7 +28,20 @@ public class MypageController extends HttpServlet {
         }
 
         String userId = (String) session.getAttribute("loginUserId");
-        MypageDTO dto = service.getUserByUserId(userId);
+
+        String workPageStr = request.getParameter("workPage");
+        int workPage = 1;
+        int workPageSize = 5;
+
+        if (workPageStr != null && !workPageStr.trim().isEmpty()) {
+            try {
+                workPage = Integer.parseInt(workPageStr);
+            } catch (Exception e) {
+                workPage = 1;
+            }
+        }
+
+        MypageDTO dto = service.getUserByUserId(userId, workPage, workPageSize);
 
         request.setAttribute("dto", dto);
         request.getRequestDispatcher("/mypage.jsp").forward(request, response);

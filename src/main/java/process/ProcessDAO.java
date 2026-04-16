@@ -77,7 +77,7 @@ public class ProcessDAO {
 
 		try (Connection conn = getConn();
 				PreparedStatement ps = new LoggableStatement(conn, "SELECT * FROM (SELECT rownum AS rnum, p.*  "
-						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status, "
+						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status,p.item_key, "
 						+ "			i.item_name As Item_name From tb_process p  "
 						+ "			left join tb_item i on p.item_key = i.item_key  "
 						+ "			where 1=1 and (? = 0 or p.process_key = ? ) "

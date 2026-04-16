@@ -59,7 +59,7 @@ public class BOMDAO {
 					
 					dto.setBom_key(rs.getInt("bom_key"));	
 					dto.setBom_code(rs.getString("bom_code"));	
-					dto.setQTY(rs.getInt("qty"));
+					dto.setQty(rs.getInt("qty"));
 					dto.setRemark(rs.getString("remark"));
 					dto.setItem_key(rs.getInt("item_key"));
 					dto.setParent_item_key(rs.getInt("parent_item_key"));
@@ -85,32 +85,30 @@ public class BOMDAO {
 		
 		try (Connection conn = getConn();
 				PreparedStatement ps = new LoggableStatement(conn,
-					    "SELECT * FROM ( SELECT rownum AS rnum, b.* " +
-					    "FROM ( " +
-					    "   SELECT b.bom_key, b.bom_code, b.qty, b.remark, " +
-					    "          b.item_key, b.parent_item_key, " +
-					    "          i.item_name AS item_name, " +
-					    "          (SELECT i2.item_name " +
-					    "           FROM tb_item i2 " +
-					    "           WHERE i2.item_key = b.parent_item_key) AS parent_item_name " +  // ← 띄어쓰기!
-					    "   FROM tb_bom b " +   // ⭐ 이거 필수
-					    "   LEFT JOIN tb_item i ON b.item_key = i.item_key " +
-					    "   WHERE 1=1 " +
-					    "     AND (? = 0 OR b.bom_key = ?) " +
-					    "     AND (? IS NULL OR i.item_name LIKE '%' || ? || '%') " +
-					    "   ORDER BY b.bom_key " +
-					    ") b " +
-					    "WHERE rownum <= ? ) " +
-					    "WHERE rnum >= ?"
+					   "SELECT * FROM ( "
+					   + "    SELECT rownum AS rnum, b.* "
+					   + "    FROM ( "
+					   + "        SELECT b.bom_key, b.bom_code, b.qty, b.remark, "
+					   + "               b.item_key, b.parent_item_key, "
+					   + "               i.item_name AS item_name, "
+					   + "               (SELECT i2.item_name "
+					   + "                FROM tb_item i2 "
+					   + "                WHERE i2.item_key = b.parent_item_key) AS parent_item_name "
+					   + "        FROM tb_bom b "
+					   + "        LEFT JOIN tb_item i ON b.item_key = i.item_key "
+					   + "        WHERE b.parent_item_key = ? "
+					   + "        ORDER BY b.bom_key "
+					   + "    ) b "
+					   + "    WHERE rownum <= ? "
+					   + ") "
+					   + "WHERE rnum >= ?"
 					);
 			) {
 			
-			ps.setInt(1, bomDTO.getKeycode());
-			ps.setInt(2, bomDTO.getKeycode());
-			ps.setString(3, bomDTO.getKeyword());
-			ps.setString(4, bomDTO.getKeyword());
-			ps.setInt(5, bomDTO.getEnd());
-			ps.setInt(6, bomDTO.getStart());
+			
+			ps.setInt(1, bomDTO.getParent_item_key());
+			ps.setInt(2, bomDTO.getEnd());
+			ps.setInt(3, bomDTO.getStart());
 
 			try (ResultSet rs = ps.executeQuery();) {
 				while(rs.next()) {
@@ -118,7 +116,7 @@ public class BOMDAO {
 
 					dto.setBom_key(rs.getInt("bom_key"));	
 					dto.setBom_code(rs.getString("bom_code"));	
-					dto.setQTY(rs.getInt("qty"));
+					dto.setQty(rs.getInt("qty"));
 					dto.setRemark(rs.getString("remark"));
 					dto.setItem_key(rs.getInt("item_key"));
 					dto.setParent_item_key(rs.getInt("parent_item_key"));
@@ -153,7 +151,7 @@ public class BOMDAO {
 						+ "    ? "
 						+ ") ");
 		) {
-			ps.setInt(1, bomDTO.getQTY());
+			ps.setInt(1, bomDTO.getQty());
 			ps.setString(2, bomDTO.getRemark());
 			ps.setInt(3, bomDTO.getItem_key());
 			ps.setInt(4, bomDTO.getParent_item_key());
@@ -184,7 +182,7 @@ public class BOMDAO {
 						+ " where bom_key = ? ");
 		) {
 			ps.setString(1, bomDTO.getBom_code());
-			ps.setInt(2, bomDTO.getQTY());
+			ps.setInt(2, bomDTO.getQty());
 			ps.setString(3, bomDTO.getRemark());
 			ps.setInt(4, bomDTO.getItem_key());
 			ps.setInt(5, bomDTO.getParent_item_key());

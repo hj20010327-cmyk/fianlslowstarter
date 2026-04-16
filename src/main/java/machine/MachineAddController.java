@@ -50,6 +50,10 @@ public class MachineAddController extends HttpServlet {
 		String machineName = request.getParameter("machineName");
 		String buyDateStr = request.getParameter("buyDate");
 		String remark = request.getParameter("remark");
+		int processKey = Integer.parseInt(request.getParameter("processKey"));
+
+		
+		System.out.println("processKeyStr = [" + processKey + "]");
 
 		if (machineName == null || machineName.trim().equals("")) {
 		    response.sendRedirect("/slowstarter/machine");
@@ -66,6 +70,7 @@ public class MachineAddController extends HttpServlet {
 		MachineDTO dto = new MachineDTO();
 		dto.setMachineName(machineName);
 		dto.setBuyDate(buyDate);
+		dto.setProcessKey(processKey);
 		dto.setRemark(remark);
 
 		// 등록 시 기본값

@@ -395,7 +395,7 @@ input.btn {
 
 .grid-2 {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
   margin-bottom: 20px;
 }
@@ -761,8 +761,10 @@ input.btn {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  .grid-2,
   .grid-bottom,
+  .grid-2 {
+  grid-template-columns: 1fr 1fr !important;
+  }
   .two-col,
   .three-col,
   .kpi-grid,

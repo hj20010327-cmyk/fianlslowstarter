@@ -178,8 +178,6 @@
 								<tr>
 									<th>일자</th>
 									<th>계획수량</th>
-									<th>지시수량</th>
-									<th>투입수량</th>
 									<th>양품수량</th>
 									<th>불량수량</th>
 									<th>달성률</th>
@@ -192,10 +190,6 @@
 											<tr>
 												<td>${d.workDay}</td>
 												<td><fmt:formatNumber value="${d.planQty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${d.orderQty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${d.inputQty}"
 														pattern="#,##0" /></td>
 												<td><fmt:formatNumber value="${d.goodQty}"
 														pattern="#,##0" /></td>
@@ -268,7 +262,6 @@
 								<th>품목코드</th>
 								<th>품목명</th>
 								<th>계획수량</th>
-								<th>지시수량</th>
 								<th>양품수량</th>
 								<th>불량수량</th>
 								<th>달성률</th>
@@ -282,8 +275,6 @@
 											<td>${i.itemCode}</td>
 											<td>${i.itemName}</td>
 											<td><fmt:formatNumber value="${i.planQty}"
-													pattern="#,##0" /></td>
-											<td><fmt:formatNumber value="${i.orderQty}"
 													pattern="#,##0" /></td>
 											<td><fmt:formatNumber value="${i.goodQty}"
 													pattern="#,##0" /></td>

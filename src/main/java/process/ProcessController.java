@@ -1,6 +1,7 @@
 package process;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 
 @WebServlet("/process")
 public class ProcessController extends HttpServlet {
@@ -62,9 +64,25 @@ public class ProcessController extends HttpServlet {
 		System.out.println("sequence_no = " + request.getParameter("sequence_no"));
 		
 		
+		
+		List<ProcessDTO> itemList = processservice.getItemForProcess();
+
+		
+		List<ProcessDTO> filtered = new ArrayList<>();
+
+		for(ProcessDTO dto : itemList){
+		    if(dto.getItem_key() >= 1 && dto.getItem_key() <= 5){
+		        filtered.add(dto);
+		    }
+		}
+
+		request.setAttribute("itemList", filtered);
+		
+		System.out.println("itemList = " + itemList);
+		System.out.println("itemList size = " + (itemList == null ? "null" : itemList.size()));
+		
 		RequestDispatcher rd = request.getRequestDispatcher("/process.jsp");
 		rd.forward(request, response);
-		
 		
 	}
 
@@ -117,7 +135,7 @@ public class ProcessController extends HttpServlet {
 		
 		processDTO.setProcess_code(process_code);
 		processDTO.setProcess_name(process_name);
-		processDTO.setSequence_no(sequence_no);
+		processDTO.setSequence_no(sequence_no); 
 		processDTO.setProcess_desc(process_desc);
 		processDTO.setStatus(status);
 		processDTO.setItem_key(item_key);

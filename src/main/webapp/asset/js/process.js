@@ -50,3 +50,27 @@ document.getElementById("processForm").addEventListener("submit", function () {
     console.log("cmd =", document.getElementById("cmd").value);
     console.log("process_key =", document.getElementById("process_key").value);
 });
+
+
+
+document.addEventListener("change", function (e) {
+    if (e.target && e.target.id === "process_name") {
+        const selected = e.target.options[e.target.selectedIndex];
+        document.getElementById("process_desc").value =
+            selected.dataset.desc || "";
+    }
+});
+console.log("js 실행행");
+
+document.getElementById("process_name").addEventListener("change", function () {
+    console.log("change 됨?");
+});
+
+document.addEventListener("change", function (e) {
+    console.log("change 발생:", e.target);
+});
+
+window.addEventListener("load", function () {
+    console.log("JS 실행됨 (load)");
+});
+

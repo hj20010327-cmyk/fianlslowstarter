@@ -250,5 +250,35 @@ public class ProcessDAO {
 		}
 		return totalCount;
 	}
+	
+	// 모달창 완제품 중복 거르기 
+	public List<ProcessDTO> selectItemForProcess() {
+
+	    List<ProcessDTO> list = new ArrayList<>();
+
+	    String sql =
+	        "SELECT DISTINCT p.item_key, i.item_name " +
+	        " FROM tb_item i " +
+	        " left join tb_process p " +
+	        " on i.item_key = p.item_key " +   
+	        " ORDER BY item_name";
+
+	    try (Connection conn = getConn();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            ProcessDTO dto = new ProcessDTO();
+	            dto.setItem_key(rs.getInt("item_key"));
+	            dto.setItem_name(rs.getString("item_name"));
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
+	}
 
 }

@@ -58,5 +58,13 @@ public class ProcessService {
 		
 		return map;
 	}
+	
+	public List<ProcessDTO> getItemForProcess() {
+
+	    ProcessDAO processDAO = new ProcessDAO();
+
+	    return processDAO.selectItemForProcess();
+	}
+	
 
 }

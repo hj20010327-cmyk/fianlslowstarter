@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import process.ProcessDAO;
+import process.ProcessDTO;
+
 public class BOMService {
 	
 	public int insert(BOMDTO dto) {
@@ -58,4 +61,12 @@ public class BOMService {
 		return map;
 		
 	}
+	
+	public List<BOMDTO> getItemForBOM() {
+
+	    BOMDAO bomDAO = new BOMDAO();
+
+	    return bomDAO.selectItemForBOM();
+	}
+	
 }

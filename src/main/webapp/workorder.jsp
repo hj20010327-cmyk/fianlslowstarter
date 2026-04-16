@@ -196,6 +196,7 @@
 									<th>선택</th>
 									<th>작업코드</th>
 									<th>계획코드</th>
+									<th>제품명</th>
 									<th>작업일</th>
 									<th>수량</th>
 									<th>지시자</th>
@@ -230,6 +231,7 @@
 
 
 										<td>${w.plan_code}</td>
+										<td>${w.item_name}</td>
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
 										<td>${w.order_user_name}</td>
@@ -320,16 +322,28 @@
 							</div>
 
 							<div class="form-group">
+								<label>품목명</label> <input type="text" class="input"
+									id="item_name" readonly />
+							</div>
+
+							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
 									id="work_date" name="work_date" />
 							</div>
 
-							<select class="input" id="plan_key" name="plan_key">
-								<option value="">생산계획 선택</option>
-								<c:forEach var="p" items="${planList}">
-									<option value="${p.plan_key}">${p.plan_code}</option>
-								</c:forEach>
-							</select>
+							<div class="form-group">
+								<label>생산계획</label> <select class="input" id="plan_key"
+									name="plan_key">
+									<option value="">생산계획 선택</option>
+									<c:forEach var="p" items="${planList}">
+										<option value="${p.plan_key}" 
+										data-qty="${p.plan_qty}"
+										data-date="${p.plan_date}" 
+										data-item="${p.item_name}">
+										${p.plan_code}</option>
+									</c:forEach>
+								</select>
+							</div>
 
 						</div>
 					</div>
@@ -360,7 +374,7 @@
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="edit_order_qty"/>
+									id="edit_order_qty" name="edit_order_qty" readonly/>
 							</div>
 
 							<div class="form-group">
@@ -397,6 +411,8 @@
 			document.getElementById("order_qty").value = "";
 			document.getElementById("work_date").value = "";
 			document.getElementById("plan_key").value = "";
+			document.getElementById("item_name").value = "";
+			document.getElementById("insert_work_user_key").value = "";
 
 			document.getElementById("commonModal").classList.add("show");
 		}
@@ -426,6 +442,34 @@
 		function closeModal() {
 			document.getElementById("commonModal").classList.remove("show");
 		}
+		
+		document.getElementById("plan_key").addEventListener("change", function() {
+
+			var select = document.getElementById("plan_key");
+			var selectedOption = select.options[select.selectedIndex];
+
+			var qty = selectedOption.getAttribute("data-qty");
+			var date = selectedOption.getAttribute("data-date");
+			var itemName = selectedOption.getAttribute("data-item");
+
+			if (qty) {
+				document.getElementById("order_qty").value = qty;
+			} else {
+				document.getElementById("order_qty").value = "";
+			}
+
+			if (date) {
+				document.getElementById("work_date").value = date;
+			} else {
+				document.getElementById("work_date").value = "";
+			}
+
+			if (itemName) {
+				document.getElementById("item_name").value = itemName;
+			} else {
+				document.getElementById("item_name").value = "";
+			}
+		});
 	</script>
 </body>
 </html>

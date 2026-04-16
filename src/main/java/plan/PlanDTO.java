@@ -3,16 +3,22 @@ package plan;
 import java.sql.Date;
 
 public class PlanDTO {
-	private int plan_key; // °èÈ¹ Å° pk 
-	private String plan_code; // °èÈ¹ ¸í
-	private int item_key; // ¾ÆÀÌÅÛ Å° 
-	private Date plan_date; // °èÈ¹ÀÏ
-	private Date due_date; // ¸¶°¨ÀÏ 
-	private int plan_qty; // °èÈ¹ ¼ö·®  
-	private String status; // °èÈ¹ »óÅÂ
-	private int user_key; // À¯Àú Å° 
-	private Date create_at; // »ı¼ºÀÏ
-	private int priority; // ¿ì¼±¼øÀ§
+	private int plan_key;      // ê³„íš í‚¤ PK
+	private String plan_code;  // ê³„íš ì½”ë“œ
+	private int item_key;      // í’ˆëª© í‚¤
+	private Date plan_date;    // ê³„íšì¼
+	private Date due_date;     // ë§ˆê°ì¼
+	private int plan_qty;      // ê³„íš ìˆ˜ëŸ‰
+	private String status;     // ê³„íš ìƒíƒœ
+	private int user_key;      // ë“±ë¡ì í‚¤
+	private Date create_at;    // ìƒì„±ì¼
+	private int priority;      // ìš°ì„ ìˆœìœ„
+
+	// í‘œì‹œìš© 
+	private String item_name;      // ì œí’ˆëª…
+	private String user_name;      // ë“±ë¡ìëª…
+	private String priority_name;  // ìš°ì„ ìˆœìœ„ëª…
+	
 	
 	public int getPriority() {
 		return priority;
@@ -74,12 +80,32 @@ public class PlanDTO {
 	public void setCreate_at(Date create_at) {
 		this.create_at = create_at;
 	}
+	public String getItem_name() {
+		return item_name;
+	}
+	public void setItem_name(String item_name) {
+		this.item_name = item_name;
+	}
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
+	public String getPriority_name() {
+		return priority_name;
+	}
+	public void setPriority_name(String priority_name) {
+		this.priority_name = priority_name;
+	}
 	@Override
 	public String toString() {
 		return "PlanDTO [plan_key=" + plan_key + ", plan_code=" + plan_code + ", item_key=" + item_key + ", plan_date="
 				+ plan_date + ", due_date=" + due_date + ", plan_qty=" + plan_qty + ", status=" + status + ", user_key="
-				+ user_key + ", create_at=" + create_at + ", priority=" + priority + "]";
+				+ user_key + ", create_at=" + create_at + ", priority=" + priority + ", item_name=" + item_name
+				+ ", user_name=" + user_name + ", priority_name=" + priority_name + "]";
 	}
+	
 	
 	
 }

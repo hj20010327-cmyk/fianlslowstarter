@@ -56,87 +56,87 @@ public class PlanDAO {
 	}
 
     public int insertPlan(PlanDTO dto) {
-        
-        int result = -1;
 
-        try {
-            Context ctx = new InitialContext();
-            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-            conn = dataFactory.getConnection();
+    	int result = -1;
 
-            String query = "INSERT INTO tb_plan (" +
-                    "plan_key, plan_code, item_key, plan_date, due_date, " +
-                    "plan_qty, plan_status, user_key, created_at, priority" +
-                    ") VALUES (" +
-                    "seq_plan.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?" +
-                    ")";
+    	try {
+    		Context ctx = new InitialContext();
+    		DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+    		conn = dataFactory.getConnection();
 
-            ps = conn.prepareStatement(query);
+    		String query = "INSERT INTO tb_plan ( "
+    				+ "    plan_key, item_key, plan_code, plan_date, due_date, "
+    				+ "    plan_qty, plan_status, user_key, created_at, priority "
+    				+ ") "
+    				+ "SELECT "
+    				+ "    seq_plan.NEXTVAL, "
+    				+ "    ?, "
+    				+ "    'PLAN-' || LPAD(seq_plan.CURRVAL, 3, '0'), "
+    				+ "    ?, ?, ?, ?, ?, SYSDATE, ? "
+    				+ "FROM dual";
 
-            ps.setString(1, dto.getPlan_code());
-            ps.setInt(2, dto.getItem_key());
-            ps.setDate(3, dto.getPlan_date());
-            ps.setDate(4, dto.getDue_date());
-            ps.setInt(5, dto.getPlan_qty());
-            ps.setString(6, dto.getStatus());     
-            ps.setInt(7, dto.getUser_key());
-            ps.setInt(8, dto.getPriority());
+    		ps = conn.prepareStatement(query);
 
-            result = ps.executeUpdate();
-            System.out.println("insert의 결과:" + result);
+    		ps.setInt(1, dto.getItem_key());
+    		ps.setDate(2, dto.getPlan_date());
+    		ps.setDate(3, dto.getDue_date());
+    		ps.setInt(4, dto.getPlan_qty());
+    		ps.setString(5, dto.getStatus());
+    		ps.setInt(6, dto.getUser_key());
+    		ps.setInt(7, dto.getPriority());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }  finally {
-			closeAll();
-		}
-		return result;
-	}
+    		result = ps.executeUpdate();
+    		System.out.println("plan insert의 결과:" + result);
+
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} finally {
+    		closeAll();
+    	}
+    	return result;
+    }
 
     public int updatePlan(PlanDTO dto) {
-       
-        int result = -1;
 
-        try {
-            Context ctx = new InitialContext();
-            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-            conn = dataFactory.getConnection();
+    	int result = -1;
 
-            String query = "UPDATE tb_plan SET " +
-                    "plan_code = ?, " +
-                    "item_key = ?, " +
-                    "plan_date = ?, " +
-                    "due_date = ?, " +
-                    "plan_qty = ?, " +
-                    "plan_status = ?, " +
-                    "user_key = ?, " +
-                    "priority = ? " +
-                    "WHERE plan_key = ?";
+    	try {
+    		Context ctx = new InitialContext();
+    		DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+    		conn = dataFactory.getConnection();
 
-            ps = conn.prepareStatement(query);
+    		String query = "UPDATE tb_plan "
+    				+ "SET item_key = ?, "
+    				+ "    plan_date = ?, "
+    				+ "    due_date = ?, "
+    				+ "    plan_qty = ?, "
+    				+ "    plan_status = ?, "
+    				+ "    user_key = ?, "
+    				+ "    priority = ? "
+    				+ "WHERE plan_key = ?";
 
-            ps.setString(1, dto.getPlan_code());
-            ps.setInt(2, dto.getItem_key());
-            ps.setDate(3, dto.getPlan_date());
-            ps.setDate(4, dto.getDue_date());
-            ps.setInt(5, dto.getPlan_qty());
-            ps.setString(6, dto.getStatus());    
-            ps.setInt(7, dto.getUser_key());
-            ps.setInt(8, dto.getPriority());
-            ps.setInt(9, dto.getPlan_key());
+    		ps = conn.prepareStatement(query);
 
-            result = ps.executeUpdate();
-            System.out.println("update의 결과:" + result);
+    		ps.setInt(1, dto.getItem_key());
+    		ps.setDate(2, dto.getPlan_date());
+    		ps.setDate(3, dto.getDue_date());
+    		ps.setInt(4, dto.getPlan_qty());
+    		ps.setString(5, dto.getStatus());
+    		ps.setInt(6, dto.getUser_key());
+    		ps.setInt(7, dto.getPriority());
+    		ps.setInt(8, dto.getPlan_key());
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-			closeAll();
-		}
+    		result = ps.executeUpdate();
+    		System.out.println("plan update의 결과:" + result);
 
-		return result;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} finally {
+    		closeAll();
+    	}
 
-	}
+    	return result;
+    }
 
     public int deletePlan(int plankey) {
         
@@ -228,49 +228,57 @@ public class PlanDAO {
     }
 
     public List<PlanDTO> selectPage(int startRow, int endRow) {
-        List<PlanDTO> list = new ArrayList<PlanDTO>();
+		List<PlanDTO> list = new ArrayList<>();
 
-        try {
-            Context ctx = new InitialContext();
-            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-            conn = dataFactory.getConnection();
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
 
-            String query =
-                "SELECT * FROM ( " +
-                "  SELECT ROWNUM rnum, A.* FROM ( " +
-                "    SELECT * FROM tb_plan ORDER BY plan_key " +
-                "  ) A WHERE ROWNUM <= ? " +
-                ") WHERE rnum >= ?";
+			String query =
+				"SELECT * FROM ( " +
+				"  SELECT ROWNUM rnum, A.* FROM ( " +
+				"    SELECT p.plan_key, p.plan_code, p.item_key, i.item_name, " +
+				"           p.plan_date, p.due_date, p.plan_qty, p.plan_status, " +
+				"           p.user_key, u.user_name, p.created_at, p.priority " +
+				"    FROM tb_plan p " +
+				"    LEFT JOIN tb_item i ON p.item_key = i.item_key " +
+				"    LEFT JOIN tb_user u ON p.user_key = u.user_key " +
+				"    ORDER BY p.plan_key " +
+				"  ) A WHERE ROWNUM <= ? " +
+				") WHERE rnum >= ?";
 
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, endRow);
-            ps.setInt(2, startRow);
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, endRow);
+			ps.setInt(2, startRow);
 
-            rs = ps.executeQuery();
+			rs = ps.executeQuery();
 
-            while (rs.next()) {
-                PlanDTO dto = new PlanDTO();
-                dto.setPlan_key(rs.getInt("plan_key"));
-                dto.setPlan_code(rs.getString("plan_code"));
-                dto.setItem_key(rs.getInt("item_key"));
-                dto.setPlan_date(rs.getDate("plan_date"));
-                dto.setDue_date(rs.getDate("due_date"));
-                dto.setPlan_qty(rs.getInt("plan_qty"));
-                dto.setStatus(rs.getString("plan_status"));
-                dto.setUser_key(rs.getInt("user_key"));
-                dto.setCreate_at(rs.getDate("created_at"));
-                dto.setPriority(rs.getInt("priority"));
+			while (rs.next()) {
+				PlanDTO dto = new PlanDTO();
+				dto.setPlan_key(rs.getInt("plan_key"));
+				dto.setPlan_code(rs.getString("plan_code"));
+				dto.setItem_key(rs.getInt("item_key"));
+				dto.setItem_name(rs.getString("item_name"));
+				dto.setPlan_date(rs.getDate("plan_date"));
+				dto.setDue_date(rs.getDate("due_date"));
+				dto.setPlan_qty(rs.getInt("plan_qty"));
+				dto.setStatus(rs.getString("plan_status"));
+				dto.setUser_key(rs.getInt("user_key"));
+				dto.setUser_name(rs.getString("user_name"));
+				dto.setCreate_at(rs.getDate("created_at"));
+				dto.setPriority(rs.getInt("priority"));
 
-                list.add(dto);
-            }
+				list.add(dto);
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }finally {
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
 			closeAll();
 		}
-        return list;
-    }
+		return list;
+	}
     
     public int getTotalCount() {
         int count = 0;
@@ -297,77 +305,82 @@ public class PlanDAO {
         return count;
     }
     
-    public List<PlanDTO> searchPage(String planCode, String status,String dueDate, int startRow, int endRow) {
-        List<PlanDTO> list = new ArrayList<PlanDTO>();
+    public List<PlanDTO> searchPage(String planCode, String status, String dueDate, int startRow, int endRow) {
+    	List<PlanDTO> list = new ArrayList<>();
 
-        try {
-            Context ctx = new InitialContext();
-            DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
-            conn = dataFactory.getConnection();
+    	try {
+    		Context ctx = new InitialContext();
+    		DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+    		conn = dataFactory.getConnection();
 
-            String query =
-                "SELECT * FROM ( " +
-                "  SELECT ROWNUM rnum, A.* FROM ( " +
-                "    SELECT * FROM tb_plan WHERE 1=1 ";
+    		String query =
+    			"SELECT * FROM ( " +
+    			"  SELECT ROWNUM rnum, A.* FROM ( " +
+    			"    SELECT p.plan_key, p.plan_code, p.item_key, i.item_name, " +
+    			"           p.plan_date, p.due_date, p.plan_qty, p.plan_status, " +
+    			"           p.user_key, u.user_name, p.created_at, p.priority " +
+    			"    FROM tb_plan p " +
+    			"    LEFT JOIN tb_item i ON p.item_key = i.item_key " +
+    			"    LEFT JOIN tb_user u ON p.user_key = u.user_key " +
+    			"    WHERE 1=1 ";
 
-            if (planCode != null && !planCode.trim().equals("")) {
-                query += " AND plan_code LIKE ?";
-            }
+    		if (planCode != null && !planCode.trim().equals("")) {
+    			query += " AND p.plan_code LIKE ?";
+    		}
+    		if (status != null && !status.trim().equals("")) {
+    			query += " AND p.plan_status = ?";
+    		}
+    		if (dueDate != null && !dueDate.trim().equals("")) {
+    			query += " AND p.due_date < TO_DATE(?, 'YYYY-MM-DD') + 1";
+    		}
 
-            if (status != null && !status.trim().equals("")) {
-                query += " AND plan_status = ?";
-            }
-            if (dueDate != null && !dueDate.trim().equals("")) {
-                query += " AND due_date < TO_DATE(?, 'YYYY-MM-DD') + 1";
-            }
+    		query += " ORDER BY p.plan_key " +
+    		         "  ) A WHERE ROWNUM <= ? " +
+    		         ") WHERE rnum >= ?";
 
-            query += " ORDER BY plan_key " +
-                     "  ) A WHERE ROWNUM <= ? " +
-                     ") WHERE rnum >= ?";
+    		ps = conn.prepareStatement(query);
 
-            ps = conn.prepareStatement(query);
+    		int idx = 1;
 
-            int idx = 1;
+    		if (planCode != null && !planCode.trim().equals("")) {
+    			ps.setString(idx++, "%" + planCode + "%");
+    		}
+    		if (status != null && !status.trim().equals("")) {
+    			ps.setString(idx++, status);
+    		}
+    		if (dueDate != null && !dueDate.trim().equals("")) {
+    			ps.setString(idx++, dueDate);
+    		}
 
-            if (planCode != null && !planCode.trim().equals("")) {
-                ps.setString(idx++, "%" + planCode.trim() + "%");
-            }
+    		ps.setInt(idx++, endRow);
+    		ps.setInt(idx++, startRow);
 
-            if (status != null && !status.trim().equals("")) {
-                ps.setString(idx++, status);
-            }
-            if (dueDate != null && !dueDate.trim().equals("")) {
-                ps.setString(idx++, dueDate);
-            }
+    		rs = ps.executeQuery();
 
-            ps.setInt(idx++, endRow);
-            ps.setInt(idx++, startRow);
+    		while (rs.next()) {
+    			PlanDTO dto = new PlanDTO();
+    			dto.setPlan_key(rs.getInt("plan_key"));
+    			dto.setPlan_code(rs.getString("plan_code"));
+    			dto.setItem_key(rs.getInt("item_key"));
+    			dto.setItem_name(rs.getString("item_name"));
+    			dto.setPlan_date(rs.getDate("plan_date"));
+    			dto.setDue_date(rs.getDate("due_date"));
+    			dto.setPlan_qty(rs.getInt("plan_qty"));
+    			dto.setStatus(rs.getString("plan_status"));
+    			dto.setUser_key(rs.getInt("user_key"));
+    			dto.setUser_name(rs.getString("user_name"));
+    			dto.setCreate_at(rs.getDate("created_at"));
+    			dto.setPriority(rs.getInt("priority"));
 
-            rs = ps.executeQuery();
+    			list.add(dto);
+    		}
 
-            while (rs.next()) {
-                PlanDTO dto = new PlanDTO();
-                dto.setPlan_key(rs.getInt("plan_key"));
-                dto.setPlan_code(rs.getString("plan_code"));
-                dto.setItem_key(rs.getInt("item_key"));
-                dto.setPlan_date(rs.getDate("plan_date"));
-                dto.setDue_date(rs.getDate("due_date"));
-                dto.setPlan_qty(rs.getInt("plan_qty"));
-                dto.setStatus(rs.getString("plan_status"));
-                dto.setUser_key(rs.getInt("user_key"));
-                dto.setCreate_at(rs.getDate("created_at"));
-                dto.setPriority(rs.getInt("priority"));
-
-                list.add(dto);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            closeAll();
-        }
-
-        return list;
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} finally {
+    		closeAll();
+    	}
+    	return list;
     }
     
     public int getSearchCount(String planCode, String status,String dueDate) {
@@ -419,6 +432,38 @@ public class PlanDAO {
         }
 
         return count;
+    }
+    
+    public List<PlanDTO> selectItemList() {
+    	List<PlanDTO> list = new ArrayList<PlanDTO>();
+
+    	try {
+    		Context ctx = new InitialContext();
+    		DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+    		conn = dataFactory.getConnection();
+
+    		String query = "SELECT item_key, item_name "
+    				     + "FROM tb_item "
+    				     + "ORDER BY item_key";
+
+    		ps = conn.prepareStatement(query);
+    		rs = ps.executeQuery();
+
+    		while (rs.next()) {
+    			PlanDTO dto = new PlanDTO();
+    			dto.setItem_key(rs.getInt("item_key"));
+    			dto.setItem_name(rs.getString("item_name"));
+
+    			list.add(dto);
+    		}
+
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	} finally {
+    		closeAll();
+    	}
+
+    	return list;
     }
     // finally 의 close가 너무 반복되서 함수로 빼버림
     private void closeAll() {

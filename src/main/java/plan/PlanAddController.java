@@ -38,24 +38,21 @@ public class PlanAddController extends HttpServlet {
 			return;
 		}
 
+
 		try {
-			String plan_code = request.getParameter("plan_code");
 			int item_key = Integer.parseInt(request.getParameter("item_key"));
 			Date plan_date = Date.valueOf(request.getParameter("plan_date"));
 			Date due_date = Date.valueOf(request.getParameter("due_date"));
 			int plan_qty = Integer.parseInt(request.getParameter("plan_qty"));
-			String status = request.getParameter("status");
-			int user_key = Integer.parseInt(request.getParameter("user_key"));
 			int priority = Integer.parseInt(request.getParameter("priority"));
 
 			PlanDTO dto = new PlanDTO();
-			dto.setPlan_code(plan_code);
 			dto.setItem_key(item_key);
 			dto.setPlan_date(plan_date);
 			dto.setDue_date(due_date);
 			dto.setPlan_qty(plan_qty);
-			dto.setStatus(status);
-			dto.setUser_key(user_key);
+			dto.setStatus("계획");
+			dto.setUser_key(loginUser.getUser_key());
 			dto.setPriority(priority);
 
 			PlanService service = new PlanService();
@@ -69,4 +66,6 @@ public class PlanAddController extends HttpServlet {
 
 		response.sendRedirect("/slowstarter/plan");
 	}
+
+		
 }

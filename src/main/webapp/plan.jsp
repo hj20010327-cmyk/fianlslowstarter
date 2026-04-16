@@ -40,21 +40,22 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+
 .search-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
 }
 
 .search-item {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .search-label {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
+	font-size: 12px;
+	color: #666;
+	margin-bottom: 4px;
 }
 </style>
 <body>
@@ -197,10 +198,12 @@
 								<tr>
 									<th>선택</th>
 									<th>계획코드</th>
-									<th>품목키</th>
+									<th>제품명</th>
 									<th>계획일</th>
 									<th>마감일</th>
 									<th>계획수량</th>
+									<th>등록자</th>
+									<th>우선순위</th>
 									<th>상태</th>
 								</tr>
 
@@ -221,7 +224,6 @@
 													'${p.due_date}',
 													'${p.plan_qty}',
 													'${p.status}',
-													'${p.user_key}',
 													'${p.priority}'
 												)">
 													${p.plan_code}</a>
@@ -230,23 +232,32 @@
 											${p.plan_code}
 										</c:if>
 										</td>
-										<td>${p.item_key}</td>
+										<td>${p.item_name}</td>
 										<td>${p.plan_date}</td>
 										<td>${p.due_date}</td>
 										<td>${p.plan_qty}</td>
+										<td>${p.user_name}</td>
+										<td><c:if test="${p.priority == 1}">긴급</c:if> 
+											<c:if test="${p.priority == 2}">높음</c:if> 
+											<c:if test="${p.priority == 3}">보통</c:if> 
+											<c:if test="${p.priority == 4}">낮음</c:if>
+										</td>
 										<td>${p.status}</td>
+
 									</tr>
 								</c:forEach>
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${page == i}">
-										<a href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}"
+										<a
+											href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}"
 											class="active">${i}</a>
 									</c:if>
 
 									<c:if test="${page != i}">
-										<a href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}">${i}</a>
+										<a
+											href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}">${i}</a>
 									</c:if>
 								</c:forEach>
 							</div>
@@ -293,56 +304,67 @@
 				</div>
 
 				<div class="modal-body">
-					<div class="form-grid">
-						<input type="hidden" id="plan_key" name="plan_key" />
+	<div class="form-grid">
+		<input type="hidden" id="plan_key" name="plan_key" />
 
-						<div class="form-group">
-							<label>계획 코드</label> <input type="text" class="input"
-								id="plan_code" name="plan_code" placeholder="계획 코드 입력" />
-						</div>
+		<div class="form-group">
+			<label>계획 코드</label>
+			<input type="text" class="input" id="plan_code" name="plan_code"
+				placeholder="자동 생성" readonly />
+		</div>
 
-						<div class="form-group">
-							<label>품목 키</label> <input type="number" class="input"
-								id="item_key" name="item_key" placeholder="품목 키 입력" />
-						</div>
+		<div class="form-group">
+			<label>제품명</label>
+			<select class="select" id="item_key" name="item_key">
+				<option value="">선택</option>
+				<c:forEach var="item" items="${itemList}">
+					<option value="${item.item_key}">${item.item_name}</option>
+				</c:forEach>
+			</select>
+		</div>
 
-						<div class="form-group">
-							<label>계획일</label> <input type="date" class="input"
-								id="plan_date" name="plan_date" />
-						</div>
+		<div class="form-group">
+			<label>계획일</label>
+			<input type="date" class="input" id="plan_date" name="plan_date" />
+		</div>
 
-						<div class="form-group">
-							<label>마감일</label> <input type="date" class="input" id="due_date"
-								name="due_date" />
-						</div>
+		<div class="form-group">
+			<label>마감일</label>
+			<input type="date" class="input" id="due_date" name="due_date" />
+		</div>
 
-						<div class="form-group">
-							<label>계획 수량</label> <input type="number" class="input"
-								id="plan_qty" name="plan_qty" placeholder="계획 수량 입력" />
-						</div>
+		<div class="form-group">
+			<label>계획 수량</label>
+			<input type="number" class="input" id="plan_qty" name="plan_qty"
+				placeholder="계획 수량 입력" />
+		</div>
 
-						<div class="form-group">
-							<label>계획 상태</label> <select class="select" id="status"
-								name="status">
-								<option value="">선택</option>
-								<option value="계획">계획</option>
-								<option value="진행중">진행중</option>
-								<option value="완료">완료</option>
-							</select>
-						</div>
+		<div class="form-group">
+			<label>계획 상태</label>
+		<select class="select" id="status" name="status">
+			<option value="계획">계획</option>
+			<option value="진행중">진행중</option>
+			<option value="완료">완료</option>
+		</select>
+		</div>
 
-						<div class="form-group">
-							<label>사용자 키</label> <input type="number" class="input"
-								id="user_key" name="user_key" placeholder="사용자 키 입력" />
-						</div>
+		<div class="form-group">
+			<label>등록자</label>
+			<input type="text" class="input" id="user_name" value="${dto.user_name}" readonly />
+		</div>
 
-						<div class="form-group">
-							<label>우선순위</label> <input type="number" class="input"
-								id="priority" name="priority" placeholder="우선순위 입력" />
-						</div>
-					</div>
-				</div>
-
+		<div class="form-group">
+			<label>우선순위</label>
+			<select class="select" id="priority" name="priority">
+				<option value="">선택</option>
+				<option value="1">긴급</option>
+				<option value="2">높음</option>
+				<option value="3">보통</option>
+				<option value="4">낮음</option>
+			</select>
+		</div>
+	</div>
+</div>
 				<div class="modal-footer">
 					<button type="button" class="btn" onclick="closeModal()">취소</button>
 					<button type="submit" class="btn primary">저장</button>
@@ -357,20 +379,18 @@
 			document.getElementById("planForm").action = "/slowstarter/plan/add";
 
 			document.getElementById("plan_key").value = "";
-			document.getElementById("plan_code").value = "";
+			document.getElementById("plan_code").value = "자동생성";
 			document.getElementById("item_key").value = "";
 			document.getElementById("plan_date").value = "";
 			document.getElementById("due_date").value = "";
 			document.getElementById("plan_qty").value = "";
-			document.getElementById("status").value = "";
-			document.getElementById("user_key").value = "";
+			document.getElementById("status").value = "계획";
 			document.getElementById("priority").value = "";
 
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openEditModal(plan_key, plan_code, item_key, plan_date,
-				due_date, plan_qty, status, user_key, priority) {
+		function openEditModal(plan_key, plan_code, item_key, plan_date, due_date, plan_qty, status, priority) {
 			document.getElementById("modalTitle").innerText = "생산계획 수정";
 			document.getElementById("planForm").action = "/slowstarter/plan/update";
 
@@ -381,7 +401,6 @@
 			document.getElementById("due_date").value = due_date;
 			document.getElementById("plan_qty").value = plan_qty;
 			document.getElementById("status").value = status;
-			document.getElementById("user_key").value = user_key;
 			document.getElementById("priority").value = priority;
 
 			document.getElementById("commonModal").classList.add("show");

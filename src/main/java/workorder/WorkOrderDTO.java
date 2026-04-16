@@ -12,6 +12,7 @@ public class WorkOrderDTO {
 	private int plan_key; // �����ȹ Ű FK
 	private String plan_code;
 	private String order_user_name;
+	private String work_user_name;
 	public int getWork_order_key() {
 		return work_order_key;
 	}
@@ -72,13 +73,22 @@ public class WorkOrderDTO {
 	public void setOrder_user_name(String order_user_name) {
 		this.order_user_name = order_user_name;
 	}
+	
+	public String getWork_user_name() {
+		return work_user_name;
+	}
+	public void setWork_user_name(String work_user_name) {
+		this.work_user_name = work_user_name;
+	}
 	@Override
 	public String toString() {
 		return "WorkOrderDTO [work_order_key=" + work_order_key + ", order_user_key=" + order_user_key
 				+ ", work_user_key=" + work_user_key + ", work_order_code=" + work_order_code + ", order_qty="
 				+ order_qty + ", work_date=" + work_date + ", created_at=" + created_at + ", plan_key=" + plan_key
-				+ ", plan_code=" + plan_code + ", order_user_name=" + order_user_name + "]";
+				+ ", plan_code=" + plan_code + ", order_user_name=" + order_user_name + ", work_user_name="
+				+ work_user_name + "]";
 	}
+	
 	
 
 	

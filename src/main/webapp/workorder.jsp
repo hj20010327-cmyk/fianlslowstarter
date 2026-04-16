@@ -40,21 +40,22 @@
 	border-color: #0d6efd;
 	font-weight: bold;
 }
+
 .search-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 12px;
+	display: flex;
+	align-items: flex-end;
+	gap: 12px;
 }
 
 .search-item {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .search-label {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 4px;
+	font-size: 12px;
+	color: #666;
+	margin-bottom: 4px;
 }
 </style>
 <body>
@@ -194,7 +195,7 @@
 								<tr>
 									<th>선택</th>
 									<th>작업코드</th>
-									<th>계획Key</th>
+									<th>계획코드</th>
 									<th>작업일</th>
 									<th>수량</th>
 									<th>지시자</th>
@@ -213,11 +214,12 @@
 													onclick="openEditModal(
 													'${w.work_order_key}',
 													'${w.work_order_code}',
-													'${w.order_user_key}',
+													'${w.order_user_name}',
 													'${w.work_user_key}',
 													'${w.order_qty}',
 													'${w.work_date}',
-													'${w.plan_key}'
+													'${w.plan_key}',
+													'${w.plan_code}'
 												)">
 													${w.work_order_code} </a>
 											</c:if> <!--  작업자는 안 열림 --> <c:if
@@ -231,7 +233,7 @@
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
 										<td>${w.order_user_name}</td>
-										<td>${w.work_user_key}</td>
+										<td>${w.work_user_name}</td>
 									</tr>
 								</c:forEach>
 							</table>
@@ -291,42 +293,89 @@
 				</div>
 
 				<div class="modal-body">
-					<div class="form-grid">
-						<input type="hidden" id="work_order_key" name="work_order_key" />
+					<input type="hidden" id="work_order_key" name="work_order_key" />
 
-						<div class="form-group">
-							<label>작업지시 코드</label> <input type="text" class="input"
-								id="work_order_code" name="work_order_code"
-								placeholder="작업지시 코드 입력" />
+					<!-- 등록용 -->
+					<div id="insertFields">
+						<div class="form-grid">
+
+							<div class="form-group">
+								<label>지시자</label> <input type="text" class="input"
+									id="order_user_name" readonly />
+							</div>
+
+							<div class="form-group">
+								<label>작업자</label> <select class="input"
+									id="insert_work_user_key" name="work_user_key">
+									<option value="">작업자 선택</option>
+									<c:forEach var="u" items="${userList}">
+										<option value="${u.work_user_key}">${u.work_user_name}</option>
+									</c:forEach>
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label>지시 수량</label> <input type="number" class="input"
+									id="order_qty" name="order_qty" placeholder="지시 수량 입력" />
+							</div>
+
+							<div class="form-group">
+								<label>작업일</label> <input type="date" class="input"
+									id="work_date" name="work_date" />
+							</div>
+
+							<select class="input" id="plan_key" name="plan_key">
+								<option value="">생산계획 선택</option>
+								<c:forEach var="p" items="${planList}">
+									<option value="${p.plan_key}">${p.plan_code}</option>
+								</c:forEach>
+							</select>
+
 						</div>
+					</div>
 
-						<div class="form-group">
-							<label>지시자</label> <input type="number" class="input"
-								id="order_user_key" name="order_user_key" placeholder="지시자 키 입력" />
-						</div>
+					<!-- 수정용  -->
+					<div id="updateFields" style="display: none;">
+						<div class="form-grid">
 
-						<div class="form-group">
-							<label>작업자</label> <input type="number" class="input"
-								id="work_user_key" name="work_user_key" placeholder="작업자 키 입력" />
-						</div>
+							<div class="form-group">
+								<label>작업지시 코드</label> <input type="text" class="input"
+									id="edit_work_order_code" readonly />
+							</div>
 
-						<div class="form-group">
-							<label>지시 수량</label> <input type="number" class="input"
-								id="order_qty" name="order_qty" placeholder="지시 수량 입력" />
-						</div>
+							<div class="form-group">
+								<label>지시자</label> <input type="text" class="input"
+									id="edit_order_user_name" readonly />
+							</div>
 
-						<div class="form-group">
-							<label>작업일</label> <input type="date" class="input"
-								id="work_date" name="work_date" />
-						</div>
+							<div class="form-group">
+								<label>작업자</label> <select class="input" id="work_user_key"
+									name="edit_work_user_key">
+									<option value="">작업자 선택</option>
+									<c:forEach var="u" items="${userList}">
+										<option value="${u.work_user_key}">${u.work_user_name}</option>
+									</c:forEach>
+								</select>
+							</div>
 
-						<div class="form-group">
-							<label>계획 키</label> <input type="number" class="input"
-								id="plan_key" name="plan_key" placeholder="계획 키 입력" />
+							<div class="form-group">
+								<label>지시 수량</label> <input type="number" class="input"
+									id="edit_order_qty"/>
+							</div>
+
+							<div class="form-group">
+								<label>작업일</label> <input type="date" class="input"
+									id="edit_work_date" readonly />
+							</div>
+
+							<div class="form-group">
+								<label>계획 코드</label> <input type="text" class="input"
+									id="edit_plan_code" readonly />
+							</div>
+
 						</div>
 					</div>
 				</div>
-
 				<div class="modal-footer">
 					<button type="button" class="btn" onclick="closeModal()">취소</button>
 					<button type="submit" class="btn primary">저장</button>
@@ -337,13 +386,14 @@
 
 	<script>
 		function openInsertModal() {
-			document.getElementById("modalTitle").innerText = "작업지시 신규 등록";
+			document.getElementById("modalTitle").innerText = "등록";
 			document.getElementById("workOrderForm").action = "/slowstarter/workorder/add";
 
+			document.getElementById("insertFields").style.display = "block";
+			document.getElementById("updateFields").style.display = "none";
+
 			document.getElementById("work_order_key").value = "";
-			document.getElementById("work_order_code").value = "";
-			document.getElementById("order_user_key").value = "";
-			document.getElementById("work_user_key").value = "";
+			document.getElementById("order_user_name").value = "${dto.user_name}";
 			document.getElementById("order_qty").value = "";
 			document.getElementById("work_date").value = "";
 			document.getElementById("plan_key").value = "";
@@ -351,18 +401,24 @@
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openEditModal(work_order_key, work_order_code, order_user_key,
-				work_user_key, order_qty, work_date, plan_key) {
-			document.getElementById("modalTitle").innerText = "작업지시 수정";
+		function openEditModal(key, code, userName, workUserKey, qty, date,
+				planKey, planCode) {
+
+			document.getElementById("modalTitle").innerText = "수정";
 			document.getElementById("workOrderForm").action = "/slowstarter/workorder/update";
 
-			document.getElementById("work_order_key").value = work_order_key;
-			document.getElementById("work_order_code").value = work_order_code;
-			document.getElementById("order_user_key").value = order_user_key;
-			document.getElementById("work_user_key").value = work_user_key;
-			document.getElementById("order_qty").value = order_qty;
-			document.getElementById("work_date").value = work_date;
-			document.getElementById("plan_key").value = plan_key;
+			document.getElementById("insertFields").style.display = "none";
+			document.getElementById("updateFields").style.display = "block";
+
+			document.getElementById("work_order_key").value = key;
+
+			document.getElementById("edit_work_order_code").value = code;
+			document.getElementById("edit_order_user_name").value = userName;
+			document.getElementById("edit_order_qty").value = qty;
+			document.getElementById("edit_work_date").value = date;
+			document.getElementById("edit_plan_code").value = planCode;
+
+			document.getElementById("work_user_key").value = workUserKey;
 
 			document.getElementById("commonModal").classList.add("show");
 		}

@@ -39,4 +39,19 @@ public class WorkOrderService {
 	    WorkOrderDAO dao = new WorkOrderDAO();
 	    return dao.getTotalCount();
 	}
+	public List selectPageByWorker(int userKey, int startRow, int endRow) {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.selectPageByWorker(userKey, startRow, endRow);
+	}
+	
+	public List selectWorkerList() {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.selectWorkerList();
+	}
+	
+	public List selectPlanList() {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.selectPlanList();
+	}
+	
 }

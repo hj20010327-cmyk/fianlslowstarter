@@ -41,6 +41,7 @@ public class MachineUpdateController extends HttpServlet {
 		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
 		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
+		int processKey = Integer.parseInt(request.getParameter("processKey"));
 		String machineStatus = request.getParameter("machineStatus");
 		System.out.println("수정 요청 machineStatus" + machineStatus);
 		String buyDateStr = request.getParameter("buyDate");
@@ -76,6 +77,7 @@ public class MachineUpdateController extends HttpServlet {
 		dto.setBuyDate(buyDate);
 		dto.setLastCheckDate(lastCheckDate);
 		dto.setRemark(remark);
+		dto.setProcessKey(processKey);
 
 		// Service 호출
 		MachineService machineservice = new MachineService();

@@ -92,7 +92,7 @@ public class MachineDAO {
 	        	    "    seq_machine.NEXTVAL, " +
 	        	    "    'MC-' || LPAD(seq_machine.CURRVAL, 3, '0'), " +
 	        	    "    ?, " +
-	        	    "    1, " +   // 기본 공정값
+	        	    "    ?, " +   
 	        	    "    '점검중', " +
 	        	    "    ?, " +
 	        	    "    NULL, " +
@@ -104,8 +104,9 @@ public class MachineDAO {
 	        ps = conn.prepareStatement(query);
 
 	        ps.setString(1, machineDTO.getMachineName());
-	        ps.setDate(2, machineDTO.getBuyDate());
-	        ps.setString(3, machineDTO.getRemark());
+	        ps.setInt(2, machineDTO.getProcessKey());
+	        ps.setDate(3, machineDTO.getBuyDate());
+	        ps.setString(4, machineDTO.getRemark());
 
 	        result = ps.executeUpdate();
 	        System.out.println("insert의 결과:" + result);
@@ -135,6 +136,7 @@ public class MachineDAO {
 			String query = "UPDATE tb_machine SET " +
 		               "machine_code = ?, " +
 		               "machine_name = ?, " +
+		               "process_key = ?, " +
 		               "machine_status = ?, " +
 		               "buy_date = ?, " +
 		               "last_check_date = ?, " +
@@ -142,15 +144,15 @@ public class MachineDAO {
 		               "WHERE machine_key = ?";
 			ps = conn.prepareStatement(query);
 //			MachineDTO dto = new MachineDTO(); �̰� �ϸ� �ȵ� 
-			ps = conn.prepareStatement(query);
 
 			ps.setString(1, machineDTO.getMachineCode());
 			ps.setString(2, machineDTO.getMachineName());
-			ps.setString(3, machineDTO.getMachineStatus());
-			ps.setDate(4, machineDTO.getBuyDate());
-			ps.setDate(5, machineDTO.getLastCheckDate());
-			ps.setString(6, machineDTO.getRemark());
-			ps.setInt(7, machineDTO.getMachineKey());
+			ps.setInt(3, machineDTO.getProcessKey());
+			ps.setString(4, machineDTO.getMachineStatus());
+			ps.setDate(5, machineDTO.getBuyDate());
+			ps.setDate(6, machineDTO.getLastCheckDate());
+			ps.setString(7, machineDTO.getRemark());
+			ps.setInt(8, machineDTO.getMachineKey());
 
 			// SQL 실행 및 결과 확보
 			result = ps.executeUpdate();
@@ -208,11 +210,14 @@ public class MachineDAO {
 	        conn = dataFactory.getConnection();
 
 	        String query =
-	            "SELECT * FROM ( " +
-	            "  SELECT ROWNUM rnum, A.* FROM ( " +
-	            "    SELECT * FROM tb_machine ORDER BY machine_key " +
-	            "  ) A WHERE ROWNUM <= ? " +
-	            ") WHERE rnum >= ?";
+	        	    "SELECT * FROM ( " +
+	        	    "  SELECT ROWNUM rnum, A.* FROM ( " +
+	        	    "    SELECT m.*, p.process_name, p.sequence_no " +
+	        	    "    FROM tb_machine m " +
+	        	    "    LEFT OUTER JOIN tb_process p ON m.process_key = p.process_key " +
+	        	    "    ORDER BY m.machine_key " +
+	        	    "  ) A WHERE ROWNUM <= ? " +
+	        	    ") WHERE rnum >= ?";
 
 	        ps = conn.prepareStatement(query);
 	        ps.setInt(1, endRow);
@@ -227,6 +232,8 @@ public class MachineDAO {
 	             dto.setMachineCode(rs.getString("machine_code"));
 	             dto.setMachineStatus(rs.getString("machine_status"));
 	             dto.setProcessKey(rs.getInt("process_key"));
+	             dto.setProcessName(rs.getString("process_name"));
+	             dto.setSequenceNo(rs.getInt("sequence_no"));
 	             dto.setBuyDate(rs.getDate("buy_date"));
 	             dto.setLastCheckDate(rs.getDate("last_check_date"));
 	             dto.setRemark(rs.getString("remark"));
@@ -281,18 +288,20 @@ public class MachineDAO {
 	        conn = dataFactory.getConnection();
 	        
 	        // SQL 문 (where 1=1 은 조건 붙이기 위해서 씀)
-	        String query = "select * from tb_machine where 1=1";
+	        String query = "select m.*, "
+	        		+ "p.process_name, p.sequence_no from tb_machine m "
+	        		+ "left join tb_process p on m.process_key = p.process_key where 1=1";
 
 	        // 설비명 조건이 있으면 추가 
 	        if (machineName != null && !machineName.trim().equals("")) {
-	            query += " and machine_name like ?";
+	            query += " and m.machine_name like ?";
 	        }
 	        // 상태 조건이 있으면 추가 
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
-	            query += " and machine_status = ?";
+	            query += " and m.machine_status = ?";
 	        }
 	        // 정렬
-	        query += " order by machine_key";
+	        query += " order by m.machine_key";
 	        
 	        // SQL 준비 
 	        ps = conn.prepareStatement(query);
@@ -320,6 +329,8 @@ public class MachineDAO {
 	            dto.setMachineCode(rs.getString("machine_code"));
 	            dto.setMachineName(rs.getString("machine_name"));
 	            dto.setProcessKey(rs.getInt("process_key"));
+	            dto.setProcessName(rs.getString("process_name"));
+	            dto.setSequenceNo(rs.getInt("sequence_no"));
 	            dto.setMachineStatus(rs.getString("machine_status"));
 	            dto.setBuyDate(rs.getDate("buy_date"));
 	            dto.setLastCheckDate(rs.getDate("last_check_date"));
@@ -348,19 +359,22 @@ public class MachineDAO {
 	        conn = dataFactory.getConnection();
 
 	        String query =
-	            "SELECT * FROM ( " +
-	            "  SELECT ROWNUM rnum, A.* FROM ( " +
-	            "    SELECT * FROM tb_machine WHERE 1=1 ";
+	        	    "SELECT * FROM ( " +
+	        	    "  SELECT ROWNUM rnum, A.* FROM ( " +
+	        	    "    SELECT m.*, p.process_name, p.sequence_no " +
+	        	    "    FROM tb_machine m " +
+	        	    "    LEFT JOIN tb_process p ON m.process_key = p.process_key " +
+	        	    "    WHERE 1=1 ";
 
 	        if (machineName != null && !machineName.trim().equals("")) {
-	            query += " AND machine_name LIKE ?";
+	            query += " AND m.machine_name LIKE ?";
 	        }
 
 	        if (machineStatus != null && !machineStatus.trim().equals("")) {
-	            query += " AND machine_status = ?";
+	            query += " AND m.machine_status = ?";
 	        }
 	        if (lastCheckDate != null && !lastCheckDate.trim().equals("")) {
-	            query += " AND last_check_date < TO_DATE(?, 'YYYY-MM-DD') +1";
+	            query += " AND m.last_check_date < TO_DATE(?, 'YYYY-MM-DD') +1";
 	        }
 	        
 	        
@@ -396,6 +410,8 @@ public class MachineDAO {
 	            dto.setMachineCode(rs.getString("machine_code"));
 	            dto.setMachineName(rs.getString("machine_name"));
 	            dto.setProcessKey(rs.getInt("process_key"));
+	            dto.setSequenceNo(rs.getInt("sequence_no"));
+	            dto.setProcessName(rs.getString("process_name"));
 	            dto.setMachineStatus(rs.getString("machine_status"));
 	            dto.setBuyDate(rs.getDate("buy_date"));
 	            dto.setLastCheckDate(rs.getDate("last_check_date"));

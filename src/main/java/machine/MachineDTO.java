@@ -13,6 +13,8 @@ public class MachineDTO {
 	private String status;
 	private Date createdAt;
 	private int processKey;
+	private String processName;
+	private int sequenceNo;
 	public int getMachineKey() {
 		return machineKey;
 	}
@@ -73,13 +75,29 @@ public class MachineDTO {
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
+	
+	public String getProcessName() {
+		return processName;
+	}
+	public void setProcessName(String processName) {
+		this.processName = processName;
+	}
+	
+	public int getSequenceNo() {
+		return sequenceNo;
+	}
+	public void setSequenceNo(int sequenceNo) {
+		this.sequenceNo = sequenceNo;
+	}
 	@Override
 	public String toString() {
 		return "MachineDTO [machineKey=" + machineKey + ", machineCode=" + machineCode + ", machineName=" + machineName
-				+ ", processKey=" + processKey + ", machineStatus=" + machineStatus + ", buyDate=" + buyDate
-				+ ", lastCheckDate=" + lastCheckDate + ", remark=" + remark + ", status=" + status + ", createdAt="
-				+ createdAt + "]";
+				+ ", machineStatus=" + machineStatus + ", buyDate=" + buyDate + ", lastCheckDate=" + lastCheckDate
+				+ ", remark=" + remark + ", status=" + status + ", createdAt=" + createdAt + ", processKey="
+				+ processKey + ", processName=" + processName + ", sequenceNo=" + sequenceNo + "]";
 	}
+	
+	
 	
 	
 }

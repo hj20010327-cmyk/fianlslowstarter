@@ -24,7 +24,7 @@
 		</div>
 
 		<script>
-    		const contextPath = '${pageContext.request.contextPath}';
+			const contextPath = '${pageContext.request.contextPath}';
 		</script>
 
 		<div class="header-right">
@@ -103,7 +103,8 @@
 				<div class="page-actions">
 					<button class="btn" type="button"
 						onclick="location.href='${pageContext.request.contextPath}/production'">초기화</button>
-					<button class="btn primary" type="button" id="btnAddProduction">신규 등록</button>
+					<button class="btn primary" type="button" id="btnAddProduction">신규
+						등록</button>
 				</div>
 			</div>
 
@@ -124,8 +125,8 @@
 						value="${startDate}" /> <input class="input" type="date"
 						name="endDate" value="${endDate}" /> <input class="input"
 						type="text" name="keyword" value="${keyword}"
-						placeholder="품목코드 / 품목명 / 생산코드" /> 
-						
+						placeholder="품목코드 / 품목명 / 생산코드" />
+
 					<button class="btn primary" type="submit">조회</button>
 				</form>
 			</section>
@@ -140,12 +141,10 @@
 						<table>
 							<thead>
 								<tr>
-									<th>생산일</th>
 									<th>생산코드</th>
+									<th>생산일</th>
 									<th>품목명</th>
 									<th>계획수량</th>
-									<th>지시수량</th>
-									<th>투입수량</th>
 									<th>양품수량</th>
 									<th>불량수량</th>
 									<th>달성률</th>
@@ -157,17 +156,15 @@
 									<c:when test="${not empty list}">
 										<c:forEach var="p" items="${list}">
 											<tr>
-												<td>${p.prod_date}</td>
 												<td>${p.prod_code}</td>
+												<td>${p.prod_date}</td>
 												<td><a href="javascript:void(0);"
-													class="prod-edit-link" 
-													data-prod-key="${p.prod_key}"
+													class="prod-edit-link" data-prod-key="${p.prod_key}"
 													data-prod-code="${p.prod_code}"
 													data-prod-date="${p.prod_date}"
 													data-item-name="${p.item_name}"
 													data-plan-qty="${p.plan_qty}"
 													data-order-qty="${p.order_qty}"
-													data-input-qty="${p.input_qty}"
 													data-good-qty="${p.good_qty}"
 													data-defect-qty="${p.defect_qty}"
 													data-work-user-key="${p.work_user_key}"
@@ -175,13 +172,8 @@
 													data-work-order-key="${p.work_order_key}"
 													data-work-order-code="${p.work_order_code}"
 													data-plan-key="${p.plan_key}"
-													data-plan-code="${p.plan_code}">
-													 ${p.item_name} </a></td>
+													data-plan-code="${p.plan_code}"> ${p.item_name} </a></td>
 												<td><fmt:formatNumber value="${p.plan_qty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${p.order_qty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${p.input_qty}"
 														pattern="#,##0" /></td>
 												<td><fmt:formatNumber value="${p.good_qty}"
 														pattern="#,##0" /></td>
@@ -276,66 +268,60 @@
 					<div class="form-grid">
 
 						<div class="form-group">
-							<label>등록일</label> <input type="text" class="input"
-								value="<%=new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date())%>"
-								readonly />
+							<label>작업지시</label> <select name="work_order_key"
+								id="workOrderSelect" class="input" required>
+								<option value="">선택하세요</option>
+								<c:forEach var="o" items="${optionList}">
+									<option value="${o.work_order_key}"
+										data-prod-code="${o.work_order_code}"
+										data-plan-key="${o.plan_key}" data-plan-code="${o.plan_code}"
+										data-plan-qty="${o.plan_qty}" data-item-name="${o.item_name}"
+										data-work-user-key="${o.work_user_key}"
+										data-work-user-name="${o.work_user_name}"
+										data-good-qty="${o.good_qty}"
+										data-defect-qty="${o.defect_qty}">
+										${o.work_order_code}</option>
+								</c:forEach>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>생산코드</label> <input type="text" name="prod_code"
-								id="prod_code" class="input" placeholder="생산코드 입력" />
+							<label>품목명</label> <select id="itemNameSelect" class="input" disabled>
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>생산일</label> <input type="date" name="prod_date"
-								id="prod_date" class="input" />
+							<label>계획수량</label> <select id="planQtySelect" class="input" disabled>
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>품목명</label> <input type="text" name="item_name"
-								id="item_name" class="input" placeholder="품목명" readonly />
+							<label>작업자</label> <select name="work_user_key" class="input"
+								id="workUserSelect" required>
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>계획수량</label> <input type="number" name="plan_qty"
-								id="plan_qty" class="input" readonly />
+							<label>양품수량</label> <select name="good_qty" id="goodQtySelect"
+								class="input" required>
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>지시수량</label> <input type="number" name="order_qty"
-								id="order_qty" class="input" readonly />
+							<label>불량수량</label> <select name="defect_qty"
+								class="input" id="defectQtySelect" required>
+								<option value="">선택하세요</option>
+							</select>
 						</div>
 
 						<div class="form-group">
-							<label>투입수량</label> <input type="number" name="input_qty"
-								id="input_qty" class="input" placeholder="투입수량 입력" />
+							<label>생산일</label> <input type="date" class="input" name="prod_date" id="prod_date" required />
 						</div>
 
-						<div class="form-group">
-							<label>양품수량</label> <input type="number" name="good_qty"
-								id="good_qty" class="input" placeholder="양품수량 입력" />
-						</div>
-
-						<div class="form-group">
-							<label>불량수량</label> <input type="number" name="defect_qty"
-								id="defect_qty" class="input" placeholder="불량수량 입력" />
-						</div>
-
-						<div class="form-group">
-							<label>작업자</label> <input type="text" name="work_user_name"
-								id="work_user_name" class="input" readonly />
-						</div>
-
-						<div class="form-group">
-							<label>작업지시코드</label> <input type="text" name="work_order_code"
-								id="work_order_code" class="input" readonly />
-						</div>
-
-						<div class="form-group" style="grid-column: span 2;">
-							<label>비고</label>
-							<textarea name="remark" id="remark" class="textarea"
-								placeholder="추가 설명 입력"></textarea>
-						</div>
 
 					</div>
 				</div>
@@ -344,17 +330,18 @@
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
 
-					<input type="hidden" name="cmd" id="cmd" value="insert"> 
-					<input type="hidden" name="prod_key" id="prod_key" value=""> 
-					<input type="hidden" name="work_order_key" id="work_order_key" value="">
-					<input type="hidden" name="work_user_key" id="work_user_key" value=""> 
-					<input type="hidden" name="plan_key" id="plan_key" value="">
+					<input type="hidden" name="cmd" id="cmd" value="insert"> <input
+						type="hidden" name="prod_key" id="prod_key" value=""> <input
+						type="hidden" name="work_order_key" id="work_order_key" value="">
+					<input type="hidden" name="work_user_key" id="work_user_key"
+						value=""> <input type="hidden" name="plan_key"
+						id="plan_key" value="">
 				</div>
 
 			</form>
 
 		</div>
 	</div>
-<script src="./asset/js/Production.js"></script>
+	<script src="./asset/js/Production.js"></script>
 </body>
 </html>

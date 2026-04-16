@@ -1,24 +1,29 @@
 package stock;
 
-import java.sql.Timestamp; // 재고관리는 날짜와 시간을 모두 저장하기 위해 Timestamp를 사용합니다.
+import java.sql.Timestamp;
 
 public class StockDTO {
 
-    // 1. 필드 선언 (재고관리 DB 테이블 컬럼과 매칭)
-    private int stock_key;      // PK
-    private String lot;         // LOT 번호
-    private int in_qty;         // 입고 수량
-    private int out_qty;        // 출고 수량
-    private int current_qty;    // 현재 재고
-    private int safe_qty;       // 안전 재고
-    private Timestamp updated_at; // 수정 일시
-    private int item_key;       // FK (품목 키)
+    // =========================
+    // TB_STOCK 컬럼
+    // =========================
+    private int stock_key;          // 재고 PK
+    private String lot;             // LOT 번호
+    private int current_qty;        // 현재고
+    private int safe_qty;           // 안전재고
+    private Timestamp updated_at;   // 수정일시
+    private int item_key;           // 품목 KEY
 
-    // 2. 기본 생성자 (품질관리와 동일한 구조)
-    public StockDTO() {
-    }
+    // =========================
+    // TB_ITEM 조인용 컬럼
+    // =========================
+    private String item_code;       // 품목코드
+    private String item_name;       // 품목명
+    private String item_type;       // 완제품 / 자재 / 기타
 
-    // 3. Getter & Setter (품질관리 스타일로 통일)
+    // =========================
+    // getter / setter
+    // =========================
     public int getStock_key() {
         return stock_key;
     }
@@ -33,22 +38,6 @@ public class StockDTO {
 
     public void setLot(String lot) {
         this.lot = lot;
-    }
-
-    public int getIn_qty() {
-        return in_qty;
-    }
-
-    public void setIn_qty(int in_qty) {
-        this.in_qty = in_qty;
-    }
-
-    public int getOut_qty() {
-        return out_qty;
-    }
-
-    public void setOut_qty(int out_qty) {
-        this.out_qty = out_qty;
     }
 
     public int getCurrent_qty() {
@@ -81,5 +70,29 @@ public class StockDTO {
 
     public void setItem_key(int item_key) {
         this.item_key = item_key;
+    }
+
+    public String getItem_code() {
+        return item_code;
+    }
+
+    public void setItem_code(String item_code) {
+        this.item_code = item_code;
+    }
+
+    public String getItem_name() {
+        return item_name;
+    }
+
+    public void setItem_name(String item_name) {
+        this.item_name = item_name;
+    }
+
+    public String getItem_type() {
+        return item_type;
+    }
+
+    public void setItem_type(String item_type) {
+        this.item_type = item_type;
     }
 }

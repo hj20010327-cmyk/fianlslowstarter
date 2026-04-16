@@ -1,159 +1,288 @@
 package stock;
 
-import java.sql.*;
-import java.util.*;
-import javax.naming.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 public class StockDAO {
 
-    // [DB 연결] 품질관리와 동일하게 DBCP 방식 사용
+    // =========================
+    // DB 연결
+    // =========================
     private Connection getConnection() throws Exception {
         Context ctx = new InitialContext();
         DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
         return dataFactory.getConnection();
     }
 
-    // [조회] 1번부터 나오도록 ASC 정렬 및 DB 사진 컬럼 매칭
-    public List<StockDTO> selectAll(int startRow, int endRow, String keyword) {
-        List<StockDTO> list = new ArrayList<>();
+    // =========================
+    // 목록 조회
+    // type
+    // all     : 전체
+    // product : 완제품
+    // item    : 자재
+    // =========================
+    public List<StockDTO> selectList(int startRow, int endRow, String keyword, String type) {
+        List<StockDTO> list = new ArrayList<StockDTO>();
+
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
 
         try {
             conn = getConnection();
-            
-            // 정렬을 STOCK_KEY ASC로 변경하여 1번부터 나오게 수정했습니다.
-            String sql = "SELECT * FROM ( "
-                       + "  SELECT ROWNUM rnum, A.* FROM ( "
-                       + "    SELECT * FROM TB_STOCK WHERE UPPER(LOT) LIKE UPPER(?) "
-                       + "    ORDER BY STOCK_KEY ASC " 
-                       + "  ) A WHERE ROWNUM <= ? "
-                       + ") WHERE rnum >= ?";
 
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
-            ps.setInt(2, endRow);
-            ps.setInt(3, startRow);
+            StringBuilder sql = new StringBuilder();
+
+            sql.append("SELECT * FROM ( ");
+            sql.append("    SELECT ROWNUM rnum, A.* FROM ( ");
+            sql.append("        SELECT ");
+            sql.append("            s.STOCK_KEY, ");
+            sql.append("            s.LOT, ");
+            sql.append("            s.CURRENT_QTY, ");
+            sql.append("            s.SAFE_QTY, ");
+            sql.append("            s.UPDATED_AT, ");
+            sql.append("            s.ITEM_KEY, ");
+            sql.append("            i.ITEM_CODE, ");
+            sql.append("            i.ITEM_NAME, ");
+            sql.append("            CASE ");
+            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-A%' THEN '완제품' ");
+            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-P%' THEN '자재' ");
+            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-M%' THEN '자재' ");   // ★ 추가 : CP-M도 자재
+            sql.append("                ELSE '자재' ");                                 // ★ 수정 : 기타 → 자재
+            sql.append("            END AS ITEM_TYPE ");
+            sql.append("        FROM TB_STOCK s ");
+            sql.append("        LEFT OUTER JOIN TB_ITEM i ");
+            sql.append("            ON s.ITEM_KEY = i.ITEM_KEY ");
+            sql.append("        WHERE 1=1 ");
+
+            // LOT 검색
+            if (keyword != null && !keyword.trim().equals("")) {
+                sql.append(" AND UPPER(s.LOT) LIKE UPPER(?) ");
+            }
+
+            // 완제품만
+            if ("product".equals(type)) {
+                sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
+            }
+            // 자재만
+            else if ("item".equals(type)) {
+                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') "); // ★ 수정
+            }
+
+            sql.append("        ORDER BY s.STOCK_KEY ASC ");
+            sql.append("    ) A WHERE ROWNUM <= ? ");
+            sql.append(") WHERE rnum >= ? ");
+
+            ps = conn.prepareStatement(sql.toString());
+
+            int idx = 1;
+
+            if (keyword != null && !keyword.trim().equals("")) {
+                ps.setString(idx++, "%" + keyword.trim() + "%");
+            }
+
+            ps.setInt(idx++, endRow);
+            ps.setInt(idx++, startRow);
 
             rs = ps.executeQuery();
 
             while (rs.next()) {
                 StockDTO dto = new StockDTO();
-                // DB 사진(TB_STOCK) 컬럼 순서와 이름에 맞게 세팅
+
                 dto.setStock_key(rs.getInt("STOCK_KEY"));
                 dto.setLot(rs.getString("LOT"));
-                dto.setIn_qty(rs.getInt("IN_QTY"));
-                dto.setOut_qty(rs.getInt("OUT_QTY"));
                 dto.setCurrent_qty(rs.getInt("CURRENT_QTY"));
                 dto.setSafe_qty(rs.getInt("SAFE_QTY"));
                 dto.setUpdated_at(rs.getTimestamp("UPDATED_AT"));
                 dto.setItem_key(rs.getInt("ITEM_KEY"));
+
+                dto.setItem_code(rs.getString("ITEM_CODE"));
+                dto.setItem_name(rs.getString("ITEM_NAME"));
+                dto.setItem_type(rs.getString("ITEM_TYPE"));
+
                 list.add(dto);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             close(conn, ps, rs);
         }
+
         return list;
     }
 
-    // [개수 조회] 페이징 처리를 위해 전체 데이터 개수를 가져오는 메소드 (추가됨)
-    public int getTotalCount(String keyword) {
+    // =========================
+    // 전체 개수 조회
+    // =========================
+    public int getTotalCount(String keyword, String type) {
         int total = 0;
+
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        
+
         try {
             conn = getConnection();
-            String sql = "SELECT COUNT(*) FROM TB_STOCK WHERE UPPER(LOT) LIKE UPPER(?)";
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, "%" + (keyword == null ? "" : keyword) + "%");
-            
+
+            StringBuilder sql = new StringBuilder();
+
+            sql.append("SELECT COUNT(*) ");
+            sql.append("FROM TB_STOCK s ");
+            sql.append("LEFT OUTER JOIN TB_ITEM i ");
+            sql.append("    ON s.ITEM_KEY = i.ITEM_KEY ");
+            sql.append("WHERE 1=1 ");
+
+            if (keyword != null && !keyword.trim().equals("")) {
+                sql.append(" AND UPPER(s.LOT) LIKE UPPER(?) ");
+            }
+
+            if ("product".equals(type)) {
+                sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
+            } else if ("item".equals(type)) {
+                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') "); // ★ 수정
+            }
+
+            ps = conn.prepareStatement(sql.toString());
+
+            int idx = 1;
+
+            if (keyword != null && !keyword.trim().equals("")) {
+                ps.setString(idx++, "%" + keyword.trim() + "%");
+            }
+
             rs = ps.executeQuery();
+
             if (rs.next()) {
                 total = rs.getInt(1);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             close(conn, ps, rs);
         }
+
         return total;
     }
 
-    // [등록] 현재고(입고-출고) 자동 계산 로직 포함
+    // =========================
+    // 등록
+    // =========================
     public int insert(StockDTO dto) {
         Connection conn = null;
         PreparedStatement ps = null;
+
         try {
             conn = getConnection();
-            String query = "INSERT INTO TB_STOCK (STOCK_KEY, LOT, IN_QTY, OUT_QTY, CURRENT_QTY, SAFE_QTY, UPDATED_AT, ITEM_KEY) "
-                         + "VALUES (STOCK_SEQ.NEXTVAL, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)";
-            ps = conn.prepareStatement(query);
+
+            String sql = ""
+                    + "INSERT INTO TB_STOCK ( "
+                    + "    STOCK_KEY, LOT, CURRENT_QTY, SAFE_QTY, UPDATED_AT, ITEM_KEY "
+                    + ") VALUES ( "
+                    + "    STOCK_SEQ.NEXTVAL, ?, ?, ?, CURRENT_TIMESTAMP, ? "
+                    + ")";
+
+            ps = conn.prepareStatement(sql);
             ps.setString(1, dto.getLot());
-            ps.setInt(2, dto.getIn_qty());
-            ps.setInt(3, dto.getOut_qty());
-            ps.setInt(4, dto.getIn_qty() - dto.getOut_qty()); // 현재고 계산
-            ps.setInt(5, dto.getSafe_qty());
-            ps.setInt(6, dto.getItem_key());
+            ps.setInt(2, dto.getCurrent_qty());
+            ps.setInt(3, dto.getSafe_qty());
+            ps.setInt(4, dto.getItem_key());
+
             return ps.executeUpdate();
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-            return 0; 
-        } finally { 
-            close(conn, ps, null); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            close(conn, ps, null);
         }
     }
-    
-    // [수정] 서비스에서 호출하는 이름과 일치 (update)
+
+    // =========================
+    // 수정
+    // =========================
     public int update(StockDTO dto) {
         Connection conn = null;
         PreparedStatement ps = null;
+
         try {
             conn = getConnection();
-            // 수정 시에도 현재고가 다시 계산되도록 처리
-            String query = "UPDATE TB_STOCK SET LOT=?, IN_QTY=?, OUT_QTY=?, SAFE_QTY=?, CURRENT_QTY=?, UPDATED_AT=CURRENT_TIMESTAMP WHERE STOCK_KEY=?";
-            ps = conn.prepareStatement(query);
+
+            String sql = ""
+                    + "UPDATE TB_STOCK "
+                    + "SET LOT = ?, "
+                    + "    CURRENT_QTY = ?, "
+                    + "    SAFE_QTY = ?, "
+                    + "    UPDATED_AT = CURRENT_TIMESTAMP, "
+                    + "    ITEM_KEY = ? "
+                    + "WHERE STOCK_KEY = ?";
+
+            ps = conn.prepareStatement(sql);
             ps.setString(1, dto.getLot());
-            ps.setInt(2, dto.getIn_qty());
-            ps.setInt(3, dto.getOut_qty());
-            ps.setInt(4, dto.getSafe_qty());
-            ps.setInt(5, dto.getIn_qty() - dto.getOut_qty()); // 현재고 갱신
-            ps.setInt(6, dto.getStock_key());
-            
+            ps.setInt(2, dto.getCurrent_qty());
+            ps.setInt(3, dto.getSafe_qty());
+            ps.setInt(4, dto.getItem_key());
+            ps.setInt(5, dto.getStock_key());
+
             return ps.executeUpdate();
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-            return 0; 
-        } finally { 
-            close(conn, ps, null); 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        } finally {
+            close(conn, ps, null);
         }
     }
 
-    // [삭제]
+    // =========================
+    // 삭제
+    // =========================
     public int delete(String ids) {
-        if (ids == null || ids.isEmpty()) return 0;
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+
         Connection conn = null;
         Statement stmt = null;
+
         try {
             conn = getConnection();
+
             String sql = "DELETE FROM TB_STOCK WHERE STOCK_KEY IN (" + ids + ")";
             stmt = conn.createStatement();
+
             return stmt.executeUpdate(sql);
-        } catch (Exception e) { 
-            e.printStackTrace(); 
-            return 0; 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         } finally {
-            try { if(stmt!=null)stmt.close(); if(conn!=null)conn.close(); } catch(Exception e){}
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+            }
         }
     }
 
-    // 자원 해제
+    // =========================
+    // 자원 반납
+    // =========================
     private void close(Connection conn, PreparedStatement ps, ResultSet rs) {
-        try { if(rs!=null)rs.close(); if(ps!=null)ps.close(); if(conn!=null)conn.close(); } catch(Exception e){}
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (Exception e) {
+        }
     }
 }

@@ -55,6 +55,12 @@ public class QualityDTO {
     // 담당자 이름 (TB_USER 조인)
     private String user_name;
 
+    // 품목 이름 (TB_ITEM 조인)
+    private String item_name;
+
+    // ★ 추가 : 생산 코드명 (TB_PRODUCTION 조인)
+    private String prod_name;
+
     // ⭐ [추가] 마감일 (TB_PLAN에서 가져옴)
     private Date due_date;
 
@@ -164,6 +170,24 @@ public class QualityDTO {
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    // 품목 이름 getter / setter
+    public String getItem_name() {
+        return item_name;
+    }
+
+    public void setItem_name(String item_name) {
+        this.item_name = item_name;
+    }
+
+    // ★ 추가 : 생산 코드명 getter / setter
+    public String getProd_name() {
+        return prod_name;
+    }
+
+    public void setProd_name(String prod_name) {
+        this.prod_name = prod_name;
     }
 
     // =========================

@@ -16,7 +16,6 @@
 <link rel="stylesheet" href="./asset/css/page.css" />
 
 <style>
-/* 페이지네이션 */
 .pagination {
 	display: flex;
 	justify-content: center;
@@ -43,7 +42,6 @@
 	font-weight: bold;
 }
 
-/* 상태 색상 */
 .status-pass {
 	color: green;
 	font-weight: bold;
@@ -59,7 +57,6 @@
 	font-weight: bold;
 }
 
-/* 검색영역 */
 .search-inline-wrap {
 	display: flex;
 	align-items: flex-end;
@@ -97,7 +94,6 @@
 	width: 100%;
 }
 
-/* 행 전체 클릭 */
 .click-row {
 	cursor: pointer;
 }
@@ -207,7 +203,6 @@
 				</div>
 			</div>
 
-			<!-- 검색 조건 -->
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
@@ -220,7 +215,7 @@
 					<div class="search-inline-wrap">
 						<div class="search-inline-item">
 							<input class="input" type="text" name="qualityCode"
-								placeholder="계획 코드 입력"
+								placeholder="검사 번호 입력"
 								value="${qualityCode}" />
 						</div>
 
@@ -233,8 +228,8 @@
 							</select>
 						</div>
 
-						<div class="search-inline-item date-area">
-							<label class="search-small-label">마감일</label>
+						<div class="search-inline-item.date-area">
+							<label class="search-small-label">등록일</label>
 							<input class="input date-input" type="date" name="inspectDate"
 								value="${inspectDate}" />
 						</div>
@@ -248,7 +243,6 @@
 			</section>
 
 			<section class="panel-grid">
-				<!-- 목록 카드 -->
 				<div class="card">
 					<form id="deleteForm" action="${pageContext.request.contextPath}/quality/delete" method="post">
 						<div class="section-title">
@@ -268,16 +262,17 @@
 												style="cursor:pointer;" onclick="toggleAllCheckboxes()"
 											</c:if>
 										>선택</th>
+
 										<th>검사번호</th>
+										<th>품목명</th>
+										<th>생산명</th>
 										<th>검사일자</th>
-										<th>마감일</th>
+										<th>등록일</th>
 										<th>검사수량</th>
 										<th>양품수량</th>
 										<th>불량수량</th>
 										<th>불량사유</th>
 										<th>상태</th>
-										<th>생산KEY</th>
-										<th>품목KEY</th>
 										<th>담당자명</th>
 									</tr>
 								</thead>
@@ -299,7 +294,10 @@
 												<td onclick="event.stopPropagation();">
 													<input type="checkbox" name="quality_key" value="${m.quality_key}">
 												</td>
+
 												<td>${m.quality_code}</td>
+												<td>${m.item_name}</td>
+												<td>${m.prod_name}</td>
 												<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
 												<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
 												<td>${m.inspect_qty}</td>
@@ -319,8 +317,6 @@
 														</c:otherwise>
 													</c:choose>
 												</td>
-												<td>${m.prod_key}</td>
-												<td>${m.item_key}</td>
 												<td>${m.user_name}</td>
 											</tr>
 										</c:if>
@@ -329,6 +325,8 @@
 											<tr>
 												<td></td>
 												<td>${m.quality_code}</td>
+												<td>${m.item_name}</td>
+												<td>${m.prod_name}</td>
 												<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
 												<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
 												<td>${m.inspect_qty}</td>
@@ -348,8 +346,6 @@
 														</c:otherwise>
 													</c:choose>
 												</td>
-												<td>${m.prod_key}</td>
-												<td>${m.item_key}</td>
 												<td>${m.user_name}</td>
 											</tr>
 										</c:if>
@@ -386,7 +382,6 @@
 		</main>
 	</div>
 
-	<!-- 공통 모달 -->
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 			<form id="qualityForm" action="${pageContext.request.contextPath}/quality/add" method="post">
@@ -400,31 +395,31 @@
 					<input type="hidden" id="quality_key" name="quality_key" />
 
 					<div class="form-grid">
-						<!-- 검사번호 -->
 						<div class="form-group">
 							<label>검사번호</label>
 							<input type="text" class="input" id="quality_code" name="quality_code" />
 						</div>
 
-						<!-- 검사일자 -->
 						<div class="form-group">
 							<label>검사일자</label>
 							<input type="date" class="input" id="inspect_date" name="inspect_date" />
 						</div>
 
-						<!-- 검사수량 -->
 						<div class="form-group">
 							<label>검사수량</label>
-							<input type="number" class="input" id="inspect_qty" name="inspect_qty" placeholder="검사수량 입력" />
+							<input type="number" class="input" id="inspect_qty" name="inspect_qty" />
 						</div>
 
-						<!-- 양품수량 -->
 						<div class="form-group">
 							<label>양품수량</label>
-							<input type="number" class="input" id="good_qty" name="good_qty" placeholder="양품수량 입력" />
+							<input type="number" class="input" id="good_qty" name="good_qty" />
 						</div>
 
-						<!-- 검사상태 -->
+						<div class="form-group">
+							<label>불량수량</label>
+							<input type="number" class="input" id="defect_qty" name="defect_qty" />
+						</div>
+
 						<div class="form-group">
 							<label>검사상태</label>
 							<select class="select" id="qc_status" name="qc_status">
@@ -435,19 +430,11 @@
 							</select>
 						</div>
 
-						<!-- 생산KEY -->
 						<div class="form-group">
 							<label>생산KEY</label>
-							<input type="number" class="input" id="prod_key" name="prod_key" placeholder="생산 KEY 입력" />
+							<input type="number" class="input" id="prod_key" name="prod_key" />
 						</div>
 
-						<!-- 품목KEY -->
-						<div class="form-group">
-							<label>품목KEY</label>
-							<input type="number" class="input" id="item_key" name="item_key" placeholder="품목 KEY 입력" readonly />
-						</div>
-
-						<!-- 담당자명 -->
 						<div class="form-group">
 							<label>담당자명</label>
 							<select class="select" id="user_key" name="user_key" required>
@@ -458,11 +445,9 @@
 							</select>
 						</div>
 
-						<!-- 불량사유 -->
-						<!-- 수정 모달에서만 사용 -->
 						<div class="form-group" style="grid-column: span 2;">
 							<label>불량사유</label>
-							<textarea class="textarea" id="defect_reason" name="defect_reason" placeholder="불량사유 입력"></textarea>
+							<textarea class="textarea" id="defect_reason" name="defect_reason"></textarea>
 						</div>
 					</div>
 				</div>
@@ -481,26 +466,16 @@
 			document.getElementById("modalTitle").innerText = "품질 등록";
 			document.getElementById("qualityForm").action = contextPath + "/quality/add";
 
-			// 등록 모달에서는 검사번호 입력 가능
 			document.getElementById("quality_code").readOnly = false;
 
-			// 등록 모달에서는 필요한 항목 보이기
-			document.getElementById("good_qty").parentElement.style.display = "";
-			document.getElementById("qc_status").parentElement.style.display = "";
-			document.getElementById("item_key").parentElement.style.display = "none";
-
-			// 등록 모달에서는 불량사유 숨기기
-			document.getElementById("defect_reason").parentElement.style.display = "none";
-
-			// 값 초기화
 			document.getElementById("quality_key").value = "";
 			document.getElementById("quality_code").value = "";
 			document.getElementById("inspect_date").value = "";
 			document.getElementById("inspect_qty").value = "";
 			document.getElementById("good_qty").value = "";
+			document.getElementById("defect_qty").value = "";
 			document.getElementById("qc_status").value = "";
 			document.getElementById("prod_key").value = "";
-			document.getElementById("item_key").value = "";
 			document.getElementById("user_key").value = "";
 			document.getElementById("defect_reason").value = "";
 
@@ -511,22 +486,13 @@
 			document.getElementById("modalTitle").innerText = "품질 수정";
 			document.getElementById("qualityForm").action = contextPath + "/quality/update";
 
-			// 수정 모달에서는 검사번호 수정 불가
 			document.getElementById("quality_code").readOnly = true;
 
-			// 수정 모달에서는 수정 안 하는 항목 숨기기
-			document.getElementById("good_qty").parentElement.style.display = "none";
-			document.getElementById("qc_status").parentElement.style.display = "none";
-			document.getElementById("item_key").parentElement.style.display = "";
-			document.getElementById("defect_reason").parentElement.style.display = "";
-
-			// 값 세팅
 			document.getElementById("quality_key").value = qualityKey;
 			document.getElementById("quality_code").value = qualityCode;
 			document.getElementById("inspect_date").value = inspectDate.substring(0, 10);
 			document.getElementById("inspect_qty").value = inspectQty;
 			document.getElementById("prod_key").value = prodKey;
-			document.getElementById("item_key").value = itemKey;
 			document.getElementById("user_key").value = userKey;
 
 			if (defectReason == 'null') {

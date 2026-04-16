@@ -48,14 +48,19 @@ public class PlanListController extends HttpServlet {
 		    totalCount = service.getSearchCount(planCode, status, dueDate);
 		}
 		
+		
 	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
-
+	    
+	    List<PlanDTO> itemList = service.selectItemList();
+	    
+	    request.setAttribute("itemList", itemList);
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("planCode", planCode);
 		request.setAttribute("status", status);
 		request.setAttribute("dueDate", dueDate);
 		request.setAttribute("totalPage", totalPage);
+		
 
 		request.getRequestDispatcher("/plan.jsp").forward(request, response);
 	}

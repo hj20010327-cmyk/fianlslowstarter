@@ -29,6 +29,14 @@ public class BOMController extends HttpServlet {
 		String skeycode = request.getParameter("keycode");
 		String keyword = request.getParameter("keyword");
 		
+		String sParent = request.getParameter("parent_item_key");
+		int parent_item_key = 0;
+
+		try {
+		    parent_item_key = Integer.parseInt(sParent);
+		} catch (Exception e) {}
+
+		
 		//페이징
 		int size = 10; 
 		int page = 1; 
@@ -55,6 +63,7 @@ public class BOMController extends HttpServlet {
 		bomDTO.setPage(page);
 		bomDTO.setKeycode(keycode);
 		bomDTO.setKeyword(keyword);
+		bomDTO.setParent_item_key(parent_item_key);
 		
 		// 서비스 
 		BOMService bomservice = new BOMService();
@@ -66,10 +75,19 @@ public class BOMController extends HttpServlet {
 		request.setAttribute("map",map);
 		request.setAttribute("list",map.get("list"));
 		
-		RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
-		rd.forward(request, response);
 		
-	
+		System.out.println("parent_item_key = " + request.getParameter("parent_item_key"));
+		
+		String view = request.getParameter("view");
+		
+		if("detail".equals(view)){
+			RequestDispatcher rd = request.getRequestDispatcher("/bom_detail.jsp");
+			rd.forward(request, response);
+		} else {
+			RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
+			rd.forward(request, response);
+		}
+		
 		
 	}
 
@@ -82,6 +100,8 @@ public class BOMController extends HttpServlet {
 		
 		// form 요소
 		String cmd = request.getParameter("cmd");
+		
+		System.out.println("cmd: " + cmd);
 		
 		if(cmd.equals("insert")) {
 			insert(request, response);
@@ -102,11 +122,13 @@ public class BOMController extends HttpServlet {
 		// 파라미터
 		
 		String bom_code = request.getParameter("bom_code");
-		String QTY = request.getParameter("QTY");
+		String QTY = request.getParameter("qty");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
 		String Bitem_key = request.getParameter("item_key");
+		String item_name = request.getParameter("item_name");
 		String Bparent_item_key = request.getParameter("parent_item_key");
+		String parent_item_name = request.getParameter("parent_item_name");
 		
 		int item_key = 0; 
 		if (Bitem_key != null && !Bitem_key.trim().isEmpty()) {
@@ -122,10 +144,12 @@ public class BOMController extends HttpServlet {
 		BOMDTO bomDTO = new BOMDTO(); 
 		
 		bomDTO.setBom_code(bom_code);
-		bomDTO.setQTY(qty);
+		bomDTO.setQty(qty);
 		bomDTO.setRemark(remark);
 		bomDTO.setItem_key(item_key);
 		bomDTO.setParent_item_key(parent_item_key);
+		bomDTO.setItem_name(item_name);
+		bomDTO.setParent_item_name(parent_item_name);
 		
 		
 		// service & DTO
@@ -146,11 +170,13 @@ public class BOMController extends HttpServlet {
 		String Bom_key = request.getParameter("bom_key");
 		int bom_key = Integer.parseInt(Bom_key);
 		String bom_code = request.getParameter("bom_code");
-		String QTY = request.getParameter("QTY");
+		String QTY = request.getParameter("qty");
 		int qty = Integer.parseInt(QTY);
 		String remark = request.getParameter("remark");
 		String Bitem_key = request.getParameter("item_key");
 		String Bparent_item_key = request.getParameter("parent_item_key");
+		String item_name = request.getParameter("item_name");
+		String parent_item_name = request.getParameter("parent_item_name");
 		
 		int item_key = 0; 
 		if (Bitem_key != null && !Bitem_key.trim().isEmpty()) {
@@ -170,10 +196,12 @@ public class BOMController extends HttpServlet {
 			
 			bomDTO.setBom_key(bom_key);
 			bomDTO.setBom_code(bom_code);
-			bomDTO.setQTY(qty);
+			bomDTO.setQty(qty);
 			bomDTO.setRemark(remark);
 			bomDTO.setItem_key(item_key);
 			bomDTO.setParent_item_key(parent_item_key);
+			bomDTO.setItem_name(item_name);
+			bomDTO.setParent_item_name(parent_item_name);
 			
 			BOMService bomservice = new BOMService(); 
 			int result = bomservice.update(bomDTO);

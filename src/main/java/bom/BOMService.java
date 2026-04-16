@@ -42,13 +42,10 @@ public class BOMService {
 		List list;
 		int totalCount;
 
-		if(dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
+		if(dto.getParent_item_key() != 0) {
 		    list = bomDAO.selectdetailBOM(dto);
 		    totalCount = bomDAO.SearchTotal(dto);
-		} else if(dto.getKeycode() != 0 ) {
-			list = bomDAO.selectdetailBOM(dto);
-			totalCount = bomDAO.SearchTotal(dto);
-		} else { list = bomDAO.selectAllBOM(dto);
+		}  else { list = bomDAO.selectAllBOM(dto);
 		    totalCount = bomDAO.BOMTotal();
 		}	
 		

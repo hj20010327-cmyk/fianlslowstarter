@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
 <link rel="stylesheet" href="./asset/css/pagination.css" />
+<link rel="stylesheet" href="./asset/css/bom.css" />
 
 </head>
 
@@ -111,23 +112,25 @@
 				</div>
 				<div class="page-actions">
 					<button class="btn primary" type="button"
-						onclick="openModal('BOM 신규 등록')">신규 등록</button>
+						onclick="openInsertModal('BOM 신규 등록')">신규 등록</button>
 				</div>
 			</div>
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
-					<h2>검색 조건</h2>
+					<h2>완제품별 BOM 조회</h2>
 					<span>기준 조건을 선택하세요</span>
 				</div>
 				<form method="get" action="bom">
-					<div class="search-row">
-						<input class="input" type="text" name="keycode"
-							placeholder="코드 또는 번호 입력" /> <input class="input" type="text"
-							name="keyword" placeholder="명칭 입력" /> <select class="select">
-							<option>전체</option>
-							<option>사용</option>
-							<option>미사용</option>
+					<div class="search-row bom_search">
+						<select name="parent_item_key" class="modal-select">
+							<option value="">완제품 선택</option>
+							<option value="1">컴프레셔 완제품 A형</option>
+							<option value="2">컴프레셔 완제품 B형</option>
+							<option value="3">컴프레셔 완제품 C형</option>
+							<option value="4">컴프레셔 완제품 D형</option>
+							<option value="5">컴프레셔 완제품 E형</option>
 						</select>
+
 						<button class="btn primary" type="submit">조회</button>
 					</div>
 				</form>
@@ -161,24 +164,22 @@
 								</thead>
 								<tbody>
 
-									<c:forEach var="bom" items="${map.list}">
+									<c:forEach var="bom" items="${list}">
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-											<td>
-											<a href="javascript:void(0);"
+											<td><a href="javascript:void(0);"
 												onclick="openEditModal('${bom.bom_key}',
 											'${bom.bom_code}',
-											'${bom.QTY}',
+											'${bom.qty}',
 											'${bom.remark}',
-											'${bom.item_key}',
-											'${bom.parent_item_key}'
+											'${bom.item_name}',
+											'${bom.parent_item_name}'
 											)">
-											${bom.bom_code}
-											</a></td>
+													${bom.bom_code} </a></td>
 											<td>${bom.parent_item_name}</td>
 											<td>${bom.item_name}</td>
-											<td>${bom.QTY}</td>
+											<td>${bom.qty}</td>
 											<td>${bom.remark}</td>
 										</tr>
 									</c:forEach>
@@ -260,7 +261,7 @@
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
-			<form id="processForm" method="post" action="bom">
+			<form id="bomForm" method="post" action="bom">
 
 				<!-- 헤더 -->
 				<div class="modal-header">
@@ -282,43 +283,57 @@
 
 
 						<div class="form-group">
-							<label>BOM코드</label> 
-							<input type="text" name="bom_code" id="bom_code" 
-							class="input" placeholder="코드 입력" />
-						</div>
-
-
-						<div class="form-group">
-							<label>소요량</label> 
-							<input type="number" name="QTY" id="QTY"  
-							class="input" placeholder="수량 입력" />
+							<label>BOM코드</label> <input type="text" name="bom_code"
+								id="bom_code" class="input" placeholder="자동 생성" />
 						</div>
 
 						<div class="form-group">
-							<label>버전</label> 
-							<input type="text" class="input"
-								placeholder="예: V1" />
+							<label>완제품명</label> <select name="parent_item_key"
+								id="parent_item_key" class="modal-select">
+								<option value="" selected>-- 선택하세요 --</option>
+								<option value="1">컴프레셔 완제품 A형</option>
+								<option value="2">컴프레셔 완제품 B형</option>
+								<option value="3">컴프레셔 완제품 C형</option>
+								<option value="4">컴프레셔 완제품 D형</option>
+								<option value="5">컴프레셔 완제품 E형</option>
+							</select>
 						</div>
 
+						<div class="form-group">
+							<label>자재명</label> <select name="item_key" id="item_key"
+								class="modal-select">
+								<option value="" selected>-- 선택하세요 --</option>
+								<option value="6">전방 하우징</option>
+								<option value="7">후방 하우징</option>
+								<option value="8">실린더 블록</option>
+								<option value="9">샤프트</option>
+								<option value="10">스와시 플레이트</option>
+								<option value="11">피스톤 키트</option>
+								<option value="12">밸브 플레이트</option>
+								<option value="13">클러치 허브</option>
+								<option value="14">풀리</option>
+								<option value="15">코일 어셈블리</option>
+								<option value="16">베어링 6204</option>
+								<option value="17">오링</option>
+								<option value="18">샤프트 씰</option>
+								<option value="19">볼트MB</option>
+								<option value="20">컴프레셔 오일</option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label>소요량</label> <input type="number" name="qty" id="qty"
+								class="input" placeholder="수량 입력" />
+						</div>
 
 						<div class="form-group" style="grid-column: span 2;">
 							<label>비고</label>
-							<textarea name="remark" class="textarea" placeholder="추가 설명 입력"></textarea>
+							<textarea name="remark" class="textarea" id="remark"
+								placeholder="추가 설명 입력"></textarea>
 						</div>
-						
 
-						<div class="form-group">
-							<label>완제품명</label> 
-							<input type="text" class="input"
-								name="parent_item_key" placeholder="완제품명 입력" />
-						</div>
-						
-						<div class="form-group">
-							<label>자재명</label> 
-							<input type="text" class="input"
-								name="item_key" placeholder="제품명 입력" />
-						</div>
-						
+
+
 					</div>
 				</div>
 
@@ -326,8 +341,9 @@
 				<div class="modal-footer">
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
-					<input type="hidden" name="cmd" id="cmd">
-					<input type="hidden" name="bom_key" id="bom_key">
+					<input type="hidden" name="cmd" id="cmd"> <input
+						type="hidden" name="bom_key" id="bom_key">
+
 				</div>
 
 			</form>

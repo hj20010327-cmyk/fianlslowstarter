@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import login.LoginDTO;
-import user.UserDTO;
+
 
 @WebServlet("/plan/add")
 public class PlanAddController extends HttpServlet {

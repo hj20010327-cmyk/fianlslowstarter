@@ -19,7 +19,7 @@
 	<div class="auth-wrap">
 		<section class="auth-visual">
 			<div>
-				<a href="./login.html" class="logo" style="color: #fff"><span
+				<a href="./login" class="logo" style="color: #fff"><span
 					class="logo-mark" style="background: rgba(255, 255, 255, .18)">AM</span><span>AUTO
 						MES</span></a>
 				<h1>자동차 콤프레셔 제조 공장을 위한 MES</h1>

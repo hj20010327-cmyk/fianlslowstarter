@@ -43,29 +43,48 @@ public class MachineUpdateController extends HttpServlet {
 		String machineName = request.getParameter("machineName");
 		int processKey = Integer.parseInt(request.getParameter("processKey"));
 		String machineStatus = request.getParameter("machineStatus");
+		System.out.println("수정 요청 machineStatus" + machineStatus);
+		String buyDateStr = request.getParameter("buyDate");
+		String lastCheckDateStr = request.getParameter("lastCheckDate");
 		String remark = request.getParameter("remark");
-		Date buyDate = Date.valueOf(request.getParameter("buyDate"));
-		Date lastCheckDate = Date.valueOf(request.getParameter("lastCheckDate"));
-//		Date Create_at = Date.valueOf(request.getParameter("Create_at")); 필요없어서 주석
 
-		// DTO에 담기 
+		if (machineCode == null || machineCode.trim().equals("")) {
+		    response.sendRedirect("/slowstarter/machine");
+		    return;
+		}
+
+		if (machineName == null || machineName.trim().equals("")) {
+		    response.sendRedirect("/slowstarter/machine");
+		    return;
+		}
+
+		Date buyDate = null;
+		if (buyDateStr != null && !buyDateStr.trim().equals("")) {
+		    buyDate = Date.valueOf(buyDateStr);
+		}
+
+		Date lastCheckDate = null;
+		if (lastCheckDateStr != null && !lastCheckDateStr.trim().equals("")) {
+		    lastCheckDate = Date.valueOf(lastCheckDateStr);
+		}
+
+		// DTO에 담기
 		MachineDTO dto = new MachineDTO();
 		dto.setMachineKey(machineKey);
 		dto.setMachineCode(machineCode);
 		dto.setMachineName(machineName);
-		dto.setProcessKey(processKey);
-		dto.setRemark(remark);
 		dto.setMachineStatus(machineStatus);
 		dto.setBuyDate(buyDate);
 		dto.setLastCheckDate(lastCheckDate);
-//		dto.setCreatedAt(Create_at); 필요없음
+		dto.setRemark(remark);
+		dto.setProcessKey(processKey);
 
-		// Service 호출 
+		// Service 호출
 		MachineService machineservice = new MachineService();
 		int count = machineservice.getupdatemachine(dto);
-		System.out.println("count: "+ count);
+		System.out.println("count: " + count);
 
-		// 목록으로 이동 
+		// 목록으로 이동
 		response.sendRedirect("/slowstarter/machine");
 
 	}

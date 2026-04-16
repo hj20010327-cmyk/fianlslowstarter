@@ -47,6 +47,7 @@ public class MachineService {
 	    MachineDAO dao = new MachineDAO();
 	    return dao.getSearchCount(name, status,lastCheckDate);
 	}
+
 	
 	
 	

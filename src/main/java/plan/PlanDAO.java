@@ -25,7 +25,7 @@ public class PlanDAO {
             DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
             conn = dataFactory.getConnection();
 
-            String query = "SELECT * FROM tb_plan where rownum<=4";
+            String query = "SELECT * FROM tb_plan";
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
 

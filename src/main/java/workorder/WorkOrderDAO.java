@@ -29,22 +29,12 @@ public class WorkOrderDAO {
 			// 목록에서 클릭 시 수정 모달에 기존 값을 채우기 위해
 			// 표시용 데이터 + 수정에 필요한 key 값들을 함께 조회
 			// 따라서 SELECT 컬럼이 많아졌음
-			String query = "SELECT w.work_order_key, "
-		             + "w.work_order_code, "
-		             + "w.order_user_key, "
-		             + "w.work_user_key, "
-		             + "w.order_qty, "
-		             + "w.work_date, "
-		             + "w.created_at, "
-		             + "w.plan_key, "
-		             + "p.plan_code, "
-		             + "u.user_name AS order_user_name "
-		             + "FROM tb_work_order w "
-		             + "LEFT JOIN tb_plan p "
-		             + "  ON w.plan_key = p.plan_key "
-		             + "LEFT JOIN tb_user u "
-		             + "  ON w.order_user_key = u.user_key "
-		             + "ORDER BY w.work_order_key";
+			String query = "SELECT w.work_order_key, " + "w.work_order_code, " + "w.order_user_key, "
+					+ "w.work_user_key, " + "w.order_qty, " + "w.work_date, " + "w.created_at, " + "w.plan_key, "
+					+ "p.plan_code, " + "u1.user_name AS order_user_name, " + "u2.user_name AS work_user_name "
+					+ "FROM tb_work_order w " + "LEFT JOIN tb_plan p " + "  ON w.plan_key = p.plan_key "
+					+ "LEFT JOIN tb_user u1 " + "  ON w.order_user_key = u1.user_key " + "LEFT JOIN tb_user u2 "
+					+ "  ON w.work_user_key = u2.user_key " + "ORDER BY w.work_order_key";
 			ps = conn.prepareStatement(query);
 			rs = ps.executeQuery();
 
@@ -60,6 +50,7 @@ public class WorkOrderDAO {
 				dto.setPlan_key(rs.getInt("plan_key"));
 				dto.setPlan_code(rs.getString("plan_code"));
 				dto.setOrder_user_name(rs.getString("order_user_name"));
+				dto.setWork_user_name(rs.getString("work_user_name"));
 
 				list.add(dto);
 			}
@@ -82,19 +73,20 @@ public class WorkOrderDAO {
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
 			conn = dataFactory.getConnection();
 
-			String query = "INSERT INTO tb_work_order ("
-					+ "work_order_key, order_user_key, work_user_key, work_order_code, "
-					+ "order_qty, work_date, created_at, plan_key" + ") VALUES ("
-					+ "seq_work_order.NEXTVAL, ?, ?, ?, ?, ?, SYSDATE, ?" + ")";
+			String query = "INSERT INTO tb_work_order ( "
+					+ "    work_order_key, order_user_key, work_user_key, work_order_code, "
+					+ "    order_qty, work_date, created_at, plan_key " + ") " + "SELECT "
+					+ "    seq_work_order.NEXTVAL, " + "    ?, " + "    ?, "
+					+ "    'WO-' || LPAD(seq_work_order.CURRVAL, 3, '0'), " + "    ?, " + "    ?, " + "    SYSDATE, "
+					+ "    ? " + "FROM dual";
 
 			ps = conn.prepareStatement(query);
 
 			ps.setInt(1, dto.getOrder_user_key());
 			ps.setInt(2, dto.getWork_user_key());
-			ps.setString(3, dto.getWork_order_code());
-			ps.setInt(4, dto.getOrder_qty());
-			ps.setDate(5, dto.getWork_date());
-			ps.setInt(6, dto.getPlan_key());
+			ps.setInt(3, dto.getOrder_qty());
+			ps.setDate(4, dto.getWork_date());
+			ps.setInt(5, dto.getPlan_key());
 
 			result = ps.executeUpdate();
 			System.out.println("workorder insert의 결과:" + result);
@@ -116,19 +108,12 @@ public class WorkOrderDAO {
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
 			conn = dataFactory.getConnection();
 
-			String query = "UPDATE tb_work_order SET " + "order_user_key = ?, " + "work_user_key = ?, "
-					+ "work_order_code = ?, " + "order_qty = ?, " + "work_date = ?, " + "plan_key = ? "
-					+ "WHERE work_order_key = ?";
+			String query = "UPDATE tb_work_order " + "SET work_user_key = ? " + "WHERE work_order_key = ?";
 
 			ps = conn.prepareStatement(query);
 
-			ps.setInt(1, dto.getOrder_user_key());
-			ps.setInt(2, dto.getWork_user_key());
-			ps.setString(3, dto.getWork_order_code());
-			ps.setInt(4, dto.getOrder_qty());
-			ps.setDate(5, dto.getWork_date());
-			ps.setInt(6, dto.getPlan_key());
-			ps.setInt(7, dto.getWork_order_key());
+			ps.setInt(1, dto.getWork_user_key());
+			ps.setInt(2, dto.getWork_order_key());
 
 			result = ps.executeUpdate();
 			System.out.println("workorder update의 결과:" + result);
@@ -179,21 +164,13 @@ public class WorkOrderDAO {
 			// JSP에서 등록/수정 모달을 공용으로 사용하고 있음
 			// 목록에서 항목 클릭 시 수정 모달에 기존 데이터를 세팅해야 하므로
 			// 표시용 데이터 + 수정에 필요한 key 값들을 함께 조회함
-			//  이로 인해 SELECT 컬럼이 많아짐
-			String query = "SELECT w.work_order_key, "
-					+ "w.order_user_key, "
-					+ "w.work_user_key, "
-					+ "w.work_order_code, "
-					+ "w.order_qty, "
-					+ "w.work_date, "
-					+ "w.created_at, "
-					+ "w.plan_key, "
-					+ "p.plan_code, "
-					+ "u.user_name AS order_user_name "
-					+ "FROM tb_work_order w "
-					+ "LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
-					+ "LEFT JOIN tb_user u ON w.order_user_key = u.user_key "
-					+ "WHERE 1=1 ";
+			// 이로 인해 SELECT 컬럼이 많아짐
+			String query = "SELECT w.work_order_key, " + "w.order_user_key, " + "w.work_user_key, "
+					+ "w.work_order_code, " + "w.order_qty, " + "w.work_date, " + "w.created_at, " + "w.plan_key, "
+					+ "p.plan_code, " + "u1.user_name AS order_user_name, " + "u2.user_name AS work_user_name "
+					+ "FROM tb_work_order w " + "LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
+					+ "LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key " + "WHERE 1=1 ";
 
 			if (workOrderCode != null && !workOrderCode.trim().equals("")) {
 				query += " and w.work_order_code like ?";
@@ -231,6 +208,7 @@ public class WorkOrderDAO {
 				dto.setPlan_key(rs.getInt("plan_key"));
 				dto.setPlan_code(rs.getString("plan_code"));
 				dto.setOrder_user_name(rs.getString("order_user_name"));
+				dto.setWork_user_name(rs.getString("work_user_name"));
 
 				list.add(dto);
 			}
@@ -257,24 +235,15 @@ public class WorkOrderDAO {
 			// 목록에서 항목 클릭 시 수정 모달에 기존 데이터를 세팅해야 하므로
 			// 표시용 데이터 + 수정에 필요한 key 값들을 함께 조회함
 			// → 이로 인해 SELECT 컬럼이 많아짐
-			String query = "SELECT * FROM ( "
-					+ "  SELECT ROWNUM rnum, A.* FROM ( "
-					+ "    SELECT w.work_order_key, "
-					+ "           w.order_user_key, "
-					+ "           w.work_user_key, "
-					+ "           w.work_order_code, "
-					+ "           w.order_qty, "
-					+ "           w.work_date, "
-					+ "           w.created_at, "
-					+ "           w.plan_key, "
-					+ "           p.plan_code, "
-					+ "           u.user_name AS order_user_name "
-					+ "    FROM tb_work_order w "
-					+ "    LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
-					+ "    LEFT JOIN tb_user u ON w.order_user_key = u.user_key "
-					+ "    ORDER BY w.work_order_key "
-					+ "  ) A WHERE ROWNUM <= ? "
-					+ ") WHERE rnum >= ?";
+			String query = "SELECT * FROM ( " + "  SELECT ROWNUM rnum, A.* FROM ( " + "    SELECT w.work_order_key, "
+					+ "           w.order_user_key, " + "           w.work_user_key, "
+					+ "           w.work_order_code, " + "           w.order_qty, " + "           w.work_date, "
+					+ "           w.created_at, " + "           w.plan_key, " + "           p.plan_code, "
+					+ "           u1.user_name AS order_user_name, " + "           u2.user_name AS work_user_name "
+					+ "    FROM tb_work_order w " + "    LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "    LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
+					+ "    LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key "
+					+ "    ORDER BY w.work_order_key " + "  ) A WHERE ROWNUM <= ? " + ") WHERE rnum >= ?";
 
 			ps = conn.prepareStatement(query);
 			ps.setInt(1, endRow);
@@ -294,6 +263,7 @@ public class WorkOrderDAO {
 				dto.setPlan_key(rs.getInt("plan_key"));
 				dto.setPlan_code(rs.getString("plan_code"));
 				dto.setOrder_user_name(rs.getString("order_user_name"));
+				dto.setWork_user_name(rs.getString("work_user_name"));
 
 				list.add(dto);
 			}
@@ -308,7 +278,7 @@ public class WorkOrderDAO {
 	}
 
 	public int getTotalCount() {
-		
+
 		int count = 0;
 
 		try {
@@ -332,12 +302,141 @@ public class WorkOrderDAO {
 
 		return count;
 	}
-	 
-	// finally 의 close가 너무 반복되서 함수로 빼버림 
+
+	public List<WorkOrderDTO> selectPageByWorker(int userKey, int startRow, int endRow) {
+		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT * FROM ( " + "  SELECT ROWNUM rnum, A.* FROM ( " + "    SELECT w.work_order_key, "
+					+ "           w.order_user_key, " + "           w.work_user_key, "
+					+ "           w.work_order_code, " + "           w.order_qty, " + "           w.work_date, "
+					+ "           w.created_at, " + "           w.plan_key, " + "           p.plan_code, "
+					+ "           u1.user_name AS order_user_name, " + "           u2.user_name AS work_user_name "
+					+ "    FROM tb_work_order w " + "    LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "    LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
+					+ "    LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key "
+					+ "    WHERE w.work_user_key = ? " + "    ORDER BY w.work_order_key " + "  ) A WHERE ROWNUM <= ? "
+					+ ") WHERE rnum >= ?";
+
+			ps = conn.prepareStatement(query);
+			ps.setInt(1, userKey);
+			ps.setInt(2, endRow);
+			ps.setInt(3, startRow);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				WorkOrderDTO dto = new WorkOrderDTO();
+				dto.setWork_order_key(rs.getInt("work_order_key"));
+				dto.setOrder_user_key(rs.getInt("order_user_key"));
+				dto.setWork_user_key(rs.getInt("work_user_key"));
+				dto.setWork_order_code(rs.getString("work_order_code"));
+				dto.setOrder_qty(rs.getInt("order_qty"));
+				dto.setWork_date(rs.getDate("work_date"));
+				dto.setCreated_at(rs.getDate("created_at"));
+				dto.setPlan_key(rs.getInt("plan_key"));
+				dto.setPlan_code(rs.getString("plan_code"));
+				dto.setOrder_user_name(rs.getString("order_user_name"));
+				dto.setWork_user_name(rs.getString("work_user_name"));
+
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return list;
+	}
+
+	public List<WorkOrderDTO> selectWorkerList() {
+		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT user_key, user_name " + "FROM tb_user " + "WHERE user_role = '작업자' "
+					+ "ORDER BY user_key";
+
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				WorkOrderDTO dto = new WorkOrderDTO();
+				dto.setWork_user_key(rs.getInt("user_key"));
+				dto.setWork_user_name(rs.getString("user_name"));
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return list;
+	}
+	
+	public List<WorkOrderDTO> selectPlanList() {
+		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT plan_key, plan_code "
+					+ "FROM tb_plan "
+					+ "WHERE plan_status = '계획' "
+					+ "ORDER BY plan_key";
+
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				WorkOrderDTO dto = new WorkOrderDTO();
+				dto.setPlan_key(rs.getInt("plan_key"));
+				dto.setPlan_code(rs.getString("plan_code"));
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return list;
+	}
+
+	// finally 의 close가 너무 반복되서 함수로 빼버림
 	private void closeAll() {
-		if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
-		if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
-		if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+		if (rs != null)
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		if (ps != null)
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		if (conn != null)
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 	}
 
 }

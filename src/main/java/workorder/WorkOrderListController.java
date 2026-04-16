@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import login.LoginDTO;
 
 @WebServlet("/workorder")
 public class WorkOrderListController extends HttpServlet {
@@ -32,22 +34,34 @@ public class WorkOrderListController extends HttpServlet {
 		int pageSize = 10;
 		int startRow = (page - 1) * pageSize + 1;
 		int endRow = page * pageSize;
+		
+		HttpSession session = request.getSession();
+		LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 
 		WorkOrderService service = new WorkOrderService();
 		List<WorkOrderDTO> list;
 
-		if ((workOrderCode == null || workOrderCode.isEmpty()) &&
-			(planKey == null || planKey.isEmpty())) {
-			list = service.selectPage(startRow, endRow);
+		if (loginUser != null && "작업자".equals(loginUser.getUser_role())) {
+			list = service.selectPageByWorker(loginUser.getUser_key(), startRow, endRow);
 		} else {
-			list = service.searchList(workOrderCode, planKey);
+			if ((workOrderCode == null || workOrderCode.isEmpty()) &&
+				(planKey == null || planKey.isEmpty())) {
+				list = service.selectPage(startRow, endRow);
+			} else {
+				list = service.searchList(workOrderCode, planKey);
+			}
 		}
 		
 		int totalCount = service.getTotalCount();
 		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
-
+		
+		List<WorkOrderDTO> userList = service.selectWorkerList();
+		List<WorkOrderDTO> planList = service.selectPlanList();
+		
+		request.setAttribute("planList", planList);
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
+		request.setAttribute("userList", userList);
 		request.setAttribute("workOrderCode", workOrderCode);
 		request.setAttribute("planKey", planKey);
 		request.setAttribute("totalPage", totalPage);

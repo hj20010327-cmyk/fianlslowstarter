@@ -18,18 +18,21 @@ public class QualityDAO {
     PreparedStatement ps = null;
     ResultSet rs = null;
 
+    // DB 연결
     private void getConnection() throws Exception {
         Context ctx = new InitialContext();
         DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
         conn = dataFactory.getConnection();
     }
 
+    // 자원 닫기
     private void closeAll() {
         if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
         if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
         if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
     }
 
+    // 목록 조회용 DTO 세팅
     private QualityDTO makeDto(ResultSet rs) throws Exception {
         QualityDTO dto = new QualityDTO();
 
@@ -54,7 +57,7 @@ public class QualityDAO {
         return dto;
     }
 
-    // 담당자 목록 (테스트 제외)
+    // 담당자 목록 (테스트 계정 제외)
     public List<QualityDTO> getUserList() {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -85,7 +88,8 @@ public class QualityDAO {
         return list;
     }
 
-    // 작업지시 목록 + 품목명 + 현재고
+    // 작업지시 목록 조회
+    // TB_WORK_ORDER / TB_PLAN은 조회만 사용
     public List<QualityDTO> getWorkOrderList() {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -93,7 +97,7 @@ public class QualityDAO {
                 + "SELECT w.WORK_ORDER_KEY, "
                 + "       w.WORK_ORDER_CODE, "
                 + "       i.ITEM_NAME, "
-                + "       NVL(SUM(s.CURRENT_QTY), 0) AS STOCK_QTY "
+                + "       NVL(s.CURRENT_QTY, 0) AS STOCK_QTY "
                 + "FROM TB_WORK_ORDER w "
                 + "LEFT OUTER JOIN TB_PLAN plan "
                 + "    ON w.PLAN_KEY = plan.PLAN_KEY "
@@ -101,7 +105,6 @@ public class QualityDAO {
                 + "    ON plan.ITEM_KEY = i.ITEM_KEY "
                 + "LEFT OUTER JOIN TB_STOCK s "
                 + "    ON i.ITEM_KEY = s.ITEM_KEY "
-                + "GROUP BY w.WORK_ORDER_KEY, w.WORK_ORDER_CODE, i.ITEM_NAME "
                 + "ORDER BY w.WORK_ORDER_KEY ASC";
 
         try {
@@ -212,6 +215,7 @@ public class QualityDAO {
         return nextCode;
     }
 
+    // 목록 페이징 조회
     public List<QualityDTO> selectPage(int startRow, int endRow) {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -267,6 +271,7 @@ public class QualityDAO {
         return list;
     }
 
+    // 전체 개수
     public int getTotalCount() {
         int count = 0;
 
@@ -290,6 +295,7 @@ public class QualityDAO {
         return count;
     }
 
+    // 검색 페이징 조회
     public List<QualityDTO> searchPage(String qualityCode, String itemName, String status, String inspectDate, int startRow, int endRow) {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -381,6 +387,7 @@ public class QualityDAO {
         return list;
     }
 
+    // 검색 개수
     public int getSearchCount(String qualityCode, String itemName, String status, String inspectDate) {
         int count = 0;
 
@@ -445,7 +452,9 @@ public class QualityDAO {
         return count;
     }
 
-    // 등록 + WAIT_QC 증가를 한 번에 처리
+    // 등록
+    // 1. TB_QUALITY 저장
+    // 2. TB_STOCK WAIT_QC 증가
     public int addquality(QualityDTO dto) {
         int result = 0;
 
@@ -460,7 +469,7 @@ public class QualityDAO {
                     + "INSERT INTO TB_QUALITY ( "
                     + "    QUALITY_KEY, QUALITY_CODE, INSPECT_DATE, INSPECT_QTY, "
                     + "    GOOD_QTY, DEFECT_QTY, DEFECT_REASON, QC_STATUS, "
-                    + "    CREATED_AT, WORK_ORDER_KEY, USER_KEY "
+                    + "    CREATED_AT, USER_KEY, WORK_ORDER_KEY "
                     + ") VALUES ( "
                     + "    SEQ_TB_QUALITY.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, SYSDATE, ?, ? "
                     + ")";
@@ -473,16 +482,16 @@ public class QualityDAO {
             psInsert.setInt(5, dto.getDefect_qty());
             psInsert.setString(6, dto.getDefect_reason());
             psInsert.setString(7, dto.getQc_status());
-            psInsert.setInt(8, dto.getProd_key());
-            psInsert.setInt(9, dto.getUser_key());
+            psInsert.setInt(8, dto.getUser_key());
+            psInsert.setInt(9, dto.getProd_key());
 
             result = psInsert.executeUpdate();
 
-            // 품질 등록 성공 시 WAIT_QC 증가
+            // 등록 성공하면 WAIT_QC 증가
             String updateStockSql = ""
                     + "UPDATE TB_STOCK "
                     + "SET WAIT_QC = WAIT_QC + ?, "
-                    + "    UPDATED_AT = CURRENT_TIMESTAMP "
+                    + "    UPDATED_AT = SYSDATE "
                     + "WHERE ITEM_KEY = ( "
                     + "    SELECT plan.ITEM_KEY "
                     + "    FROM TB_WORK_ORDER w "
@@ -516,44 +525,84 @@ public class QualityDAO {
         return result;
     }
 
+    // 수정
+    // 1. TB_QUALITY 수정
+    // 2. 품목명 바뀌었으면 TB_ITEM.ITEM_NAME 수정
     public int updatequality(QualityDTO dto) {
         int result = 0;
 
-        String query = ""
-                + "UPDATE TB_QUALITY "
-                + "SET INSPECT_DATE = ?, "
-                + "    INSPECT_QTY = ?, "
-                + "    GOOD_QTY = ?, "
-                + "    DEFECT_QTY = ?, "
-                + "    DEFECT_REASON = ?, "
-                + "    QC_STATUS = ?, "
-                + "    USER_KEY = ? "
-                + "WHERE QUALITY_KEY = ?";
+        PreparedStatement psQuality = null;
+        PreparedStatement psItem = null;
 
         try {
             getConnection();
-            ps = conn.prepareStatement(query);
+            conn.setAutoCommit(false);
 
-            ps.setDate(1, dto.getInspect_date());
-            ps.setInt(2, dto.getInspect_qty());
-            ps.setInt(3, dto.getGood_qty());
-            ps.setInt(4, dto.getDefect_qty());
-            ps.setString(5, dto.getDefect_reason());
-            ps.setString(6, dto.getQc_status());
-            ps.setInt(7, dto.getUser_key());
-            ps.setInt(8, dto.getQuality_key());
+            String qualitySql = ""
+                    + "UPDATE TB_QUALITY "
+                    + "SET INSPECT_DATE = ?, "
+                    + "    INSPECT_QTY = ?, "
+                    + "    GOOD_QTY = ?, "
+                    + "    DEFECT_QTY = ?, "
+                    + "    DEFECT_REASON = ?, "
+                    + "    QC_STATUS = ?, "
+                    + "    USER_KEY = ? "
+                    + "WHERE QUALITY_KEY = ?";
 
-            result = ps.executeUpdate();
+            psQuality = conn.prepareStatement(qualitySql);
+            psQuality.setDate(1, dto.getInspect_date());
+            psQuality.setInt(2, dto.getInspect_qty());
+            psQuality.setInt(3, dto.getGood_qty());
+            psQuality.setInt(4, dto.getDefect_qty());
+            psQuality.setString(5, dto.getDefect_reason());
+            psQuality.setString(6, dto.getQc_status());
+            psQuality.setInt(7, dto.getUser_key());
+            psQuality.setInt(8, dto.getQuality_key());
+
+            result = psQuality.executeUpdate();
+
+            // 품목명 수정
+            if (dto.getItem_name() != null && !dto.getItem_name().trim().equals("")) {
+                String itemSql = ""
+                        + "UPDATE TB_ITEM "
+                        + "SET ITEM_NAME = ? "
+                        + "WHERE ITEM_KEY = ( "
+                        + "    SELECT plan.ITEM_KEY "
+                        + "    FROM TB_QUALITY q "
+                        + "    LEFT OUTER JOIN TB_WORK_ORDER w "
+                        + "        ON q.WORK_ORDER_KEY = w.WORK_ORDER_KEY "
+                        + "    LEFT OUTER JOIN TB_PLAN plan "
+                        + "        ON w.PLAN_KEY = plan.PLAN_KEY "
+                        + "    WHERE q.QUALITY_KEY = ? "
+                        + ")";
+
+                psItem = conn.prepareStatement(itemSql);
+                psItem.setString(1, dto.getItem_name());
+                psItem.setInt(2, dto.getQuality_key());
+                psItem.executeUpdate();
+            }
+
+            conn.commit();
 
         } catch (Exception e) {
             e.printStackTrace();
+            try {
+                if (conn != null) conn.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            result = 0;
         } finally {
+            try { if (psQuality != null) psQuality.close(); } catch (Exception e) {}
+            try { if (psItem != null) psItem.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.setAutoCommit(true); } catch (Exception e) {}
             closeAll();
         }
 
         return result;
     }
 
+    // 삭제
     public int deleteQuality(String[] qualityKeys) {
         int result = 0;
 

@@ -7,36 +7,35 @@ public class QualityDTO {
     // =========================
     // 기본 품질 정보
     // =========================
-
-    private int quality_key;
-    private String quality_code;
-    private Date inspect_date;
-    private int inspect_qty;
-    private int good_qty;
-    private int defect_qty;
-    private String defect_reason;
-    private String qc_status;
-    private Date created_at;
+    private int quality_key;       // 품질 PK
+    private String quality_code;   // 검사번호 (예: Q-001)
+    private Date inspect_date;     // 검사일자
+    private int inspect_qty;       // 검사수량
+    private int good_qty;          // 양품수량
+    private int defect_qty;        // 불량수량
+    private String defect_reason;  // 불량사유
+    private String qc_status;      // 상태 (합격/불합격/재검)
+    private Date created_at;       // 등록일
 
     // =========================
     // KEY 정보
     // =========================
-
-    private int prod_key;
-    private int user_key;
-    private int item_key;
+    private int prod_key;          // WORK_ORDER_KEY
+    private int user_key;          // USER_KEY
+    private int item_key;          // ITEM_KEY
 
     // =========================
-    // 추가 정보 (조인용)
+    // 조인해서 화면에 보여줄 값들
     // =========================
+    private String user_name;      // 담당자명
+    private String item_name;      // 품목명
+    private String prod_name;      // 작업지시코드
+    private Date due_date;         // 마감일
 
-    private String user_name;
-    private String item_name;
-    private String prod_name;
-    private Date due_date;
-
-    // 추가 필드가 있어도 데이터 출력에는 영향 없음
-    private int stock_qty;
+    // =========================
+    // 추가 값
+    // =========================
+    private int stock_qty;         // 현재고(등록 모달에서 검사수량 자동입력용)
 
     public int getQuality_key() {
         return quality_key;

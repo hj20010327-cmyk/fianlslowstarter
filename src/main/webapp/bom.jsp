@@ -168,7 +168,11 @@
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-											<td><a href="javascript:void(0);"
+												
+											<td>
+											<c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<a href="javascript:void(0);"
 												onclick="openEditModal('${bom.bom_key}',
 											'${bom.bom_code}',
 											'${bom.qty}',
@@ -176,7 +180,14 @@
 											'${bom.item_name}',
 											'${bom.parent_item_name}'
 											)">
-													${bom.bom_code} </a></td>
+													${bom.bom_code} </a>
+											</c:if>
+											<c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													${bom.bom_code}
+											</c:if>
+											</td>
+											
 											<td>${bom.parent_item_name}</td>
 											<td>${bom.item_name}</td>
 											<td>${bom.qty}</td>

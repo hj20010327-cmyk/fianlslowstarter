@@ -25,6 +25,8 @@ public class ProcessController extends HttpServlet {
 		
 		String skeycode = request.getParameter("keycode");
 		String keyword = request.getParameter("keyword");
+		String process_name = request.getParameter("process_name");
+		String status = request.getParameter("status");
 		
 		// 페이징 
 		int size = 10; 
@@ -49,6 +51,8 @@ public class ProcessController extends HttpServlet {
 		processDTO.setPage(page);
 		processDTO.setKeycode(keycode);
 		processDTO.setKeyword(keyword);
+		processDTO.setProcess_name(process_name);
+		processDTO.setStatus(status);
 		
 		// 서비스 
 		ProcessService processservice = new ProcessService(); 

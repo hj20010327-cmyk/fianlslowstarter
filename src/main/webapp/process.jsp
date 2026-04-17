@@ -120,16 +120,17 @@
 				</div>
 				<form method="get" action="process">
 					<div class="search-row">
-				<%-- 		<input class="input" type="text" name="keycode"
-							placeholder="제품명" />  --%>
-						<select class="select">
+						<input class="input" type="text" name="keyword"
+							placeholder="완제품명" />  
+							
+					<%--	<select class="select">
 							<option>제품명</option>
 							<option>컴프레셔 완제품A형</option>
 							<option>컴프레셔 완제품B형</option>
 							<option>컴프레셔 완제품C형</option>
 							<option>컴프레셔 완제품D형</option>
 							<option>컴프레셔 완제품E형</option>
-						</select>
+						</select>  --%>
 						
 						<select class="select">
 							<option>선택</option>
@@ -140,12 +141,12 @@
 					<%--	<input class="input" name="keyword"
 							type="text" placeholder="공정구분" />   --%>
 							
-						<select class="select">
+						<select class="select" name="process_name">
 							<option>공정구분</option>
-							<option>가공</option>
-							<option>세척</option>
-							<option>조립</option>
-							<option>성능검사</option>
+							<option value="가공">가공</option>
+							<option value="세척">세척</option>
+							<option value="조립">조립</option>
+							<option value="성능검사">성능검사</option>
 						
 						</select>
 						<button class="btn primary" type="submit">조회</button>
@@ -256,7 +257,7 @@
 						</div>
 					</div>
 				</form>
-				<c:out value="${itemList}" />
+				
 				
 				<script>
 console.log("JS 실행됨");

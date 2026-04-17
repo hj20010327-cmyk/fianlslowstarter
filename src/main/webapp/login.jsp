@@ -13,6 +13,8 @@
 <script src="./asset/js/auth.js"></script>
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/auth.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body class="auth-body">
@@ -44,15 +46,19 @@
 						placeholder="아이디 입력" value="william" />
 				</div>
 				<div class="auth-row">
-					<label>비밀번호</label><input name="pw" class="auth-input"
-						type="password" placeholder="비밀번호 입력" value="Qwer1234@" />
+					<label>비밀번호</label>
+					<div class="input-wrap">
+						<input name="pw" class="auth-input" type="password"
+							placeholder="비밀번호 입력" value="Qwer1234@" id="pw"/> 
+							<span class="eye-toggle" data-target="pw">
+							<i class="fa-solid fa-eye"></i>
+						</span>
+					</div>
 				</div>
 				<c:if test="${not empty error}">
-				<div style=color:red;>${error}</div>
+					<div style="color: red;">${error}</div>
 				</c:if>
-				<label class="checkbox-row"><input type="checkbox" /> 아이디
-					저장</label>
-				<input class="auth-btn" type="submit" value="로그인">
+				 <input class="auth-btn" type="submit" value="로그인">
 				<button class="auth-subbtn" type="button"
 					onclick="location.href='./signup'">회원가입</button>
 				<div class="auth-links">

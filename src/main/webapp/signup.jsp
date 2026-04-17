@@ -12,6 +12,8 @@
 <script src="./asset/js/auth.js"></script>
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/auth.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 
 <body class="auth-body">
@@ -87,14 +89,25 @@
 
 				<div class="auth-split">
 					<div class="auth-row">
-						<label for="pw">비밀번호</label> <input id="pw" name="pw"
-							class="auth-input" type="password" placeholder="비밀번호 입력" data-required/>
+						<label for="pw">비밀번호</label> 
+						<div class="input-wrap">
+						<input id="pw" name="pw" class="auth-input" type="password" placeholder="비밀번호 입력" data-required/>
+							<span class="eye-toggle" data-target="pw">
+							<i class="fa-solid fa-eye"></i>
+							</span>
+							</div>
 					</div>
 
 					<div class="auth-row">
-						<label for="pwCheck">비밀번호 확인</label> <input id="pwCheck"
+						<label for="pwCheck">비밀번호 확인</label> 
+						<div class="input-wrap">
+							<input id="pwCheck"
 							name="pwCheck" class="auth-input" type="password"
 							placeholder="비밀번호 확인" data-required/>
+							<span class="eye-toggle" data-target="pwCheck">
+							<i class="fa-solid fa-eye"></i>
+							</span>
+							</div>
 					</div>
 				</div>
 

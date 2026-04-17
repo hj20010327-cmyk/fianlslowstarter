@@ -120,12 +120,34 @@
 				</div>
 				<form method="get" action="process">
 					<div class="search-row">
-						<input class="input" type="text" name="keycode"
-							placeholder="코드 또는 번호 입력" /><input class="input" name="keyword"
-							type="text" placeholder="명칭 입력" /><select class="select">
-							<option>전체</option>
+						<input class="input" type="text" name="keyword"
+							placeholder="완제품명" />  
+							
+					<%--	<select class="select">
+							<option>제품명</option>
+							<option>컴프레셔 완제품A형</option>
+							<option>컴프레셔 완제품B형</option>
+							<option>컴프레셔 완제품C형</option>
+							<option>컴프레셔 완제품D형</option>
+							<option>컴프레셔 완제품E형</option>
+						</select>  --%>
+						
+						<select class="select">
+							<option>선택</option>
 							<option>사용</option>
 							<option>미사용</option>
+						</select>
+						
+					<%--	<input class="input" name="keyword"
+							type="text" placeholder="공정구분" />   --%>
+							
+						<select class="select" name="process_name">
+							<option>공정구분</option>
+							<option value="가공">가공</option>
+							<option value="세척">세척</option>
+							<option value="조립">조립</option>
+							<option value="성능검사">성능검사</option>
+						
 						</select>
 						<button class="btn primary" type="submit">조회</button>
 					</div>
@@ -152,12 +174,12 @@
 								<thead>
 									<tr>
 										<th>선택</th>
-										<th>공정코드</th>
-										<th>공정명</th>
-										<th>일련번호</th>
-										<th>공정설명</th>
-										<th>상태</th>
 										<th>제품명</th>
+										<th>공정순서</th>
+										<th>공정명</th>
+										<th>상태</th>
+										<th>공정설명</th>
+										<th>공정코드</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -167,6 +189,11 @@
 
 											<td><input type="checkbox" name="process_key"
 												value="${process.process_key}"></td>
+											<td>${ process.item_name }</td>
+											<td>${ process.sequence_no }</td>
+											<td>${ process.process_name }</td>
+											<td>${ process.status }</td>
+											<td>${ process.process_desc }</td>
 											<!-- 관리자용 -->
 												<td>
 											<c:if
@@ -188,11 +215,6 @@
 												${ process.process_code }
 											</c:if>
 											</td>
-											<td>${ process.process_name }</td>
-											<td>${ process.sequence_no }</td>
-											<td>${ process.process_desc }</td>
-											<td>${ process.status }</td>
-											<td>${ process.item_name }</td>
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -235,6 +257,21 @@
 						</div>
 					</div>
 				</form>
+				
+				
+				<script>
+console.log("JS 실행됨");
+
+document.addEventListener("change", function (e) {
+    if (e.target && e.target.id === "process_name") {
+        const selected = e.target.options[e.target.selectedIndex];
+        document.getElementById("process_desc").value =
+            selected.dataset.desc || "";
+        document.getElementById("sequence_no").value = 
+        	selected.dataset.seq || "";
+    }
+});
+</script>
 
 				<div class="card">
 					<div class="section-title">
@@ -292,26 +329,42 @@
 
 						<div class="form-group">
 							<label>공정 코드</label> <input type="text" name="process_code"
-								id="process_code" class="input" placeholder="자동입력" />
+								id="process_code" class="input" placeholder="자동입력" readonly />
 						</div>
-
 
 						<div class="form-group">
-							<label>공정명</label> <input type="text" name="process_name"
-								id="process_name" class="input" placeholder="제품명 입력" />
+							<label>제품명</label> <select id="item_key" name="item_key"
+								class="select">
+								<option value="">선택하세요</option>
+								<c:forEach var="item" items="${itemList}">
+									<option value="${item.item_key}">${item.item_name}</option>
+								</c:forEach>
 
+							</select>
+						</div>
+						
+
+						<div class="form-group">
+							<label>공정명</label> <select name="process_name"
+								id="process_name" class="select">
+								<option value="" selected>-- 선택하세요 --</option>
+								<option value="가공" data-desc="전방 하우징 가공" data-seq="1">가공</option>
+								<option value="세척" data-desc="가공품 세척" data-seq="2">세척</option>
+								<option value="조립" data-desc="핵심 부품 조립" data-seq="3">조립</option>
+								<option value="성능검사" data-desc="성능 및 누설 검사" data-seq="4">성능검사</option>
+							</select>
 						</div>
 
+						<div class="form-group">
+							<label>공정 순서</label> <input type="number" class="input"
+								name="sequence_no" id="sequence_no" placeholder="예: 1" />
+						</div>
 
 						<div class="form-group">
 							<label>공정 설명</label> <input type="text" name="process_desc"
 								id="process_desc" class="input" placeholder="공정 설명 입력" />
 						</div>
 
-						<div class="form-group">
-							<label>공정 번호</label> <input type="number" class="input"
-								name="sequence_no" id="sequence_no" placeholder="예: 1" />
-						</div>
 
 						<div class="form-group">
 							<label>사용여부</label> <select class="select" name="status"
@@ -321,21 +374,6 @@
 							</select>
 						</div>
 
-						<div class="form-group">
-							<label>제품명</label> <select id="item_key" name="item_key"
-								class="select">
-								<option value="">선택하세요</option>
-								<c:forEach var="item" items="${map.list}">
-									<option value="${item.item_key}">${item.item_name}</option>
-								</c:forEach>
-
-							</select>
-						</div>
-
-						<div class="form-group">
-							<label>제품 코드</label> <input type="number" name="item_key"
-								id="item_key" class="input" placeholder="코드 입력" />
-						</div>
 					</div>
 				</div>
 

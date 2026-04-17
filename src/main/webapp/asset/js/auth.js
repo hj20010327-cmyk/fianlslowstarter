@@ -9,6 +9,7 @@ const AuthPage = {
         this.bindLoginValidation();
         this.bindPasswordMatchCheck();
         this.bindRequiredFieldHighlight();
+        this.bindPasswordToggle();
     },
 
     cacheDom() {
@@ -22,6 +23,8 @@ const AuthPage = {
         this.pwCheckMsg = document.getElementById("pwCheckMsg");
 
         this.requiredInputs = document.querySelectorAll("[data-required]");
+        this.passwordToggles = document.querySelectorAll(".eye-toggle");
+
     },
 
     onlyNumber(value) {
@@ -119,6 +122,26 @@ const AuthPage = {
             input.addEventListener("input", () => {
                 if (input.value.trim()) {
                     input.classList.remove("input-error");
+                }
+            });
+        });
+    },
+    bindPasswordToggle() {
+        if (!this.passwordToggles.length) return;
+
+        this.passwordToggles.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const targetId = btn.dataset.target;
+                const input = document.getElementById(targetId);
+
+                if (!input) return;
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+                } else {
+                    input.type = "password";
+                    btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
                 }
             });
         });

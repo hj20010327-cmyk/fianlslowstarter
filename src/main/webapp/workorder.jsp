@@ -57,6 +57,13 @@
 	color: #666;
 	margin-bottom: 4px;
 }
+@media (max-width: 770px) {
+	.search-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
 </style>
 <body>
 	<header class="header">
@@ -158,14 +165,23 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>기준 조건을 선택하세요</span>
+					<span>※ 작업지시 목록은 오늘 이후 작업만 표시됩니다. 이전 작업은 검색을 이용하세요.</span>
 				</div>
 				<form id="workOrderSearchForm" action="/slowstarter/workorder"
 					method="get">
 					<div class="search-row">
-						<input class="input" type="text" name="workOrderCode"
-							placeholder="작업지시 코드 입력" /> <input class="input" type="text"
-							name="planKey" placeholder="계획 키 입력" />
+						<input class="input" type="text" name="workOrderCode" value="${workOrderCode}"
+							placeholder="작업지시 코드 입력" /> 
+						
+						<select class="select" name="itemName">
+							<option value="">전체</option>
+							<c:forEach var="item" items="${itemList}">
+								<option value="${item.item_name}"
+									<c:if test="${itemName == item.item_name}">selected</c:if>>
+									${item.item_name}
+								</option>
+							</c:forEach>
+						</select>
 
 						<div class="search-item">
 							<span class="search-label">작업일</span> <input class="input"
@@ -241,46 +257,47 @@
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-									<c:choose>
-										<c:when test="${page == i}">
-											<a href="workorder?page=${i}" class="active">${i}</a>
-										</c:when>
-										<c:otherwise>
-											<a href="workorder?page=${i}">${i}</a>
-										</c:otherwise>
-									</c:choose>
+		
+									<c:if test="${page == i}">
+										<a href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}" class="active">${i}</a>
+									</c:if>
+									
+									<c:if test="${page != i}">
+										<a href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}">${i}</a>
+									</c:if>
+		
 								</c:forEach>
 							</div>
 						</div>
 					</form>
 				</div>
 
-				<div class="card">
-					<div class="section-title">
-						<h2>요약 / 상태</h2>
-						<span>오늘 기준</span>
-					</div>
-					<ul class="summary-list">
-						<li>
-							<div>
-								<strong>진행중 작업</strong>
-								<p>현재 8건의 작업이 진행 중입니다.</p>
-							</div> <span class="badge ok">8건</span>
-						</li>
-						<li>
-							<div>
-								<strong>금일 마감</strong>
-								<p>오늘 납기 작업이 3건 남았습니다.</p>
-							</div> <span class="badge warn">3건</span>
-						</li>
-						<li>
-							<div>
-								<strong>지연 작업</strong>
-								<p>현재 지연 작업은 없습니다.</p>
-							</div> <span class="badge ok">정상</span>
-						</li>
-					</ul>
-				</div>
+<!-- 				<div class="card"> -->
+<!-- 					<div class="section-title"> -->
+<!-- 						<h2>요약 / 상태</h2> -->
+<!-- 						<span>오늘 기준</span> -->
+<!-- 					</div> -->
+<!-- 					<ul class="summary-list"> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>진행중 작업</strong> -->
+<!-- 								<p>현재 8건의 작업이 진행 중입니다.</p> -->
+<!-- 							</div> <span class="badge ok">8건</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>금일 마감</strong> -->
+<!-- 								<p>오늘 납기 작업이 3건 남았습니다.</p> -->
+<!-- 							</div> <span class="badge warn">3건</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>지연 작업</strong> -->
+<!-- 								<p>현재 지연 작업은 없습니다.</p> -->
+<!-- 							</div> <span class="badge ok">정상</span> -->
+<!-- 						</li> -->
+<!-- 					</ul> -->
+<!-- 				</div> -->
 			</section>
 		</main>
 	</div>
@@ -374,12 +391,12 @@
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="edit_order_qty" name="edit_order_qty" readonly/>
+									id="edit_order_qty" name="edit_order_qty"/>
 							</div>
 
 							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
-									id="edit_work_date" readonly />
+									id="edit_work_date" name="edit_work_date"/>
 							</div>
 
 							<div class="form-group">

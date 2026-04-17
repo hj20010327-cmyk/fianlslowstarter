@@ -25,9 +25,9 @@ public class WorkOrderService {
 		return dao.deleteWorkOrder(key);
 	}
 	
-	public List searchList(String workOrderCode, String planKey) {
+	public List searchList(String workOrderCode, String itemName , String workDate) {
 	    WorkOrderDAO dao = new WorkOrderDAO();
-	    return dao.searchList(workOrderCode, planKey);
+	    return dao.searchList(workOrderCode, itemName, workDate);
 	}
 
 	public List selectPage(int startRow, int endRow) {
@@ -52,6 +52,20 @@ public class WorkOrderService {
 	public List selectPlanList() {
 	    WorkOrderDAO dao = new WorkOrderDAO();
 	    return dao.selectPlanList();
+	}
+	public List selectItemList() {
+		WorkOrderDAO dao = new WorkOrderDAO();
+		return dao.selectItemList();
+	}
+	
+	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate, int startRow, int endRow) {
+		WorkOrderDAO dao = new WorkOrderDAO();
+		return dao.searchPage(workOrderCode, itemName, workDate, startRow, endRow);
+	}
+
+	public int getSearchCount(String workOrderCode, String itemName, String workDate) {
+		WorkOrderDAO dao = new WorkOrderDAO();
+		return dao.getSearchCount(workOrderCode, itemName, workDate);
 	}
 	
 }

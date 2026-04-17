@@ -168,7 +168,11 @@
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-											<td><a href="javascript:void(0);"
+												
+											<td>
+											<c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<a href="javascript:void(0);"
 												onclick="openEditModal('${bom.bom_key}',
 											'${bom.bom_code}',
 											'${bom.qty}',
@@ -176,7 +180,14 @@
 											'${bom.item_name}',
 											'${bom.parent_item_name}'
 											)">
-													${bom.bom_code} </a></td>
+													${bom.bom_code} </a>
+											</c:if>
+											<c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													${bom.bom_code}
+											</c:if>
+											</td>
+											
 											<td>${bom.parent_item_name}</td>
 											<td>${bom.item_name}</td>
 											<td>${bom.qty}</td>
@@ -284,18 +295,16 @@
 
 						<div class="form-group">
 							<label>BOM코드</label> <input type="text" name="bom_code"
-								id="bom_code" class="input" placeholder="자동 생성" />
+								id="bom_code" class="input" placeholder="자동 생성" readonly />
 						</div>
 
 						<div class="form-group">
 							<label>완제품명</label> <select name="parent_item_key"
 								id="parent_item_key" class="modal-select">
-								<option value="" selected>-- 선택하세요 --</option>
-								<option value="1">컴프레셔 완제품 A형</option>
-								<option value="2">컴프레셔 완제품 B형</option>
-								<option value="3">컴프레셔 완제품 C형</option>
-								<option value="4">컴프레셔 완제품 D형</option>
-								<option value="5">컴프레셔 완제품 E형</option>
+								<option value="">선택하세요</option>
+								<c:forEach var="item" items="${itemList}">
+									<option value="${item.item_key}">${item.item_name}</option>
+								</c:forEach>
 							</select>
 						</div>
 

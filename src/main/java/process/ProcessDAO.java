@@ -80,14 +80,14 @@ public class ProcessDAO {
 						+ "	FROM( SELECT p.process_key,p.process_code,p.process_name,p.sequence_no,p.process_desc,p.status,p.item_key, "
 						+ "			i.item_name As Item_name From tb_process p  "
 						+ "			left join tb_item i on p.item_key = i.item_key  "
-						+ "			where 1=1 and (? = 0 or p.process_key = ? ) "
-						+ "			and (? is null or p.process_name like '%' || ? || '%' )   "
+						+ "			where 1=1 and (? is null or p.process_name like '%' || ? || '%' ) "
+						+ "			and (? is null or i.item_name like '%' || ? || '%' )   "
 						+ "			ORDER BY p.process_key ) p  "
 						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ");
 
 		) {
-			ps.setInt(1, processDTO.getKeycode());
-			ps.setInt(2, processDTO.getKeycode());
+			ps.setString(1, processDTO.getProcess_name());
+			ps.setString(2, processDTO.getProcess_name());
 			ps.setString(3, processDTO.getKeyword());
 			ps.setString(4, processDTO.getKeyword());
 			ps.setInt(5, processDTO.getEnd());
@@ -249,6 +249,36 @@ public class ProcessDAO {
 			e.printStackTrace();
 		}
 		return totalCount;
+	}
+	
+	// 모달창 완제품 중복 거르기 
+	public List<ProcessDTO> selectItemForProcess() {
+
+	    List<ProcessDTO> list = new ArrayList<>();
+
+	    String sql =
+	        "SELECT DISTINCT p.item_key, i.item_name " +
+	        " FROM tb_item i " +
+	        " left join tb_process p " +
+	        " on i.item_key = p.item_key " +   
+	        " ORDER BY item_name";
+
+	    try (Connection conn = getConn();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            ProcessDTO dto = new ProcessDTO();
+	            dto.setItem_key(rs.getInt("item_key"));
+	            dto.setItem_name(rs.getString("item_name"));
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
 	}
 
 }

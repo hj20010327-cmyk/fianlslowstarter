@@ -29,7 +29,7 @@ public class WorkOrderUpdateController extends HttpServlet {
 		HttpSession session = request.getSession();
 		LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 		
-		System.out.println("loginUser = " + loginUser);
+//		System.out.println("loginUser = " + loginUser);
 
 		if (loginUser == null
 				|| (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
@@ -42,11 +42,13 @@ public class WorkOrderUpdateController extends HttpServlet {
 			int work_order_key = Integer.parseInt(request.getParameter("work_order_key"));
 			int work_user_key = Integer.parseInt(request.getParameter("edit_work_user_key"));
 			int order_qty = Integer.parseInt(request.getParameter("edit_order_qty"));
+			Date work_date = Date.valueOf(request.getParameter("edit_work_date"));
 			
 			WorkOrderDTO dto = new WorkOrderDTO();
 			dto.setWork_order_key(work_order_key);
 			dto.setWork_user_key(work_user_key);
 			dto.setOrder_qty(order_qty);
+			dto.setWork_date(work_date);
 
 			WorkOrderService service = new WorkOrderService();
 			int result = service.updateWorkOrder(dto);

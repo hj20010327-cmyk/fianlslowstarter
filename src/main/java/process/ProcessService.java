@@ -42,7 +42,11 @@ public class ProcessService {
 		List list; 
 		int totalCount; 
 		
-		if(dto.getKeyword() != null && !dto.getKeyword().isEmpty()) {
+		if(
+			(dto.getKeyword() != null && !dto.getKeyword().isEmpty()) ||
+		    (dto.getProcess_name() != null && !dto.getProcess_name().isEmpty()) ||
+	        (dto.getStatus() != null && !dto.getStatus().isEmpty())
+				) {
 			list = processDAO.selectdetailProcess(dto);
 			totalCount = processDAO.SearchTotal(dto);
 		} else if (dto.getKeycode() != 0) {
@@ -58,5 +62,13 @@ public class ProcessService {
 		
 		return map;
 	}
+	
+	public List<ProcessDTO> getItemForProcess() {
+
+	    ProcessDAO processDAO = new ProcessDAO();
+
+	    return processDAO.selectItemForProcess();
+	}
+	
 
 }

@@ -315,6 +315,92 @@ public class BOMDAO {
 
 		    return list;
 		}
+		
+		// 자재 6~20까지 select 
+				public List<BOMDTO> selectnameForBOM() {
 
+				    List<BOMDTO> list = new ArrayList<>();
+
+				    String sql =
+				    	    "SELECT distinct i.item_name, i.item_key " +
+				    	    "FROM tb_item i " +
+				    	    "LEFT JOIN tb_bom b ON i.item_key = b.item_key " +
+				    	    "WHERE i.item_key BETWEEN 6 AND 20 " +
+				    	    "ORDER BY i.item_name";				     
+
+				    try (Connection conn = getConn();
+				         PreparedStatement ps = conn.prepareStatement(sql);
+				         ResultSet rs = ps.executeQuery()) {
+
+				        while (rs.next()) {
+				            BOMDTO dto = new BOMDTO();
+				            dto.setItem_key(rs.getInt("item_key"));
+				            dto.setItem_name(rs.getString("item_name"));
+				            list.add(dto);
+				        }
+
+				    } catch (Exception e) {
+				        e.printStackTrace();
+				    }
+
+				    return list;
+				}
+
+				
+				
+				// 봄키 비교해서 item 가져오기 
+				public List<BOMDTO> ItemForBOM() {
+
+				    List<BOMDTO> list = new ArrayList<>();
+
+				    String sql =
+				    	    "SELECT  "
+				    	    + "    b.parent_item_key, "
+				    	    + "    p.item_name AS parent_name, "
+				    	    + "    b.item_key, "
+				    	    + "    c.item_code,  "
+				    	    + "    c.item_name,  "
+				    	    + "    c.spec,  "
+				    	    + "    c.unit,  "
+				    	    + "    c.price,  "
+				    	    + "    c.safe_qty,  "
+				    	    + "    c.status,  "
+				    	    + "    c.created_at  "
+				    	    + " FROM tb_bom b "
+				    	    + " JOIN tb_item p  "
+				    	    + "    ON b.parent_item_key = p.item_key "
+				    	    + " JOIN tb_item c  "
+				    	    + "    ON b.item_key = c.item_key "
+				    	    + " WHERE b.parent_item_key BETWEEN 1 AND 5 "
+				    	    + " ORDER BY b.parent_item_key, b.item_key";				     
+
+				    try (Connection conn = getConn();
+				         PreparedStatement ps = conn.prepareStatement(sql);
+				         ResultSet rs = ps.executeQuery()) {
+
+				        while (rs.next()) {
+				            BOMDTO dto = new BOMDTO();
+				            dto.setItem_code(rs.getString("item_code"));
+				            dto.setItem_name(rs.getString("item_name"));
+				            dto.setSpec(rs.getString("spec"));
+				            dto.setUnit(rs.getString("unit"));
+				            dto.setPrice(rs.getInt("price"));
+				            dto.setSafe_qty(rs.getInt("safe_qty"));
+				            dto.setStatus(rs.getString("status"));
+				            dto.setCreated_at(rs.getDate("created_at"));
+				            dto.setParent_item_key(rs.getInt("parent_item_key"));
+				            dto.setItem_key(rs.getInt("item_key"));
+
+				            list.add(dto);
+				        }
+
+				    } catch (Exception e) {
+				        e.printStackTrace();
+				    }
+
+				    return list;
+				}
+
+				
 
 }

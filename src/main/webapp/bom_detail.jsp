@@ -11,12 +11,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BOM 상세</title>
 
-<link rel="stylesheet" href="./asset/css/common.css" />
-<link rel="stylesheet" href="./asset/css/bom-detail.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/common.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/bom-detail.css" />
 
 
 <script src="./asset/js/common.js" defer></script>
-<script src="./asset/js/bom-detail.js" defer></script>
+
 
 
 <style>
@@ -129,45 +129,7 @@
 }
 </style>
 <script>
-const sampleData = {
-		  1: {
-		    name: "컴프레셔 A형",
-		    children: [
-		      {
-		        name: "전방 하우징",
-		        qty: 1,
-		        children: [
-		          { name: "알루미늄 블록", qty: 2 },
-		          { name: "볼트 M6", qty: 6 }
-		        ]
-		      },
-		      {
-		        name: "샤프트",
-		        qty: 1,
-		        children: [
-		          { name: "베어링 6204", qty: 2 },
-		          { name: "오링", qty: 3 }
-		        ]
-		      }
-		    ]
-		  },
 
-		  2: {
-		    name: "컴프레셔 B형",
-		    children: [
-		      { name: "하우징 B", qty: 1 },
-		      { name: "클러치", qty: 1 }
-		    ]
-		  },
-
-		  3: {
-		    name: "컴프레셔 C형",
-		    children: [
-		      { name: "모터", qty: 1 },
-		      { name: "프레임", qty: 1 }
-		    ]
-		  }
-		};
 
 		// ===== 선택 상태 =====
 		let selectedId = null;
@@ -236,10 +198,10 @@ const sampleData = {
 		}
 		
 		function toggle(code) {
-			const row = document.getElementById("item-" + id);
+			const row = document.getElementById("item-" + code);
 			
 			if (row.style.display === "none"){
-				row.style.display = "table_row";
+				row.style.display = "table-row";
 			} else {
 				row.style.display = "none";
 			}
@@ -261,6 +223,8 @@ const sampleData = {
 
 		<script>
 			const contextPath = '${pageContext.request.contextPath}';
+			
+			
 		</script>
 
 		<div class="header-right">
@@ -362,6 +326,8 @@ const sampleData = {
       <li onclick="selectProduct(1)">컴프레셔 A형</li>
       <li onclick="selectProduct(2)">컴프레셔 B형</li>
       <li onclick="selectProduct(3)">컴프레셔 C형</li>
+      <li onclick="selectProduct(4)">컴프레셔 D형</li>
+      <li onclick="selectProduct(5)">컴프레셔 E형</li>
     </ul>
   </section>
 
@@ -375,25 +341,26 @@ const sampleData = {
     <div id="bomTree" class="tree"></div>
     
     <table >
-    	<c:forEach var="bom" items="${map.list}">
-    	<tr onclick="toggle('${bom.bom_code}')" style="cursor:pointer">
-    		<td>▶ ${bom.bom_code}</td>
-    		<td>▶ ${bom.parent_item_name}</td>
+    	<c:forEach var="parent" items="${itemList}">
+    	<tr onclick="toggle('${parent.parent_item_key}')" >
+    		<td>▶ ${parent.item_name}</td>
     	</tr>
     	
-    	<tr id="item-${bom.bom_code}" style="display:none;">
+    	<tr id="item-${parent.parent_item_key}" style="display:none;">
     		<td colspan="2">
     		
     			<table border="1" width="100%">
-    				<c:forEach var="item" items="${itemMap[bom.bom_code]}">
+    				<c:forEach var="child" items="${material}">
+    				 <c:if test="${parent.item_key == child.parent_item_key}">
     					<tr>
-    						<td> - ${item.item_code}</td>
-    						<td> - ${item.item_name}</td>
-    						<td> - ${item.spec}</td>
-    						<td> - ${item.price}</td>
-    						<td> - ${item.safe_qty}</td>
-    						<td> - ${item.unit}</td>
+    						<td> - ${child.item_code}</td>
+    						<td> - ${child.item_name}</td>
+    						<td> - ${child.spec}</td>
+    						<td> - ${child.price}</td>
+    						<td> - ${child.safe_qty}</td>
+    						<td> - ${child.unit}</td>
    						</tr>
+   						</c:if>
 					</c:forEach>
 				</table>
 			</td>

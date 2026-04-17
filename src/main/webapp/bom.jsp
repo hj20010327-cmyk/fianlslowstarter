@@ -143,6 +143,12 @@
 							<c:if
 								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 								<span>
+									<button type="button" class="btn"
+										style="background: #4a90e2; color: white;"
+										onclick="location.href='${pageContext.request.contextPath}/bom/detail'">
+										BOM 상세페이지</button>
+								</span>
+								<span>
 									<button type="submit" class="btn" value="삭제"
 										style="background: #4a90e2; color: white;">삭제</button> <input
 									type="hidden" name="cmd" value="delete">
@@ -168,26 +174,23 @@
 										<tr>
 											<td><input type="checkbox" name="bom_key"
 												value="${bom.bom_key}"></td>
-												
-											<td>
-											<c:if
-												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-											<a href="javascript:void(0);"
-												onclick="openEditModal('${bom.bom_key}',
+
+											<td><c:if
+													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<a href="javascript:void(0);"
+														onclick="openEditModal('${bom.bom_key}',
 											'${bom.bom_code}',
 											'${bom.qty}',
 											'${bom.remark}',
 											'${bom.item_name}',
 											'${bom.parent_item_name}'
 											)">
-													${bom.bom_code} </a>
-											</c:if>
-											<c:if
-												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+														${bom.bom_code} </a>
+												</c:if> <c:if
+													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
 													${bom.bom_code}
-											</c:if>
-											</td>
-											
+											</c:if></td>
+
 											<td>${bom.parent_item_name}</td>
 											<td>${bom.item_name}</td>
 											<td>${bom.qty}</td>
@@ -301,7 +304,7 @@
 						<div class="form-group">
 							<label>완제품명</label> <select name="parent_item_key"
 								id="parent_item_key" class="modal-select">
-								<option value="">선택하세요</option>
+								<option value="" dsiablied selected>선택하세요</option>
 								<c:forEach var="item" items="${itemList}">
 									<option value="${item.item_key}">${item.item_name}</option>
 								</c:forEach>
@@ -312,21 +315,9 @@
 							<label>자재명</label> <select name="item_key" id="item_key"
 								class="modal-select">
 								<option value="" selected>-- 선택하세요 --</option>
-								<option value="6">전방 하우징</option>
-								<option value="7">후방 하우징</option>
-								<option value="8">실린더 블록</option>
-								<option value="9">샤프트</option>
-								<option value="10">스와시 플레이트</option>
-								<option value="11">피스톤 키트</option>
-								<option value="12">밸브 플레이트</option>
-								<option value="13">클러치 허브</option>
-								<option value="14">풀리</option>
-								<option value="15">코일 어셈블리</option>
-								<option value="16">베어링 6204</option>
-								<option value="17">오링</option>
-								<option value="18">샤프트 씰</option>
-								<option value="19">볼트MB</option>
-								<option value="20">컴프레셔 오일</option>
+								<c:forEach var="item" items="${itemname}">
+									<option value="${item.item_key}">${item.item_name}</option>
+								</c:forEach>
 							</select>
 						</div>
 

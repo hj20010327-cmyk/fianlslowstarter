@@ -25,39 +25,59 @@
     <table border="1">
 
         <tr>
-            <th>BOM CODE</th>
-            <th>NAME</th>
+          
+            <th>완제품명</th>
         </tr>
 
-        <c:forEach var="bom" items="${list}">
+        <c:forEach var="item" items="${itemList}">
             <tr>
-                <td>${bom.bom_code}</td>
-                <td>${bom.parent_item_name}</td>
+                <td>${item.item_name}</td>
+               
             </tr>
         </c:forEach>
-        
-        <c:forEach var="bom" items="${list}">
-										<tr>
-											<td><input type="checkbox" name="bom_key"
-												value="${bom.bom_key}"></td>
-											<td><a href="javascript:void(0);"
-												onclick="openEditModal('${bom.bom_key}',
-											'${bom.bom_code}',
-											'${bom.qty}',
-											'${bom.remark}',
-											'${bom.item_name}',
-											'${bom.parent_item_name}'
-											)">
-													${bom.bom_code} </a></td>
-											<td>${bom.parent_item_name}</td>
-											<td>${bom.item_name}</td>
-											<td>${bom.qty}</td>
-											<td>${bom.remark}</td>
-										</tr>
-									</c:forEach>
+
 
     </table>
+    
+    <table border="1"> 
+    	<tr>
+    	<th>자재코드</th>
+    	<th>자재명</th>
+    	<th>검사</th>
+    	<th>단위</th>
+    	<th>단가</th>
+    	<th>수량</th>
+    	<th>상태</th>
+    	</tr>
+    	 <c:forEach var="item" items="${material}">
+    	<tr>
+    	<th>${item.item_code}</th>
+    	<th>${item.item_name}</th>
+    	<th>${item.spec}</th>
+    	<th>${item.unit}</th>
+    	<th>${item.price}</th>
+    	<th>${item.safe_qty}</th>
+    	<th>${item.status}</th>
+    	</tr>
+    	</c:forEach>
+    </table>
 </c:if>
+
+
+
+<ul>
+<c:forEach var="parent" items="${itemList}">
+    <li>${parent.item_name}
+        <ul>
+            <c:forEach var="child" items="${list}">
+                <c:if test="${parent.item_key == child.parent_item_key}">
+                    <li>${child.item_name}</li>
+                </c:if>
+            </c:forEach>
+        </ul>
+    </li>
+</c:forEach>
+</ul>
 
 list size = ${list.size()}
 

@@ -7,6 +7,8 @@ import java.util.Map;
 import process.ProcessDAO;
 import process.ProcessDTO;
 
+import product.*;
+
 public class BOMService {
 	
 	public int insert(BOMDTO dto) {
@@ -69,4 +71,25 @@ public class BOMService {
 	    return bomDAO.selectItemForBOM();
 	}
 	
+	public List<BOMDTO> getnameForBOM() {
+		
+		BOMDAO bomDAO = new BOMDAO();
+		
+		return bomDAO.selectnameForBOM();
+	}
+	
+	public List<ProductDTO> getProductList(int startRow, int endRow, String keyword){
+		ProductDAO dao = new ProductDAO();
+		return dao.selectAll(startRow, endRow, keyword);
+	}
+	
+	
+	public List<BOMDTO> MaterialBOM(){
+		BOMDAO bomDAO = new BOMDAO(); 
+		return bomDAO.ItemForBOM(); 
+	}
+	
+	
 }
+
+

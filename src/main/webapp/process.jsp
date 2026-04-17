@@ -120,10 +120,9 @@
 				</div>
 				<form method="get" action="process">
 					<div class="search-row">
-						<input class="input" type="text" name="keyword"
-							placeholder="완제품명" />  
-							
-					<%--	<select class="select">
+						<input class="input" type="text" name="keyword" value="${param.keyword}" placeholder="완제품명" />
+
+						<%--	<select class="select">
 							<option>제품명</option>
 							<option>컴프레셔 완제품A형</option>
 							<option>컴프레셔 완제품B형</option>
@@ -131,23 +130,27 @@
 							<option>컴프레셔 완제품D형</option>
 							<option>컴프레셔 완제품E형</option>
 						</select>  --%>
-						
+
 						<select class="select">
 							<option>선택</option>
 							<option>사용</option>
 							<option>미사용</option>
 						</select>
-						
-					<%--	<input class="input" name="keyword"
+
+						<%--	<input class="input" name="keyword"
 							type="text" placeholder="공정구분" />   --%>
-							
+
 						<select class="select" name="process_name">
-							<option>공정구분</option>
-							<option value="가공">가공</option>
-							<option value="세척">세척</option>
-							<option value="조립">조립</option>
-							<option value="성능검사">성능검사</option>
-						
+							<option value="">공정구분</option>
+							<option value="가공"
+								${param.process_name == '가공' ? 'selected' : ''}>가공</option>
+							<option value="세척"
+								${param.process_name == '세척' ? 'selected' : '' }>세척</option>
+							<option value="조립"
+								${param.process_name == '조립' ? 'selected' : '' }>조립</option>
+							<option value="성능검사"
+								${param.process_name == '성능검사' ? 'selected' : '' }>성능검사</option>
+
 						</select>
 						<button class="btn primary" type="submit">조회</button>
 					</div>
@@ -174,12 +177,12 @@
 								<thead>
 									<tr>
 										<th>선택</th>
+										<th>공정코드</th>
 										<th>제품명</th>
 										<th>공정순서</th>
 										<th>공정명</th>
 										<th>상태</th>
 										<th>공정설명</th>
-										<th>공정코드</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -189,17 +192,10 @@
 
 											<td><input type="checkbox" name="process_key"
 												value="${process.process_key}"></td>
-											<td>${ process.item_name }</td>
-											<td>${ process.sequence_no }</td>
-											<td>${ process.process_name }</td>
-											<td>${ process.status }</td>
-											<td>${ process.process_desc }</td>
-											<!-- 관리자용 -->
-												<td>
-											<c:if
-												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-												<a href="javascript:void(0);"
-													onclick="openEditModal(
+											<td><c:if
+													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<a href="javascript:void(0);"
+														onclick="openEditModal(
 												'${process.process_key}',		
 												'${process.process_code}',		
 												'${process.process_name}',		
@@ -209,12 +205,16 @@
 												'${process.item_key}'		
 												)">
 														${ process.process_code }</a>
-											</c:if>
-											<c:if
-												test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+												</c:if> <c:if
+													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
 												${ process.process_code }
-											</c:if>
-											</td>
+											</c:if></td>
+											<td>${ process.item_name }</td>
+											<td>${ process.sequence_no }</td>
+											<td>${ process.process_name }</td>
+											<td>${ process.status }</td>
+											<td>${ process.process_desc }</td>
+											<!-- 관리자용 -->
 										</tr>
 									</c:forEach>
 								</tbody>
@@ -257,8 +257,8 @@
 						</div>
 					</div>
 				</form>
-				
-				
+
+
 				<script>
 console.log("JS 실행됨");
 
@@ -271,6 +271,46 @@ document.addEventListener("change", function (e) {
         	selected.dataset.seq || "";
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+	  const processSelect = document.getElementById("process_name");
+	  const desc = document.getElementById("process_desc");
+	  const seq = document.getElementById("sequence_no");
+
+	  if (!processSelect) return;
+
+	  // 복원
+	  const saved = sessionStorage.getItem("process_name");
+	  if (saved) {
+	    processSelect.value = saved;
+	  }
+
+	  // change 이벤트
+	  processSelect.addEventListener("change", (e) => {
+
+	    const selected = e.target.options[e.target.selectedIndex];
+
+	    sessionStorage.setItem("process_name", e.target.value);
+
+	    if (desc) desc.value = selected.dataset.desc || "";
+	    if (seq) seq.value = selected.dataset.seq || "";
+	  });
+
+	});
+	
+form.addEventListener("submit", () => {
+	  const select = document.getElementById("process_name");
+	  sessionStorage.setItem("process_name", select.value);
+	});
+	
+window.addEventListener("load", () => {
+	  const v = sessionStorage.getItem("process_name");
+	  if (v) document.getElementById("process_name").value = v;
+	});
+	
+
+
 </script>
 
 				<div class="card">
@@ -342,11 +382,11 @@ document.addEventListener("change", function (e) {
 
 							</select>
 						</div>
-						
+
 
 						<div class="form-group">
-							<label>공정명</label> <select name="process_name"
-								id="process_name" class="select">
+							<label>공정명</label> <select name="process_name" id="process_name"
+								class="select">
 								<option value="" selected>-- 선택하세요 --</option>
 								<option value="가공" data-desc="전방 하우징 가공" data-seq="1">가공</option>
 								<option value="세척" data-desc="가공품 세척" data-seq="2">세척</option>

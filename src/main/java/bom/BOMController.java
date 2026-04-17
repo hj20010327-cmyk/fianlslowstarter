@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import process.ProcessDTO;
 
+import product.*;
+
 /**
  * Servlet implementation class bomcontroller
  */
@@ -94,15 +96,12 @@ public class BOMController extends HttpServlet {
 
 		request.setAttribute("itemList", filtered);
 
-		String view = request.getParameter("view");
+		List<BOMDTO> itemname = bomservice.getnameForBOM();
+		request.setAttribute("itemname", itemname);
 
-		if ("detail".equals(view)) {
-			RequestDispatcher rd = request.getRequestDispatcher("/bom_detail.jsp");
-			rd.forward(request, response);
-		} else {
-			RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
-			rd.forward(request, response);
-		}
+		
+		RequestDispatcher rd = request.getRequestDispatcher("/bom.jsp");
+		rd.forward(request, response);
 
 	}
 

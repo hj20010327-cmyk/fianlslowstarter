@@ -69,6 +69,12 @@
 	color: #666;
 	margin-bottom: 4px;
 }
+@media (max-width: 770px) {
+	.search-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
 </style>
 <body>
 	<header class="header">
@@ -303,36 +309,36 @@
 					</form>
 				</div>
 
-				<div class="card">
-					<div class="section-title">
-						<h2>설비 상태 요약</h2>
-						<span>실시간 기준</span>
-					</div>
+<!-- 				<div class="card"> -->
+<!-- 					<div class="section-title"> -->
+<!-- 						<h2>설비 상태 요약</h2> -->
+<!-- 						<span>실시간 기준</span> -->
+<!-- 					</div> -->
 
-					<ul class="summary-list">
-						<li>
-							<div>
-								<strong>가동 설비</strong>
-								<p>총 12대 중 9대 가동중</p>
-							</div>
-							<span class="badge ok">정상</span>
-						</li>
-						<li>
-							<div>
-								<strong>점검 필요</strong>
-								<p>3대 점검 필요</p>
-							</div>
-							<span class="badge warn">주의</span>
-						</li>
-						<li>
-							<div>
-								<strong>고장 설비</strong>
-								<p>1대 고장 발생</p>
-							</div>
-							<span class="badge danger">긴급</span>
-						</li>
-					</ul>
-				</div>
+<!-- 					<ul class="summary-list"> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>가동 설비</strong> -->
+<!-- 								<p>총 12대 중 9대 가동중</p> -->
+<!-- 							</div> -->
+<!-- 							<span class="badge ok">정상</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>점검 필요</strong> -->
+<!-- 								<p>3대 점검 필요</p> -->
+<!-- 							</div> -->
+<!-- 							<span class="badge warn">주의</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>고장 설비</strong> -->
+<!-- 								<p>1대 고장 발생</p> -->
+<!-- 							</div> -->
+<!-- 							<span class="badge danger">긴급</span> -->
+<!-- 						</li> -->
+<!-- 					</ul> -->
+<!-- 				</div> -->
 			</section>
 		</main>
 

@@ -29,12 +29,8 @@ public class ProductionSaveController extends HttpServlet {
 		dto.setProd_code(request.getParameter("prod_code"));
 		dto.setProd_date(request.getParameter("prod_date"));
 
-		dto.setGood_qty(parseInt(request.getParameter("good_qty")));
-		dto.setDefect_qty(parseInt(request.getParameter("defect_qty")));
-
 		dto.setWork_order_key(parseInt(request.getParameter("work_order_key")));
-		dto.setWork_user_key(parseInt(request.getParameter("work_user_key")));
-		dto.setPlan_key(parseInt(request.getParameter("plan_key")));
+		dto.setQuality_key(parseInt(request.getParameter("quality_key")));
 
 		if ("update".equals(cmd)) {
 			service.updateProduction(dto);

@@ -19,16 +19,15 @@ public class QualityAddController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        // 한글 처리
+    		System.out.println("quality/add do Get 실행");
+    	
+    	
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8;");
 
-        // 로그인 세션 가져오기
         HttpSession session = request.getSession();
         LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 
-        // 관리자 / 슈퍼바이저만 등록 가능
         if (loginUser == null ||
             (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
             response.sendRedirect(request.getContextPath() + "/qualityList");
@@ -36,25 +35,28 @@ public class QualityAddController extends HttpServlet {
         }
 
         try {
-            // 전달받은 값을 DTO에 담기
             QualityDTO dto = new QualityDTO();
-
-            dto.setQuality_code(request.getParameter("quality_code"));                 // 검사번호
-            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));   // 검사일자
-            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty"))); // 검사수량
-            dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));       // 양품수량
-            dto.setDefect_qty(Integer.parseInt(request.getParameter("defect_qty")));   // 불량수량
-            dto.setDefect_reason(request.getParameter("defect_reason"));               // 불량사유
-            dto.setQc_status(request.getParameter("qc_status"));                       // 검사상태
-            dto.setProd_key(Integer.parseInt(request.getParameter("prod_key")));       // 생산 KEY
-            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));       // 담당자 KEY
-
-            // 서비스 호출해서 DB 등록
             QualityService service = new QualityService();
+
+            // 검사번호 자동 생성
+            dto.setQuality_code(service.getNextQualityCode());
+
+            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));
+            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty")));
+            dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));
+            dto.setDefect_qty(Integer.parseInt(request.getParameter("defect_qty")));
+            dto.setDefect_reason(request.getParameter("defect_reason"));
+            dto.setQc_status(request.getParameter("qc_status"));
+            dto.setProd_key(Integer.parseInt(request.getParameter("prod_key")));   // WORK_ORDER_KEY
+            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));
+
             int result = service.addquality(dto);
 
-            // 등록 후 목록으로 이동
-            response.sendRedirect(request.getContextPath() + "/qualityList");
+            if (result > 0) {
+                response.sendRedirect(request.getContextPath() + "/qualityList");
+            } else {
+                response.getWriter().println("<script>alert('품질 등록 실패'); history.back();</script>");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

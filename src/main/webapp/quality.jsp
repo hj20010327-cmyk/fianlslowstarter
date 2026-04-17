@@ -215,8 +215,16 @@
 					<div class="search-inline-wrap">
 						<div class="search-inline-item">
 							<input class="input" type="text" name="qualityCode"
-								placeholder="검사 번호 입력"
-								value="${qualityCode}" />
+								placeholder="검사 번호 입력" value="${qualityCode}" />
+						</div>
+
+						<div class="search-inline-item">
+							<select class="select" name="itemName">
+								<option value="">품목명 선택</option>
+								<c:forEach var="iname" items="${itemNameList}">
+									<option value="${iname}" ${itemName == iname ? 'selected' : ''}>${iname}</option>
+								</c:forEach>
+							</select>
 						</div>
 
 						<div class="search-inline-item">
@@ -228,8 +236,8 @@
 							</select>
 						</div>
 
-						<div class="search-inline-item.date-area">
-							<label class="search-small-label">등록일</label>
+						<div class="search-inline-item date-area">
+							<label class="search-small-label">검사일자</label>
 							<input class="input date-input" type="date" name="inspectDate"
 								value="${inspectDate}" />
 						</div>
@@ -262,12 +270,11 @@
 												style="cursor:pointer;" onclick="toggleAllCheckboxes()"
 											</c:if>
 										>선택</th>
-
 										<th>검사번호</th>
 										<th>품목명</th>
 										<th>생산명</th>
 										<th>검사일자</th>
-										<th>등록일</th>
+										<th>마감일</th>
 										<th>검사수량</th>
 										<th>양품수량</th>
 										<th>불량수량</th>
@@ -278,85 +285,53 @@
 								</thead>
 								<tbody>
 									<c:forEach var="m" items="${list}">
-
-										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-											<tr class="click-row"
-												onclick="openEditModal(
-												'${m.quality_key}',
-												'${m.quality_code}',
-												'${m.inspect_date}',
-												'${m.inspect_qty}',
-												'${m.defect_reason}',
-												'${m.prod_key}',
-												'${m.item_key}',
-												'${m.user_key}'
-												)">
-												<td onclick="event.stopPropagation();">
-													<input type="checkbox" name="quality_key" value="${m.quality_key}">
-												</td>
-
-												<td>${m.quality_code}</td>
-												<td>${m.item_name}</td>
-												<td>${m.prod_name}</td>
-												<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
-												<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
-												<td>${m.inspect_qty}</td>
-												<td>${m.good_qty}</td>
-												<td>${m.defect_qty}</td>
-												<td>${m.defect_reason}</td>
-												<td>
-													<c:choose>
-														<c:when test="${m.qc_status eq '합격'}">
-															<span class="status-pass">합격</span>
-														</c:when>
-														<c:when test="${m.qc_status eq '불합격'}">
-															<span class="status-fail">불합격</span>
-														</c:when>
-														<c:otherwise>
-															<span class="status-re">재검</span>
-														</c:otherwise>
-													</c:choose>
-												</td>
-												<td>${m.user_name}</td>
-											</tr>
-										</c:if>
-
-										<c:if test="${dto.user_role ne '관리자' and dto.user_role ne '슈퍼바이저'}">
-											<tr>
-												<td></td>
-												<td>${m.quality_code}</td>
-												<td>${m.item_name}</td>
-												<td>${m.prod_name}</td>
-												<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
-												<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
-												<td>${m.inspect_qty}</td>
-												<td>${m.good_qty}</td>
-												<td>${m.defect_qty}</td>
-												<td>${m.defect_reason}</td>
-												<td>
-													<c:choose>
-														<c:when test="${m.qc_status eq '합격'}">
-															<span class="status-pass">합격</span>
-														</c:when>
-														<c:when test="${m.qc_status eq '불합격'}">
-															<span class="status-fail">불합격</span>
-														</c:when>
-														<c:otherwise>
-															<span class="status-re">재검</span>
-														</c:otherwise>
-													</c:choose>
-												</td>
-												<td>${m.user_name}</td>
-											</tr>
-										</c:if>
-
+										<tr class="click-row"
+											onclick="openEditModal(
+											'${m.quality_key}',
+											'${m.quality_code}',
+											'${m.inspect_date}',
+											'${m.inspect_qty}',
+											'${m.good_qty}',
+											'${m.defect_qty}',
+											'${m.defect_reason}',
+											'${m.qc_status}',
+											'${m.prod_key}',
+											'${m.prod_name}',
+											'${m.item_name}',
+											'${m.user_key}'
+											)">
+											<td onclick="event.stopPropagation();">
+												<input type="checkbox" name="quality_key" value="${m.quality_key}">
+											</td>
+											<td>${m.quality_code}</td>
+											<td>${m.item_name}</td>
+											<td>${m.prod_name}</td>
+											<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
+											<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
+											<td>${m.inspect_qty}</td>
+											<td>${m.good_qty}</td>
+											<td>${m.defect_qty}</td>
+											<td>${m.defect_reason}</td>
+											<td>
+												<c:choose>
+													<c:when test="${m.qc_status eq '합격'}">
+														<span class="status-pass">합격</span>
+													</c:when>
+													<c:when test="${m.qc_status eq '불합격'}">
+														<span class="status-fail">불합격</span>
+													</c:when>
+													<c:otherwise>
+														<span class="status-re">재검</span>
+													</c:otherwise>
+												</c:choose>
+											</td>
+											<td>${m.user_name}</td>
+										</tr>
 									</c:forEach>
 
 									<c:if test="${empty list}">
 										<tr>
-											<td colspan="12" style="text-align: center; padding: 30px;">
-												데이터가 없습니다.
-											</td>
+											<td colspan="12" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
 										</tr>
 									</c:if>
 								</tbody>
@@ -365,11 +340,11 @@
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${currentPage == i}">
-										<a href="${pageContext.request.contextPath}/qualityList?page=${i}&qualityCode=${qualityCode}&status=${status}&inspectDate=${inspectDate}"
+										<a href="${pageContext.request.contextPath}/qualityList?page=${i}&qualityCode=${qualityCode}&itemName=${itemName}&status=${status}&inspectDate=${inspectDate}"
 										   class="active">${i}</a>
 									</c:if>
 									<c:if test="${currentPage != i}">
-										<a href="${pageContext.request.contextPath}/qualityList?page=${i}&qualityCode=${qualityCode}&status=${status}&inspectDate=${inspectDate}">
+										<a href="${pageContext.request.contextPath}/qualityList?page=${i}&qualityCode=${qualityCode}&itemName=${itemName}&status=${status}&inspectDate=${inspectDate}">
 											${i}
 										</a>
 									</c:if>
@@ -393,37 +368,53 @@
 
 				<div class="modal-body">
 					<input type="hidden" id="quality_key" name="quality_key" />
+					<input type="hidden" id="quality_code" name="quality_code" />
+					<input type="hidden" id="prod_key_hidden" name="prod_key" />
 
 					<div class="form-grid">
-						<div class="form-group">
-							<label>검사번호</label>
-							<input type="text" class="input" id="quality_code" name="quality_code" />
-						</div>
-
 						<div class="form-group">
 							<label>검사일자</label>
 							<input type="date" class="input" id="inspect_date" name="inspect_date" />
 						</div>
 
+						<div class="form-group" id="prod_select_wrap">
+							<label>작업지시 코드</label>
+							<select class="select" id="prod_key_select">
+								<option value="">선택</option>
+								<c:forEach var="w" items="${workOrderList}">
+									<option value="${w.prod_key}"
+											data-itemname="${w.item_name}"
+											data-stockqty="${w.stock_qty}"
+											data-prodname="${w.prod_name}">
+										${w.prod_name}
+									</option>
+								</c:forEach>
+							</select>
+						</div>
+
+						<div class="form-group" id="prod_view_wrap" style="display:none;">
+							<label>작업지시 코드</label>
+							<input type="text" class="input" id="prod_name_view" readonly />
+						</div>
+
 						<div class="form-group">
 							<label>검사수량</label>
-							<input type="number" class="input" id="inspect_qty" name="inspect_qty" />
+							<input type="number" class="input" id="inspect_qty" name="inspect_qty" placeholder="검사수량 자동입력" readonly />
 						</div>
 
 						<div class="form-group">
 							<label>양품수량</label>
-							<input type="number" class="input" id="good_qty" name="good_qty" />
+							<input type="number" class="input" id="good_qty" name="good_qty" placeholder="양품수량 자동계산" readonly />
 						</div>
 
 						<div class="form-group">
 							<label>불량수량</label>
-							<input type="number" class="input" id="defect_qty" name="defect_qty" />
+							<input type="number" class="input" id="defect_qty" name="defect_qty" placeholder="불량수량 입력" />
 						</div>
 
 						<div class="form-group">
-							<label>검사상태</label>
+							<label>상태</label>
 							<select class="select" id="qc_status" name="qc_status">
-								<option value="">선택</option>
 								<option value="합격">합격</option>
 								<option value="불합격">불합격</option>
 								<option value="재검">재검</option>
@@ -431,13 +422,13 @@
 						</div>
 
 						<div class="form-group">
-							<label>생산KEY</label>
-							<input type="number" class="input" id="prod_key" name="prod_key" />
+							<label>품목명</label>
+							<input type="text" class="input" id="item_name_view" readonly />
 						</div>
 
 						<div class="form-group">
 							<label>담당자명</label>
-							<select class="select" id="user_key" name="user_key" required>
+							<select class="select" id="user_key" name="user_key">
 								<option value="">선택</option>
 								<c:forEach var="u" items="${userList}">
 									<option value="${u.user_key}">${u.user_name}</option>
@@ -447,7 +438,7 @@
 
 						<div class="form-group" style="grid-column: span 2;">
 							<label>불량사유</label>
-							<textarea class="textarea" id="defect_reason" name="defect_reason"></textarea>
+							<textarea class="textarea" id="defect_reason" name="defect_reason" placeholder="불량사유 입력"></textarea>
 						</div>
 					</div>
 				</div>
@@ -466,7 +457,8 @@
 			document.getElementById("modalTitle").innerText = "품질 등록";
 			document.getElementById("qualityForm").action = contextPath + "/quality/add";
 
-			document.getElementById("quality_code").readOnly = false;
+			document.getElementById("prod_select_wrap").style.display = "";
+			document.getElementById("prod_view_wrap").style.display = "none";
 
 			document.getElementById("quality_key").value = "";
 			document.getElementById("quality_code").value = "";
@@ -474,25 +466,34 @@
 			document.getElementById("inspect_qty").value = "";
 			document.getElementById("good_qty").value = "";
 			document.getElementById("defect_qty").value = "";
-			document.getElementById("qc_status").value = "";
-			document.getElementById("prod_key").value = "";
-			document.getElementById("user_key").value = "";
+			document.getElementById("qc_status").value = "합격";
+			document.getElementById("prod_key_select").value = "";
+			document.getElementById("prod_key_hidden").value = "";
+			document.getElementById("prod_name_view").value = "";
+			document.getElementById("item_name_view").value = "";
 			document.getElementById("defect_reason").value = "";
+			document.getElementById("user_key").value = "${dto.user_key}";
 
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openEditModal(qualityKey, qualityCode, inspectDate, inspectQty, defectReason, prodKey, itemKey, userKey) {
+		function openEditModal(qualityKey, qualityCode, inspectDate, inspectQty, goodQty, defectQty, defectReason, qcStatus, prodKey, prodName, itemName, userKey) {
 			document.getElementById("modalTitle").innerText = "품질 수정";
 			document.getElementById("qualityForm").action = contextPath + "/quality/update";
 
-			document.getElementById("quality_code").readOnly = true;
+			document.getElementById("prod_select_wrap").style.display = "none";
+			document.getElementById("prod_view_wrap").style.display = "";
 
 			document.getElementById("quality_key").value = qualityKey;
 			document.getElementById("quality_code").value = qualityCode;
 			document.getElementById("inspect_date").value = inspectDate.substring(0, 10);
 			document.getElementById("inspect_qty").value = inspectQty;
-			document.getElementById("prod_key").value = prodKey;
+			document.getElementById("good_qty").value = goodQty;
+			document.getElementById("defect_qty").value = defectQty;
+			document.getElementById("qc_status").value = qcStatus;
+			document.getElementById("prod_key_hidden").value = prodKey;
+			document.getElementById("prod_name_view").value = prodName;
+			document.getElementById("item_name_view").value = itemName;
 			document.getElementById("user_key").value = userKey;
 
 			if (defectReason == 'null') {
@@ -535,6 +536,53 @@
 				chk.checked = !allChecked;
 			});
 		}
+
+		document.addEventListener("DOMContentLoaded", function() {
+			const inspectQty = document.getElementById("inspect_qty");
+			const goodQty = document.getElementById("good_qty");
+			const defectQty = document.getElementById("defect_qty");
+			const prodKeySelect = document.getElementById("prod_key_select");
+			const prodKeyHidden = document.getElementById("prod_key_hidden");
+			const itemNameView = document.getElementById("item_name_view");
+
+			function calcGoodQty() {
+				const inspect = parseInt(inspectQty.value || 0);
+				const defect = parseInt(defectQty.value || 0);
+
+				if (defect > inspect) {
+					alert("불량수량은 검사수량보다 클 수 없습니다.");
+					defectQty.value = inspect;
+					goodQty.value = 0;
+					return;
+				}
+
+				goodQty.value = inspect - defect;
+			}
+
+			if (defectQty) {
+				defectQty.addEventListener("input", calcGoodQty);
+			}
+
+			if (prodKeySelect) {
+				prodKeySelect.addEventListener("change", function() {
+					const selected = this.options[this.selectedIndex];
+					const stockQty = selected.getAttribute("data-stockqty");
+					const itemName = selected.getAttribute("data-itemname");
+
+					prodKeyHidden.value = this.value;
+
+					if (stockQty != null) {
+						inspectQty.value = stockQty;
+						defectQty.value = "";
+						goodQty.value = stockQty;
+					}
+
+					if (itemNameView) {
+						itemNameView.value = itemName != null ? itemName : "";
+					}
+				});
+			}
+		});
 
 		function logout() {
 			location.href = './logout';

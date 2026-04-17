@@ -24,8 +24,12 @@ public class WorkOrderListController extends HttpServlet {
 
 		String workOrderCode = request.getParameter("workOrderCode");
 		String planKey = request.getParameter("planKey");
+		String workDate = request.getParameter("workDate");
+		String itemName = request.getParameter("itemName");
 
 		String pageStr = request.getParameter("page");
+		
+		
 		int page = 1;
 		if (pageStr != null) {
 			page = Integer.parseInt(pageStr);
@@ -37,34 +41,45 @@ public class WorkOrderListController extends HttpServlet {
 		
 		HttpSession session = request.getSession();
 		LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
+	
 
 		WorkOrderService service = new WorkOrderService();
 		List<WorkOrderDTO> list;
+		int totalCount = 0;
 
 		if (loginUser != null && "작업자".equals(loginUser.getUser_role())) {
 			list = service.selectPageByWorker(loginUser.getUser_key(), startRow, endRow);
 		} else {
-			if ((workOrderCode == null || workOrderCode.isEmpty()) &&
-				(planKey == null || planKey.isEmpty())) {
-				list = service.selectPage(startRow, endRow);
+			if ((workOrderCode != null && !workOrderCode.isEmpty()) ||
+				    (itemName != null && !itemName.isEmpty()) ||
+				    (workDate != null && !workDate.isEmpty())) {
+				list = service.searchPage(workOrderCode, itemName, workDate, startRow, endRow);
+				totalCount = service.getSearchCount(workOrderCode, itemName, workDate);
 			} else {
-				list = service.searchList(workOrderCode, planKey);
+				list = service.selectPage(startRow, endRow);
+				totalCount = service.getTotalCount();
 			}
 		}
 		
-		int totalCount = service.getTotalCount();
+		
 		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 		
 		List<WorkOrderDTO> userList = service.selectWorkerList();
 		List<WorkOrderDTO> planList = service.selectPlanList();
+		List<WorkOrderDTO> itemList = service.selectItemList();
 		
+		request.setAttribute("itemList", itemList);
 		request.setAttribute("planList", planList);
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
 		request.setAttribute("userList", userList);
 		request.setAttribute("workOrderCode", workOrderCode);
 		request.setAttribute("planKey", planKey);
+		request.setAttribute("itemName", itemName);
+		request.setAttribute("workDate", workDate);
 		request.setAttribute("totalPage", totalPage);
+		
+	
 
 		request.getRequestDispatcher("/workorder.jsp").forward(request, response);
 	}

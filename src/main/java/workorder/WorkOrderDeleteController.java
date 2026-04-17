@@ -28,7 +28,7 @@ public class WorkOrderDeleteController extends HttpServlet {
 		HttpSession session = request.getSession();
 		LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 		
-		System.out.println("loginUser = " + loginUser);
+//		System.out.println("loginUser = " + loginUser);
 
 		if (loginUser == null
 				|| (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {

@@ -26,14 +26,14 @@ public class QualityDeleteController extends HttpServlet {
         LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 
         // 관리자/슈퍼바이저만 삭제 가능
-        if (loginUser == null || 
+        if (loginUser == null ||
            (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
             response.sendRedirect(request.getContextPath() + "/quality");
             return;
         }
 
         try {
-            // JSP 체크박스 name을 quality_key 로 맞춰야 함
+            // JSP 체크박스 name을 quality_key 로 맞춤
             String[] qualityKeys = request.getParameterValues("quality_key");
 
             if (qualityKeys != null && qualityKeys.length > 0) {

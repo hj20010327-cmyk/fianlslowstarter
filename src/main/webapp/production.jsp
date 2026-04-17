@@ -8,7 +8,6 @@
 <meta charset="UTF-8">
 <title>AUTO MES | 생산실적</title>
 <script src="./asset/js/common.js" defer></script>
-
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
 </head>
@@ -143,54 +142,50 @@
 								<tr>
 									<th>생산코드</th>
 									<th>생산일</th>
+									<th>작업지시</th>
 									<th>품목명</th>
+									<th>작업자</th>
 									<th>계획수량</th>
 									<th>양품수량</th>
 									<th>불량수량</th>
 									<th>달성률</th>
-									<th>작업자</th>
+									<th>관리</th>
 								</tr>
 							</thead>
 							<tbody>
-								<c:choose>
-									<c:when test="${not empty list}">
-										<c:forEach var="p" items="${list}">
-											<tr>
-												<td>${p.prod_code}</td>
-												<td>${p.prod_date}</td>
-												<td><a href="javascript:void(0);"
-													class="prod-edit-link" data-prod-key="${p.prod_key}"
-													data-prod-code="${p.prod_code}"
-													data-prod-date="${p.prod_date}"
-													data-item-name="${p.item_name}"
-													data-plan-qty="${p.plan_qty}"
-													data-order-qty="${p.order_qty}"
-													data-good-qty="${p.good_qty}"
-													data-defect-qty="${p.defect_qty}"
-													data-work-user-key="${p.work_user_key}"
-													data-work-user-name="${p.work_user_name}"
-													data-work-order-key="${p.work_order_key}"
-													data-work-order-code="${p.work_order_code}"
-													data-plan-key="${p.plan_key}"
-													data-plan-code="${p.plan_code}"> ${p.item_name} </a></td>
-												<td><fmt:formatNumber value="${p.plan_qty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${p.good_qty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${p.defect_qty}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${p.achievement_rate}"
-														pattern="0.00" />%</td>
-												<td>${p.work_user_name}</td>
-											</tr>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<tr>
-											<td colspan="10">조회 결과가 없습니다.</td>
-										</tr>
-									</c:otherwise>
-								</c:choose>
+								<c:forEach var="p" items="${list}">
+									<tr>
+										<td>${p.prod_code}</td>
+										<td>${p.prod_date}</td>
+										<td>${p.work_order_code}</td>
+										<td>${p.item_name}</td>
+										<td>${p.work_user_name}</td>
+										<td>${p.plan_qty}</td>
+										<td>${p.good_qty}</td>
+										<td>${p.defect_qty}</td>
+										<td>${p.achievement_rate}%</td>
+										<td>
+											<button type="button" class="btn small prod-edit-link"
+												data-prod-key="${p.prod_key}"
+												data-prod-code="${p.prod_code}"
+												data-prod-date="${p.prod_date}"
+												data-work-order-key="${p.work_order_key}"
+												data-work-order-code="${p.work_order_code}"
+												data-plan-key="${p.plan_key}"
+												data-plan-code="${p.plan_code}"
+												data-plan-qty="${p.plan_qty}"
+												data-item-name="${p.item_name}"
+												data-work-user-key="${p.work_user_key}"
+												data-work-user-name="${p.work_user_name}"
+												data-quality-key="${p.quality_key}"
+												data-good-qty="${p.good_qty}"
+												data-defect-qty="${p.defect_qty}"
+												data-inspect-qty="${p.inspect_qty}"
+												data-qc-status="${p.qc_status}"
+												data-defect-reason="${p.defect_reason}">수정</button>
+										</td>
+									</tr>
+								</c:forEach>
 							</tbody>
 						</table>
 					</div>
@@ -257,7 +252,9 @@
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 
-			<form method="post" action="productionSave" id="productionForm">
+			<form method="post"
+				action="${pageContext.request.contextPath}/productionsave"
+				id="productionForm">
 
 				<div class="modal-header">
 					<h3 id="modalTitle">생산실적 신규 등록</h3>
@@ -267,61 +264,59 @@
 				<div class="modal-body">
 					<div class="form-grid">
 
+						<!-- 작업지시 -->
 						<div class="form-group">
-							<label>작업지시</label> <select name="work_order_key"
-								id="workOrderSelect" class="input" required>
+							<label>작업지시</label> <select name="work_order_key" class="input"
+								id="workOrderSelect" required>
 								<option value="">선택하세요</option>
 								<c:forEach var="o" items="${optionList}">
 									<option value="${o.work_order_key}"
-										data-prod-code="${o.work_order_code}"
-										data-plan-key="${o.plan_key}" data-plan-code="${o.plan_code}"
-										data-plan-qty="${o.plan_qty}" data-item-name="${o.item_name}"
-										data-work-user-key="${o.work_user_key}"
+										data-plan-key="${o.plan_key}" data-item-name="${o.item_name}"
 										data-work-user-name="${o.work_user_name}"
-										data-good-qty="${o.good_qty}"
-										data-defect-qty="${o.defect_qty}">
+										data-plan-qty="${o.plan_qty}"
+										data-quality-key="${o.quality_key}"
+										data-good-qty="${o.good_qty}" data-qc-status="${o.qc_status}">
 										${o.work_order_code}</option>
 								</c:forEach>
 							</select>
 						</div>
 
+						<!-- 생산코드 -->
 						<div class="form-group">
-							<label>품목명</label> <select id="itemNameSelect" class="input" disabled>
-								<option value="">선택하세요</option>
-							</select>
+							<label>생산코드</label> <input type="text" name="prod_code" class="input"
+								id="prod_code" required />
 						</div>
 
+						<!-- 생산일 -->
 						<div class="form-group">
-							<label>계획수량</label> <select id="planQtySelect" class="input" disabled>
-								<option value="">선택하세요</option>
-							</select>
+							<label>생산일</label> <input type="date" name="prod_date" class="input"
+								id="prod_date" required />
 						</div>
 
+						<!-- 품목명 -->
 						<div class="form-group">
-							<label>작업자</label> <select name="work_user_key" class="input"
-								id="workUserSelect" required>
-								<option value="">선택하세요</option>
-							</select>
+							<label>품목명</label> <input type="text" id="item_name" class="input" readonly>
 						</div>
 
+						<!-- 작업자 -->
 						<div class="form-group">
-							<label>양품수량</label> <select name="good_qty" id="goodQtySelect"
-								class="input" required>
-								<option value="">선택하세요</option>
-							</select>
+							<label>작업자</label> <input type="text" class="input" id="work_user_name" >
 						</div>
 
+						<!-- 계획수량 -->
 						<div class="form-group">
-							<label>불량수량</label> <select name="defect_qty"
-								class="input" id="defectQtySelect" required>
-								<option value="">선택하세요</option>
-							</select>
+							<label>계획수량</label> <input type="text" class="input" id="plan_qty" readonly>
 						</div>
 
+						<!-- 양품수량 -->
 						<div class="form-group">
-							<label>생산일</label> <input type="date" class="input" name="prod_date" id="prod_date" required />
+							<label>양품수량</label> <input type="text" class="input" id="good_qty" readonly>
 						</div>
 
+						<!-- 품질상태 -->
+						<div class="form-group">
+							<label>품질상태</label> <input type="text" class="input" id="qc_status" readonly>
+						</div>
 
 					</div>
 				</div>
@@ -330,12 +325,11 @@
 					<button class="btn" onclick="closeModal()" type="button">취소</button>
 					<button class="btn primary" type="submit">저장</button>
 
-					<input type="hidden" name="cmd" id="cmd" value="insert"> <input
-						type="hidden" name="prod_key" id="prod_key" value=""> <input
-						type="hidden" name="work_order_key" id="work_order_key" value="">
-					<input type="hidden" name="work_user_key" id="work_user_key"
-						value=""> <input type="hidden" name="plan_key"
-						id="plan_key" value="">
+					<!-- hidden -->
+					<input type="hidden" name="cmd" id="cmd" value="insert"> 
+					<input type="hidden" name="prod_key" id="prod_key"> 
+					<input type="hidden" name="plan_key" id="plan_key"> 
+					<input type="hidden" name="quality_key" id="quality_key">
 				</div>
 
 			</form>

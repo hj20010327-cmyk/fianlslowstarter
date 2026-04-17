@@ -31,10 +31,6 @@
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
 		</div>
 
-		<script>
-							const contextPath = '${pageContext.request.contextPath}';
-						</script>
-
 		<div class="header-right">
 			<div class="header-chip date"></div>
 			<div class="header-chip">${dto.user_name}님</div>

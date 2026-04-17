@@ -6,12 +6,15 @@ public class ProductionDTO {
 	private String prod_code;
 	private String prod_date;
 
-	private int good_qty;
-	private int defect_qty;
-
 	private int work_order_key;
 	private String work_order_code;
-	private int order_qty;
+
+	private int quality_key;
+	private int good_qty;
+	private int defect_qty;
+	private String defect_reason;
+	private String qc_status;
+	private int inspect_qty;
 
 	private int plan_key;
 	private String plan_code;
@@ -24,11 +27,7 @@ public class ProductionDTO {
 	private int work_user_key;
 	private String work_user_name;
 
-	private int quality_key;
-	private int inspect_qty;
-	private String defect_reason;
-	private String qc_status;
-
+	private int order_qty;
 	private double achievement_rate;
 
 	public int getProd_key() {
@@ -55,22 +54,6 @@ public class ProductionDTO {
 		this.prod_date = prod_date;
 	}
 
-	public int getGood_qty() {
-		return good_qty;
-	}
-
-	public void setGood_qty(int good_qty) {
-		this.good_qty = good_qty;
-	}
-
-	public int getDefect_qty() {
-		return defect_qty;
-	}
-
-	public void setDefect_qty(int defect_qty) {
-		this.defect_qty = defect_qty;
-	}
-
 	public int getWork_order_key() {
 		return work_order_key;
 	}
@@ -87,12 +70,52 @@ public class ProductionDTO {
 		this.work_order_code = work_order_code;
 	}
 
-	public int getOrder_qty() {
-		return order_qty;
+	public int getQuality_key() {
+		return quality_key;
 	}
 
-	public void setOrder_qty(int order_qty) {
-		this.order_qty = order_qty;
+	public void setQuality_key(int quality_key) {
+		this.quality_key = quality_key;
+	}
+
+	public int getGood_qty() {
+		return good_qty;
+	}
+
+	public void setGood_qty(int good_qty) {
+		this.good_qty = good_qty;
+	}
+
+	public int getDefect_qty() {
+		return defect_qty;
+	}
+
+	public void setDefect_qty(int defect_qty) {
+		this.defect_qty = defect_qty;
+	}
+
+	public String getDefect_reason() {
+		return defect_reason;
+	}
+
+	public void setDefect_reason(String defect_reason) {
+		this.defect_reason = defect_reason;
+	}
+
+	public String getQc_status() {
+		return qc_status;
+	}
+
+	public void setQc_status(String qc_status) {
+		this.qc_status = qc_status;
+	}
+
+	public int getInspect_qty() {
+		return inspect_qty;
+	}
+
+	public void setInspect_qty(int inspect_qty) {
+		this.inspect_qty = inspect_qty;
 	}
 
 	public int getPlan_key() {
@@ -159,36 +182,12 @@ public class ProductionDTO {
 		this.work_user_name = work_user_name;
 	}
 
-	public int getQuality_key() {
-		return quality_key;
+	public int getOrder_qty() {
+		return order_qty;
 	}
 
-	public void setQuality_key(int quality_key) {
-		this.quality_key = quality_key;
-	}
-
-	public int getInspect_qty() {
-		return inspect_qty;
-	}
-
-	public void setInspect_qty(int inspect_qty) {
-		this.inspect_qty = inspect_qty;
-	}
-
-	public String getDefect_reason() {
-		return defect_reason;
-	}
-
-	public void setDefect_reason(String defect_reason) {
-		this.defect_reason = defect_reason;
-	}
-
-	public String getQc_status() {
-		return qc_status;
-	}
-
-	public void setQc_status(String qc_status) {
-		this.qc_status = qc_status;
+	public void setOrder_qty(int order_qty) {
+		this.order_qty = order_qty;
 	}
 
 	public double getAchievement_rate() {
@@ -202,12 +201,12 @@ public class ProductionDTO {
 	@Override
 	public String toString() {
 		return "ProductionDTO [prod_key=" + prod_key + ", prod_code=" + prod_code + ", prod_date=" + prod_date
-				+ ", good_qty=" + good_qty + ", defect_qty=" + defect_qty + ", work_order_key=" + work_order_key
-				+ ", work_order_code=" + work_order_code + ", order_qty=" + order_qty + ", plan_key=" + plan_key
+				+ ", work_order_key=" + work_order_key + ", work_order_code=" + work_order_code + ", quality_key="
+				+ quality_key + ", good_qty=" + good_qty + ", defect_qty=" + defect_qty + ", defect_reason="
+				+ defect_reason + ", qc_status=" + qc_status + ", inspect_qty=" + inspect_qty + ", plan_key=" + plan_key
 				+ ", plan_code=" + plan_code + ", plan_qty=" + plan_qty + ", item_key=" + item_key + ", item_code="
 				+ item_code + ", item_name=" + item_name + ", work_user_key=" + work_user_key + ", work_user_name="
-				+ work_user_name + ", quality_key=" + quality_key + ", inspect_qty=" + inspect_qty + ", defect_reason="
-				+ defect_reason + ", qc_status=" + qc_status + ", achievement_rate=" + achievement_rate + "]";
+				+ work_user_name + ", order_qty=" + order_qty + ", achievement_rate=" + achievement_rate + "]";
 	}
 
 }

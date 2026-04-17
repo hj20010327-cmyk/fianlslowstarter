@@ -49,7 +49,7 @@
 
 .product-list li {
 	padding: 12px 14px;
-	border: 1px solid #e2e8f0;
+	border: 1px solid #e2e8f0;                                                
 	border-radius: 10px;
 	cursor: pointer;
 	background: #fff;
@@ -131,82 +131,52 @@
 <script>
 
 
-		// ===== 선택 상태 =====
-		let selectedId = null;
+function loadBom(productId, el) {
 
-		// ===== 제품 선택 =====
-		function selectProduct(id) {
-		  selectedId = id;
+	  // UI active 처리
+	  document.querySelectorAll(".product-list li")
+	    .forEach(li => li.classList.remove("active"));
 
-		  // active UI
-		  document.querySelectorAll(".product-list li")
-		    .forEach(li => li.classList.remove("active"));
+	  el.classList.add("active");
 
-		  event.target.classList.add("active");
+	  // 제목 변경 (안전 처리)
+	  const title = document.getElementById("selectedTitle");
+	  if (title) {
+	    title.innerText = el.innerText;
+	  }
 
-		  // title 변경
-		  document.getElementById("selectedName").innerText =
-		    sampleData[id].name;
+	  // 데이터 가져오기
+	  const data = sampleData[productId];
 
-		  renderTree(sampleData[id]);
-		}
+	  // 기존 DOM 완전 초기화 (중요)
+	  const container = document.getElementById("bomTree");
+	  if (!container) return;
 
-		// ===== TREE RENDER =====
-		function renderTree(data) {
-		  const container = document.getElementById("bomTree");
-		  container.innerHTML = "";
+	  container.innerHTML = "";
 
-		  const ul = document.createElement("ul");
-		  ul.appendChild(createNode(data));
-		  container.appendChild(ul);
-		}
+	  // 트리 렌더
+	  container.appendChild(buildNode(data));
+	}
 
-		function createNode(node) {
-		  const li = document.createElement("li");
 
-		  const hasChild = node.children && node.children.length > 0;
 
-		  const div = document.createElement("div");
-		  div.className = "node" + (hasChild ? "" : " leaf");
+	
 
-		  div.innerHTML = `
-		    <span class="toggle">${hasChild ? "+" : ""}</span>
-		    <strong>${node.name}</strong>
-		    <span class="qty">${node.qty ? "x" + node.qty : ""}</span>
-		  `;
+	  // 자식
+	  if (hasChild) {
 
-		  li.appendChild(div);
+	    const childBox = document.createElement("div");
+	    childBox.className = "bom-child";
+	    childBox.style.marginLeft = "16px";
 
-		  if (hasChild) {
-		    const ul = document.createElement("ul");
-		    ul.style.display = "none";
+	    node.children.forEach(child => {
+	      childBox.appendChild(buildNode(child));
+	    });
 
-		    node.children.forEach(child => {
-		      ul.appendChild(createNode(child));
-		    });
+	    wrapper.appendChild(childBox);
+	  }
 
-		    li.appendChild(ul);
-
-		    div.addEventListener("click", () => {
-		      const open = ul.style.display === "block";
-		      ul.style.display = open ? "none" : "block";
-		      div.querySelector(".toggle").textContent = open ? "+" : "−";
-		    });
-		  }
-
-		  return li;
-		}
-		
-		function toggle(code) {
-			const row = document.getElementById("item-" + code);
-			
-			if (row.style.display === "none"){
-				row.style.display = "table-row";
-			} else {
-				row.style.display = "none";
-			}
-			
-		}
+	  return wrapper;
 </script>
 </head>
 
@@ -322,13 +292,21 @@
       <span>클릭 시 우측 표시</span>
     </div>
 
-    <ul id="productList" class="product-list">
-      <li onclick="selectProduct(1)">컴프레셔 A형</li>
-      <li onclick="selectProduct(2)">컴프레셔 B형</li>
-      <li onclick="selectProduct(3)">컴프레셔 C형</li>
-      <li onclick="selectProduct(4)">컴프레셔 D형</li>
-      <li onclick="selectProduct(5)">컴프레셔 E형</li>
-    </ul>
+   <ul class="product-list">
+  <c:forEach var="p" items="${itemList}">
+    <li onclick="loadBom('${p.item_key}', this)">
+      ${p.item_name}
+    </li>
+  </c:forEach>
+</ul>
+
+<div class="bom-area">
+
+  
+
+  <div id="bomTree"></div>
+
+</div>
   </section>
 
   <!-- RIGHT -->
@@ -338,35 +316,50 @@
       <span id="selectedName">완제품을 선택하세요</span>
     </div>
 
-    <div id="bomTree" class="tree"></div>
-    
-    <table >
-    	<c:forEach var="parent" items="${itemList}">
-    	<tr onclick="toggle('${parent.parent_item_key}')" >
-    		<td>▶ ${parent.item_name}</td>
-    	</tr>
-    	
-    	<tr id="item-${parent.parent_item_key}" style="display:none;">
-    		<td colspan="2">
-    		
-    			<table border="1" width="100%">
-    				<c:forEach var="child" items="${material}">
-    				 <c:if test="${parent.item_key == child.parent_item_key}">
-    					<tr>
-    						<td> - ${child.item_code}</td>
-    						<td> - ${child.item_name}</td>
-    						<td> - ${child.spec}</td>
-    						<td> - ${child.price}</td>
-    						<td> - ${child.safe_qty}</td>
-    						<td> - ${child.unit}</td>
-   						</tr>
-   						</c:if>
-					</c:forEach>
-				</table>
-			</td>
-		</tr>
-	</c:forEach>
-	</table>
+   
+  <c:forEach var="p" items="${itemList}">
+
+  <!-- 완제품 제목 -->
+  <h3 class="product-title">
+    ${p.item_name}
+  </h3>
+
+  <!-- 자재 테이블 -->
+  <table class="bom-table">
+    <thead>
+      <tr>
+        <th>코드</th>
+        <th>이름</th>
+        <th>규격</th>
+        <th>수량</th>
+        <th>단위</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <c:forEach var="m" items="${material}">
+
+        <c:if test="${m.parent_item_key == p.item_key}">
+
+          <tr>
+            <td>${m.item_code}</td>
+            <td>${m.item_name}</td>
+            <td>${m.spec}</td>
+            <td>${m.safe_qty}</td>
+            <td>${m.unit}</td>
+          </tr>
+
+        </c:if>
+
+      </c:forEach>
+
+    </tbody>
+  </table>
+
+  <br/>
+
+</c:forEach>
 	
 	
 	

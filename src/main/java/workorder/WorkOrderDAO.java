@@ -18,7 +18,7 @@ public class WorkOrderDAO {
 
 	public List<WorkOrderDTO> selectAll() {
 		List<WorkOrderDTO> list = new ArrayList<>();
-		System.out.println("selectAll 실행됨");
+		
 
 		try {
 			Context ctx = new InitialContext();
@@ -122,14 +122,15 @@ public class WorkOrderDAO {
 			conn = dataFactory.getConnection();
 
 			String query = "UPDATE tb_work_order "
-					+ "SET work_user_key = ?, order_qty = ? "
+					+ "SET work_user_key = ?, order_qty = ?, work_date = ? "
 					+ "WHERE work_order_key = ?";
 
 			ps = conn.prepareStatement(query);
 
 			ps.setInt(1, dto.getWork_user_key());
 			ps.setInt(2, dto.getOrder_qty());
-			ps.setInt(3, dto.getWork_order_key());
+			ps.setDate(3, dto.getWork_date());
+			ps.setInt(4, dto.getWork_order_key());
 
 			result = ps.executeUpdate();
 			System.out.println("workorder update의 결과:" + result);
@@ -168,7 +169,7 @@ public class WorkOrderDAO {
 		return result;
 	}
 
-	public List<WorkOrderDTO> searchList(String workOrderCode, String planKey) {
+	public List<WorkOrderDTO> searchList(String workOrderCode, String itemName, String workDate) {
 		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
 
 		try {
@@ -204,8 +205,11 @@ public class WorkOrderDAO {
 				query += " and w.work_order_code like ?";
 			}
 
-			if (planKey != null && !planKey.trim().equals("")) {
-				query += " and w.plan_key = ?";
+			if (itemName != null && !itemName.trim().equals("")) {
+			    query += " and i.item_name LIKE ?";
+			}
+			if (workDate != null && !workDate.trim().equals("")) {
+			    query += " and w.work_date < TO_DATE(?, 'YYYY-MM-DD') +1 ";
 			}
 
 			query += " order by w.work_order_key";
@@ -218,8 +222,12 @@ public class WorkOrderDAO {
 				ps.setString(idx++, "%" + workOrderCode.trim() + "%");
 			}
 
-			if (planKey != null && !planKey.trim().equals("")) {
-				ps.setInt(idx++, Integer.parseInt(planKey));
+			if (itemName != null && !itemName.trim().equals("")) {
+				ps.setString(idx++, "%" + itemName.trim() + "%");
+			}
+			
+			if (workDate != null && !workDate.trim().equals("")) {
+			    ps.setString(idx++, workDate);
 			}
 
 			rs = ps.executeQuery();
@@ -283,6 +291,7 @@ public class WorkOrderDAO {
 					+ "    LEFT JOIN tb_item i ON p.item_key = i.item_key "
 					+ "    LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
 					+ "    LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key "
+					+ "    WHERE w.work_date >= TRUNC(SYSDATE) " 
 					+ "    ORDER BY w.work_order_key "
 					+ "  ) A WHERE ROWNUM <= ? "
 					+ ") WHERE rnum >= ?";
@@ -329,7 +338,7 @@ public class WorkOrderDAO {
 			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
 			conn = dataFactory.getConnection();
 
-			String query = "SELECT COUNT(*) FROM tb_work_order";
+			String query = "SELECT COUNT(*) FROM tb_work_order WHERE work_date >= TRUNC(SYSDATE)";
 			ps = conn.prepareStatement(query);
 			rs = ps.executeQuery();
 
@@ -374,6 +383,7 @@ public class WorkOrderDAO {
 					+ "    LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
 					+ "    LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key "
 					+ "    WHERE w.work_user_key = ? "
+					+ "    and w.work_date >= TRUNC(SYSDATE) "
 					+ "    ORDER BY w.work_order_key "
 					+ "  ) A WHERE ROWNUM <= ? "
 					+ ") WHERE rnum >= ?";
@@ -477,6 +487,190 @@ public class WorkOrderDAO {
 
 		return list;
 	}
+	
+	public List<WorkOrderDTO> selectItemList() {
+		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT item_name "
+					+ "FROM tb_item "
+					+ "WHERE item_name LIKE '컴프레셔 완제품%' "
+					+ "ORDER BY item_name";
+
+			ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				WorkOrderDTO dto = new WorkOrderDTO();
+				dto.setItem_name(rs.getString("item_name"));
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return list;
+	}
+	
+	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate, int startRow, int endRow) {
+		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT * FROM ( "
+					+ "  SELECT ROWNUM rnum, A.* FROM ( "
+					+ "    SELECT w.work_order_key, "
+					+ "           w.order_user_key, "
+					+ "           w.work_user_key, "
+					+ "           w.work_order_code, "
+					+ "           w.order_qty, "
+					+ "           w.work_date, "
+					+ "           w.created_at, "
+					+ "           w.plan_key, "
+					+ "           p.plan_code, "
+					+ "           i.item_name AS item_name, "
+					+ "           u1.user_name AS order_user_name, "
+					+ "           u2.user_name AS work_user_name "
+					+ "    FROM tb_work_order w "
+					+ "    LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "    LEFT JOIN tb_item i ON p.item_key = i.item_key "
+					+ "    LEFT OUTER JOIN tb_user u1 ON w.order_user_key = u1.user_key "
+					+ "    LEFT OUTER JOIN tb_user u2 ON w.work_user_key = u2.user_key "
+					+ "    WHERE 1=1 ";
+
+			if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+				query += " AND w.work_order_code LIKE ? ";
+			}
+
+			if (itemName != null && !itemName.trim().equals("")) {
+				query += " AND i.item_name LIKE ? ";
+			}
+
+			if (workDate != null && !workDate.trim().equals("")) {
+				query += " AND w.work_date < TO_DATE(?, 'YYYY-MM-DD') + 1 ";
+			}
+
+			query += "    ORDER BY w.work_order_key "
+					+ "  ) A WHERE ROWNUM <= ? "
+					+ ") WHERE rnum >= ?";
+
+			ps = conn.prepareStatement(query);
+
+			int idx = 1;
+
+			if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+				ps.setString(idx++, "%" + workOrderCode.trim() + "%");
+			}
+
+			if (itemName != null && !itemName.trim().equals("")) {
+				ps.setString(idx++, "%" + itemName.trim() + "%");
+			}
+
+			if (workDate != null && !workDate.trim().equals("")) {
+				ps.setString(idx++, workDate);
+			}
+
+			ps.setInt(idx++, endRow);
+			ps.setInt(idx++, startRow);
+
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				WorkOrderDTO dto = new WorkOrderDTO();
+				dto.setWork_order_key(rs.getInt("work_order_key"));
+				dto.setOrder_user_key(rs.getInt("order_user_key"));
+				dto.setWork_user_key(rs.getInt("work_user_key"));
+				dto.setWork_order_code(rs.getString("work_order_code"));
+				dto.setOrder_qty(rs.getInt("order_qty"));
+				dto.setWork_date(rs.getDate("work_date"));
+				dto.setCreated_at(rs.getDate("created_at"));
+				dto.setPlan_key(rs.getInt("plan_key"));
+				dto.setPlan_code(rs.getString("plan_code"));
+				dto.setOrder_user_name(rs.getString("order_user_name"));
+				dto.setWork_user_name(rs.getString("work_user_name"));
+				dto.setItem_name(rs.getString("item_name"));
+
+				list.add(dto);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return list;
+	}
+	
+	public int getSearchCount(String workOrderCode, String itemName, String workDate) {
+		int count = 0;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			String query = "SELECT COUNT(*) "
+					+ "FROM tb_work_order w "
+					+ "LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "LEFT JOIN tb_item i ON p.item_key = i.item_key "
+					+ "WHERE 1=1 ";
+
+			if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+				query += " AND w.work_order_code LIKE ? ";
+			}
+
+			if (itemName != null && !itemName.trim().equals("")) {
+				query += " AND i.item_name LIKE ? ";
+			}
+
+			if (workDate != null && !workDate.trim().equals("")) {
+				query += " AND w.work_date < TO_DATE(?, 'YYYY-MM-DD') + 1 ";
+			}
+
+			ps = conn.prepareStatement(query);
+
+			int idx = 1;
+
+			if (workOrderCode != null && !workOrderCode.trim().equals("")) {
+				ps.setString(idx++, "%" + workOrderCode.trim() + "%");
+			}
+
+			if (itemName != null && !itemName.trim().equals("")) {
+				ps.setString(idx++, "%" + itemName.trim() + "%");
+			}
+
+			if (workDate != null && !workDate.trim().equals("")) {
+				ps.setString(idx++, workDate);
+			}
+
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				count = rs.getInt(1);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return count;
+	}
+	
+	
+	
 
 	// finally 의 close가 너무 반복되서 함수로 빼버림
 	private void closeAll() {

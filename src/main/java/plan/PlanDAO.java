@@ -244,6 +244,7 @@ public class PlanDAO {
 				"    FROM tb_plan p " +
 				"    LEFT JOIN tb_item i ON p.item_key = i.item_key " +
 				"    LEFT JOIN tb_user u ON p.user_key = u.user_key " +
+				"    WHERE p.plan_date >= TRUNC(SYSDATE) " +
 				"    ORDER BY p.plan_key " +
 				"  ) A WHERE ROWNUM <= ? " +
 				") WHERE rnum >= ?";
@@ -288,7 +289,7 @@ public class PlanDAO {
             DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
             conn = dataFactory.getConnection();
 
-            String query = "SELECT COUNT(*) FROM tb_plan";
+            String query = "SELECT COUNT(*) FROM tb_plan WHERE plan_date >= TRUNC(SYSDATE)";
             ps = conn.prepareStatement(query);
             rs = ps.executeQuery();
 
@@ -305,7 +306,7 @@ public class PlanDAO {
         return count;
     }
     
-    public List<PlanDTO> searchPage(String planCode, String status, String dueDate, int startRow, int endRow) {
+    public List<PlanDTO> searchPage(int itemkey, String status, String dueDate, int startRow, int endRow) {
     	List<PlanDTO> list = new ArrayList<>();
 
     	try {
@@ -324,9 +325,9 @@ public class PlanDAO {
     			"    LEFT JOIN tb_user u ON p.user_key = u.user_key " +
     			"    WHERE 1=1 ";
 
-    		if (planCode != null && !planCode.trim().equals("")) {
-    			query += " AND p.plan_code LIKE ?";
-    		}
+    		 if (itemkey != 0) {
+    	            query += " AND p.item_key = ? ";
+    	        }
     		if (status != null && !status.trim().equals("")) {
     			query += " AND p.plan_status = ?";
     		}
@@ -342,9 +343,9 @@ public class PlanDAO {
 
     		int idx = 1;
 
-    		if (planCode != null && !planCode.trim().equals("")) {
-    			ps.setString(idx++, "%" + planCode + "%");
-    		}
+    		if (itemkey != 0) {
+                ps.setInt(idx++, itemkey);
+            }
     		if (status != null && !status.trim().equals("")) {
     			ps.setString(idx++, status);
     		}
@@ -383,7 +384,7 @@ public class PlanDAO {
     	return list;
     }
     
-    public int getSearchCount(String planCode, String status,String dueDate) {
+    public int getSearchCount(int itemkey, String status,String dueDate) {
         int count = 0;
 
         try {
@@ -393,8 +394,8 @@ public class PlanDAO {
 
             String query = "SELECT COUNT(*) FROM tb_plan WHERE 1=1";
 
-            if (planCode != null && !planCode.trim().equals("")) {
-                query += " AND plan_code LIKE ?";
+            if (itemkey != 0) {
+                query += " AND item_key = ?";
             }
 
             if (status != null && !status.trim().equals("")) {
@@ -408,8 +409,8 @@ public class PlanDAO {
 
             int idx = 1;
 
-            if (planCode != null && !planCode.trim().equals("")) {
-                ps.setString(idx++, "%" + planCode.trim() + "%");
+            if (itemkey != 0) {
+                ps.setInt(idx++, itemkey);
             }
 
             if (status != null && !status.trim().equals("")) {
@@ -442,9 +443,16 @@ public class PlanDAO {
     		DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
     		conn = dataFactory.getConnection();
 
-    		String query = "SELECT item_key, item_name "
-    				     + "FROM tb_item "
-    				     + "ORDER BY item_key";
+    	    String query = "SELECT item_key, item_name "
+                    + "FROM tb_item "
+                    + "WHERE item_name IN ("
+                    + "    '컴프레셔 완제품 A형', "
+                    + "    '컴프레셔 완제품 B형', "
+                    + "    '컴프레셔 완제품 C형', "
+                    + "    '컴프레셔 완제품 D형', "
+                    + "    '컴프레셔 완제품 E형' "
+                    + ") "
+                    + "ORDER BY item_key";
 
     		ps = conn.prepareStatement(query);
     		rs = ps.executeQuery();

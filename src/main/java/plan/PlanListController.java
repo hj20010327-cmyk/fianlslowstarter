@@ -20,13 +20,18 @@ public class PlanListController extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html; charset=utf-8;");
 
-		String planCode = request.getParameter("planCode");
+		String itemKeyStr = request.getParameter("item_key");
+		int itemKey = 0;
+		if (itemKeyStr != null && !itemKeyStr.trim().equals("")) {
+			itemKey = Integer.parseInt(itemKeyStr);
+		}
+
 		String status = request.getParameter("status");
 		String dueDate = request.getParameter("dueDate");
 
 		String pageStr = request.getParameter("page");
 		int page = 1;
-		if (pageStr != null) {
+		if (pageStr != null && !pageStr.trim().equals("")) {
 			page = Integer.parseInt(pageStr);
 		}
 
@@ -38,29 +43,27 @@ public class PlanListController extends HttpServlet {
 		List<PlanDTO> list;
 		int totalCount = 0;
 
-		if ((planCode == null || planCode.isEmpty())
-		        && (status == null || status.isEmpty())
-		        && (dueDate == null || dueDate.isEmpty())) {
-		    list = service.selectPage(startRow, endRow);
-		    totalCount = service.getTotalCount();
+		if (itemKey == 0
+				&& (status == null || status.isEmpty())
+				&& (dueDate == null || dueDate.isEmpty())) {
+			list = service.selectPage(startRow, endRow);
+			totalCount = service.getTotalCount();
 		} else {
-		    list = service.searchPage(planCode, status,dueDate, startRow, endRow);
-		    totalCount = service.getSearchCount(planCode, status, dueDate);
+			list = service.searchPage(itemKey, status, dueDate, startRow, endRow);
+			totalCount = service.getSearchCount(itemKey, status, dueDate);
 		}
-		
-		
-	    int totalPage = (int) Math.ceil((double) totalCount / pageSize);
-	    
-	    List<PlanDTO> itemList = service.selectItemList();
-	    
-	    request.setAttribute("itemList", itemList);
+
+		int totalPage = (int) Math.ceil((double) totalCount / pageSize);
+
+		List<PlanDTO> itemList = service.selectItemList();
+
+		request.setAttribute("itemList", itemList);
 		request.setAttribute("list", list);
 		request.setAttribute("page", page);
-		request.setAttribute("planCode", planCode);
+		request.setAttribute("item_key", itemKey);
 		request.setAttribute("status", status);
 		request.setAttribute("dueDate", dueDate);
 		request.setAttribute("totalPage", totalPage);
-		
 
 		request.getRequestDispatcher("/plan.jsp").forward(request, response);
 	}

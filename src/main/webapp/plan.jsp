@@ -57,6 +57,13 @@
 	color: #666;
 	margin-bottom: 4px;
 }
+@media (max-width: 770px) {
+	.search-row {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
 </style>
 <body>
 	<header class="header">
@@ -158,12 +165,21 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>기준 조건을 선택하세요</span>
+					<span>※생산계획 목록은 오늘 이후 계획만 표시됩니다. 이전 계획은 검색을 이용하세요.</span>
 				</div>
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
-						<input class="input" type="text" name="planCode"
-							placeholder="계획 코드 입력" /> <select class="select" name="status">
+						<select class="select" name="item_key">
+    						<option value="" <c:if test="${empty item_key}">selected</c:if>>전체</option>
+						    <c:forEach var="item" items="${itemList}">
+						        <option value="${item.item_key}"
+						            <c:if test="${item_key == item.item_key}">selected</c:if>>
+						            ${item.item_name}
+						        </option>
+						    </c:forEach>
+						</select>
+							
+						<select class="select" name="status">
 							<option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
 							<option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
 							<option value="진행중"
@@ -237,10 +253,9 @@
 										<td>${p.due_date}</td>
 										<td>${p.plan_qty}</td>
 										<td>${p.user_name}</td>
-										<td><c:if test="${p.priority == 1}">긴급</c:if> 
-											<c:if test="${p.priority == 2}">높음</c:if> 
-											<c:if test="${p.priority == 3}">보통</c:if> 
-											<c:if test="${p.priority == 4}">낮음</c:if>
+										<td><c:if test="${p.priority == 1}">높음</c:if> 
+											<c:if test="${p.priority == 2}">보통</c:if> 
+											<c:if test="${p.priority == 3}">낮음</c:if> 
 										</td>
 										<td>${p.status}</td>
 
@@ -251,13 +266,13 @@
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${page == i}">
 										<a
-											href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}"
+											href="plan?page=${i}&item_key=${item_key}&status=${status}&dueDate=${dueDate}"
 											class="active">${i}</a>
 									</c:if>
 
 									<c:if test="${page != i}">
 										<a
-											href="plan?page=${i}&planCode=${planCode}&status=${status}&dueDate=${dueDate}">${i}</a>
+											href="plan?page=${i}&item_key=${item_key}&status=${status}&dueDate=${dueDate}">${i}</a>
 									</c:if>
 								</c:forEach>
 							</div>
@@ -265,32 +280,32 @@
 					</form>
 				</div>
 
-				<div class="card">
-					<div class="section-title">
-						<h2>요약 / 상태</h2>
-						<span>오늘 기준</span>
-					</div>
-					<ul class="summary-list">
-						<li>
-							<div>
-								<strong>진행중 계획</strong>
-								<p>현재 생산계획 진행상태를 확인합니다.</p>
-							</div> <span class="badge ok">확인</span>
-						</li>
-						<li>
-							<div>
-								<strong>금일 마감</strong>
-								<p>오늘 마감 예정 생산계획을 확인합니다.</p>
-							</div> <span class="badge warn">확인</span>
-						</li>
-						<li>
-							<div>
-								<strong>지연 계획</strong>
-								<p>지연된 생산계획 여부를 확인합니다.</p>
-							</div> <span class="badge ok">정상</span>
-						</li>
-					</ul>
-				</div>
+<!-- 				<div class="card"> -->
+<!-- 					<div class="section-title"> -->
+<!-- 						<h2>요약 / 상태</h2> -->
+<!-- 						<span>오늘 기준</span> -->
+<!-- 					</div> -->
+<!-- 					<ul class="summary-list"> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>진행중 계획</strong> -->
+<!-- 								<p>현재 생산계획 진행상태를 확인합니다.</p> -->
+<!-- 							</div> <span class="badge ok">확인</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>금일 마감</strong> -->
+<!-- 								<p>오늘 마감 예정 생산계획을 확인합니다.</p> -->
+<!-- 							</div> <span class="badge warn">확인</span> -->
+<!-- 						</li> -->
+<!-- 						<li> -->
+<!-- 							<div> -->
+<!-- 								<strong>지연 계획</strong> -->
+<!-- 								<p>지연된 생산계획 여부를 확인합니다.</p> -->
+<!-- 							</div> <span class="badge ok">정상</span> -->
+<!-- 						</li> -->
+<!-- 					</ul> -->
+<!-- 				</div> -->
 			</section>
 		</main>
 	</div>
@@ -307,11 +322,11 @@
 	<div class="form-grid">
 		<input type="hidden" id="plan_key" name="plan_key" />
 
-		<div class="form-group">
-			<label>계획 코드</label>
-			<input type="text" class="input" id="plan_code" name="plan_code"
-				placeholder="자동 생성" readonly />
-		</div>
+<!-- 		<div class="form-group"> -->
+<!-- 			<label>계획 코드</label> -->
+<!-- 			<input type="text" class="input" id="plan_code" name="plan_code" -->
+<!-- 				placeholder="자동 생성" readonly /> -->
+<!-- 		</div> -->
 
 		<div class="form-group">
 			<label>제품명</label>
@@ -343,8 +358,6 @@
 			<label>계획 상태</label>
 		<select class="select" id="status" name="status">
 			<option value="계획">계획</option>
-			<option value="진행중">진행중</option>
-			<option value="완료">완료</option>
 		</select>
 		</div>
 
@@ -357,10 +370,9 @@
 			<label>우선순위</label>
 			<select class="select" id="priority" name="priority">
 				<option value="">선택</option>
-				<option value="1">긴급</option>
-				<option value="2">높음</option>
-				<option value="3">보통</option>
-				<option value="4">낮음</option>
+				<option value="1">높음</option>
+				<option value="2">보통</option>
+				<option value="3">낮음</option>
 			</select>
 		</div>
 	</div>
@@ -379,7 +391,6 @@
 			document.getElementById("planForm").action = "/slowstarter/plan/add";
 
 			document.getElementById("plan_key").value = "";
-			document.getElementById("plan_code").value = "자동생성";
 			document.getElementById("item_key").value = "";
 			document.getElementById("plan_date").value = "";
 			document.getElementById("due_date").value = "";
@@ -395,7 +406,6 @@
 			document.getElementById("planForm").action = "/slowstarter/plan/update";
 
 			document.getElementById("plan_key").value = plan_key;
-			document.getElementById("plan_code").value = plan_code;
 			document.getElementById("item_key").value = item_key;
 			document.getElementById("plan_date").value = plan_date;
 			document.getElementById("due_date").value = due_date;

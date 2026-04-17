@@ -8,65 +8,35 @@ public class QualityDTO {
     // 기본 품질 정보
     // =========================
 
-    // 품질 PK
     private int quality_key;
-
-    // 검사번호
     private String quality_code;
-
-    // 검사일자
     private Date inspect_date;
-
-    // 검사수량
     private int inspect_qty;
-
-    // 양품수량
     private int good_qty;
-
-    // 불량수량
     private int defect_qty;
-
-    // 불량사유
     private String defect_reason;
-
-    // 검사상태 (합격 / 불합격 / 재검)
     private String qc_status;
-
-    // 생성일
     private Date created_at;
 
     // =========================
     // KEY 정보
     // =========================
 
-    // 생산 KEY
     private int prod_key;
-
-    // 담당자 KEY
     private int user_key;
-
-    // 품목 KEY (조인으로 가져옴)
     private int item_key;
 
     // =========================
     // 추가 정보 (조인용)
     // =========================
 
-    // 담당자 이름 (TB_USER 조인)
     private String user_name;
-
-    // 품목 이름 (TB_ITEM 조인)
     private String item_name;
-
-    // ★ 추가 : 생산 코드명 (TB_PRODUCTION 조인)
     private String prod_name;
-
-    // ⭐ [추가] 마감일 (TB_PLAN에서 가져옴)
     private Date due_date;
 
-    // =========================
-    // getter / setter
-    // =========================
+    // 추가 필드가 있어도 데이터 출력에는 영향 없음
+    private int stock_qty;
 
     public int getQuality_key() {
         return quality_key;
@@ -172,7 +142,6 @@ public class QualityDTO {
         this.user_name = user_name;
     }
 
-    // 품목 이름 getter / setter
     public String getItem_name() {
         return item_name;
     }
@@ -181,7 +150,6 @@ public class QualityDTO {
         this.item_name = item_name;
     }
 
-    // ★ 추가 : 생산 코드명 getter / setter
     public String getProd_name() {
         return prod_name;
     }
@@ -190,15 +158,19 @@ public class QualityDTO {
         this.prod_name = prod_name;
     }
 
-    // =========================
-    // ⭐ 마감일 getter / setter
-    // =========================
-
     public Date getDue_date() {
         return due_date;
     }
 
     public void setDue_date(Date due_date) {
         this.due_date = due_date;
+    }
+
+    public int getStock_qty() {
+        return stock_qty;
+    }
+
+    public void setStock_qty(int stock_qty) {
+        this.stock_qty = stock_qty;
     }
 }

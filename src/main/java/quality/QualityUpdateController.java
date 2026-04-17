@@ -20,15 +20,12 @@ public class QualityUpdateController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 한글 처리
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8;");
 
-        // 로그인 세션 가져오기
         HttpSession session = request.getSession();
         LoginDTO loginUser = (LoginDTO) session.getAttribute("dto");
 
-        // 관리자 / 슈퍼바이저만 수정 가능
         if (loginUser == null ||
             (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
             response.sendRedirect(request.getContextPath() + "/qualityList");
@@ -36,23 +33,25 @@ public class QualityUpdateController extends HttpServlet {
         }
 
         try {
-            // 수정할 데이터 DTO에 담기
             QualityDTO dto = new QualityDTO();
 
-            dto.setQuality_key(Integer.parseInt(request.getParameter("quality_key")));   // 수정할 PK
-            dto.setQuality_code(request.getParameter("quality_code"));                   // 검사번호
-            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));     // 검사일자
-            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty")));   // 검사수량
-            dto.setDefect_reason(request.getParameter("defect_reason"));                 // 불량사유
-            dto.setProd_key(Integer.parseInt(request.getParameter("prod_key")));         // 생산 KEY
-            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));         // 담당자 KEY
+            dto.setQuality_key(Integer.parseInt(request.getParameter("quality_key")));
+            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));
+            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty")));
+            dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));
+            dto.setDefect_qty(Integer.parseInt(request.getParameter("defect_qty")));
+            dto.setDefect_reason(request.getParameter("defect_reason"));
+            dto.setQc_status(request.getParameter("qc_status"));
+            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));
 
-            // 서비스 호출
             QualityService service = new QualityService();
             int result = service.updatequality(dto);
 
-            // 수정 후 다시 목록으로 이동
-            response.sendRedirect(request.getContextPath() + "/qualityList");
+            if (result > 0) {
+                response.sendRedirect(request.getContextPath() + "/qualityList");
+            } else {
+                response.getWriter().println("<script>alert('품질 수정 실패'); history.back();</script>");
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

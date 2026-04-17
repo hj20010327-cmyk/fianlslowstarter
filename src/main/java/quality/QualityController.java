@@ -20,19 +20,17 @@ public class QualityController extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=utf-8;");
 
-        // 검색 조건 받기
         String qualityCode = request.getParameter("qualityCode");
+        String itemName = request.getParameter("itemName");
         String status = request.getParameter("status");
         String inspectDate = request.getParameter("inspectDate");
 
-        // 현재 페이지
         String pageStr = request.getParameter("page");
         int page = 1;
         if (pageStr != null && !pageStr.trim().equals("")) {
             page = Integer.parseInt(pageStr);
         }
 
-        // 페이지당 보여줄 개수
         int pageSize = 10;
         int startRow = (page - 1) * pageSize + 1;
         int endRow = page * pageSize;
@@ -41,8 +39,8 @@ public class QualityController extends HttpServlet {
         List<QualityDTO> list = null;
         int totalCount = 0;
 
-        // 검색 조건이 없으면 전체 조회
         if ((qualityCode == null || qualityCode.trim().equals(""))
+                && (itemName == null || itemName.trim().equals(""))
                 && (status == null || status.trim().equals(""))
                 && (inspectDate == null || inspectDate.trim().equals(""))) {
 
@@ -50,26 +48,31 @@ public class QualityController extends HttpServlet {
             totalCount = service.getTotalCount();
 
         } else {
-            // 검색 조건이 있으면 검색 조회
-            list = service.searchPage(qualityCode, status, inspectDate, startRow, endRow);
-            totalCount = service.getSearchCount(qualityCode, status, inspectDate);
+            list = service.searchPage(qualityCode, itemName, status, inspectDate, startRow, endRow);
+            totalCount = service.getSearchCount(qualityCode, itemName, status, inspectDate);
         }
 
-        // 전체 페이지 수 계산
         int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
-        // JSP로 데이터 전달
+        List<QualityDTO> userList = service.getUserList();
+        List<QualityDTO> workOrderList = service.getWorkOrderList();
+        List<String> qualityCodeList = service.getQualityCodeList();
+        List<String> itemNameList = service.getItemNameList();
+
+        request.setAttribute("userList", userList);
+        request.setAttribute("workOrderList", workOrderList);
+        request.setAttribute("qualityCodeList", qualityCodeList);
+        request.setAttribute("itemNameList", itemNameList);
         request.setAttribute("list", list);
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("currentPage", page);
 
-        // 검색값 유지
         request.setAttribute("qualityCode", qualityCode);
+        request.setAttribute("itemName", itemName);
         request.setAttribute("status", status);
         request.setAttribute("inspectDate", inspectDate);
 
-        // JSP 이동
         request.getRequestDispatcher("/quality.jsp").forward(request, response);
     }
 }

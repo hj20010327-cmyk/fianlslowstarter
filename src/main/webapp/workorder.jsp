@@ -63,6 +63,11 @@
 		align-items: stretch;
 	}
 }
+.error-msg {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+}
 
 </style>
 <body>
@@ -305,7 +310,7 @@
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 			<form id="workOrderForm" action="/slowstarter/workorder/add"
-				method="post">
+				method="post" onsubmit="return validateWorkOrder()">
 				<div class="modal-header">
 					<h3 id="modalTitle">작업지시 신규 등록</h3>
 					<button type="button" class="modal-close" onclick="closeModal()">×</button>
@@ -331,11 +336,12 @@
 										<option value="${u.work_user_key}">${u.work_user_name}</option>
 									</c:forEach>
 								</select>
+								<span class="error-msg" id="workerError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="order_qty" name="order_qty" placeholder="지시 수량 입력" />
+									id="order_qty" name="order_qty" placeholder="지시 수량 입력" min="1"/>
 							</div>
 
 							<div class="form-group">
@@ -346,6 +352,7 @@
 							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
 									id="work_date" name="work_date" />
+								<span class="error-msg" id="dateError"></span>
 							</div>
 
 							<div class="form-group">
@@ -360,6 +367,7 @@
 										${p.plan_code}</option>
 									</c:forEach>
 								</select>
+								<span class="error-msg" id="planError"></span>
 							</div>
 
 						</div>
@@ -380,23 +388,26 @@
 							</div>
 
 							<div class="form-group">
-								<label>작업자</label> <select class="input" id="work_user_key"
+								<label>작업자</label> <select class="input" id="edit_work_user_key"
 									name="edit_work_user_key">
 									<option value="">작업자 선택</option>
 									<c:forEach var="u" items="${userList}">
 										<option value="${u.work_user_key}">${u.work_user_name}</option>
 									</c:forEach>
 								</select>
+								<span class="error-msg" id="editWorkerError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="edit_order_qty" name="edit_order_qty"/>
+									id="edit_order_qty" name="edit_order_qty" min="1"/>
+									<span class="error-msg" id="editQtyError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
 									id="edit_work_date" name="edit_work_date"/>
+								<span class="error-msg" id="editDateError"></span>
 							</div>
 
 							<div class="form-group">
@@ -417,6 +428,7 @@
 
 	<script>
 		function openInsertModal() {
+			document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
 			document.getElementById("modalTitle").innerText = "등록";
 			document.getElementById("workOrderForm").action = "/slowstarter/workorder/add";
 
@@ -436,7 +448,7 @@
 
 		function openEditModal(key, code, userName, workUserKey, qty, date,
 				planKey, planCode) {
-
+			document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
 			document.getElementById("modalTitle").innerText = "수정";
 			document.getElementById("workOrderForm").action = "/slowstarter/workorder/update";
 
@@ -451,7 +463,7 @@
 			document.getElementById("edit_work_date").value = date;
 			document.getElementById("edit_plan_code").value = planCode;
 
-			document.getElementById("work_user_key").value = workUserKey;
+			document.getElementById("edit_work_user_key").value = workUserKey;
 
 			document.getElementById("commonModal").classList.add("show");
 		}
@@ -487,6 +499,105 @@
 				document.getElementById("item_name").value = "";
 			}
 		});
+		
+		function validateWorkOrder() {
+
+		    let isValid = true;
+
+		    document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
+
+		    let formAction = document.getElementById("workOrderForm").action;
+
+		    // 등록일 때
+		    if (formAction.includes("/workorder/add")) {
+		        let planKey = document.getElementById("plan_key").value;
+		        let workUserKey = document.getElementById("insert_work_user_key").value;
+		        let workDate = document.getElementById("work_date").value;
+
+		        if (!planKey) {
+		            document.getElementById("planError").innerText = "생산계획을 선택해주세요.";
+		            isValid = false;
+		        }
+
+		        if (!workUserKey) {
+		            document.getElementById("workerError").innerText = "작업자를 선택해주세요.";
+		            isValid = false;
+		        }
+
+		        if (!workDate) {
+		            document.getElementById("dateError").innerText = "작업일을 입력해주세요.";
+		            isValid = false;
+		        }
+		    }
+
+		    // 수정일 때
+		    if (formAction.includes("/workorder/update")) {
+		        let workUserKey = document.getElementById("edit_work_user_key").value;
+		        let orderQty = document.getElementById("edit_order_qty").value;
+		        let workDate = document.getElementById("edit_work_date").value;
+
+		        if (!workUserKey) {
+		            document.getElementById("editWorkerError").innerText = "작업자를 선택해주세요.";
+		            isValid = false;
+		        }
+
+		        if (!orderQty || orderQty <= 0) {
+		            document.getElementById("editQtyError").innerText = "지시수량은 1 이상 입력해주세요.";
+		            isValid = false;
+		        }
+
+		        if (!workDate) {
+		            document.getElementById("editDateError").innerText = "작업일을 입력해주세요.";
+		            isValid = false;
+		        }
+		    }
+
+		    return isValid;
+		}
+		
+		// 등록 - 생산계획 선택하면 에러 제거
+		document.getElementById("plan_key").addEventListener("change", function() {
+		    if (this.value) {
+		        document.getElementById("planError").innerText = "";
+		    }
+		});
+
+		// 등록 - 작업자 선택하면 에러 제거
+		document.getElementById("insert_work_user_key").addEventListener("change", function() {
+		    if (this.value) {
+		        document.getElementById("workerError").innerText = "";
+		    }
+		});
+
+		// 등록 - 작업일 입력하면 에러 제거
+		document.getElementById("work_date").addEventListener("input", function() {
+		    if (this.value) {
+		        document.getElementById("dateError").innerText = "";
+		    }
+		});
+
+		// 수정 - 작업자 선택하면 에러 제거
+		document.getElementById("edit_work_user_key").addEventListener("change", function() {
+		    if (this.value) {
+		        document.getElementById("editWorkerError").innerText = "";
+		    }
+		});
+
+		// 수정 - 지시수량 1 이상이면 에러 제거
+		document.getElementById("edit_order_qty").addEventListener("input", function() {
+		    if (this.value && Number(this.value) > 0) {
+		        document.getElementById("editQtyError").innerText = "";
+		    }
+		});
+
+		// 수정 - 작업일 입력하면 에러 제거
+		document.getElementById("edit_work_date").addEventListener("input", function() {
+		    if (this.value) {
+		        document.getElementById("editDateError").innerText = "";
+		    }
+		});
+		
+		
 	</script>
 </body>
 </html>

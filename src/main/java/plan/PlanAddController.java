@@ -38,7 +38,6 @@ public class PlanAddController extends HttpServlet {
 			return;
 		}
 
-
 		try {
 			int item_key = Integer.parseInt(request.getParameter("item_key"));
 			Date plan_date = Date.valueOf(request.getParameter("plan_date"));

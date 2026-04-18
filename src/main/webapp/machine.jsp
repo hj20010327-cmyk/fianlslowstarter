@@ -9,9 +9,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AUTO MES | 설비정보</title>
-<script src="./asset/js/common.js" defer></script>
-<link rel="stylesheet" href="./asset/css/common.css" />
-<link rel="stylesheet" href="./asset/css/page.css" />
+<script src="${pageContext.request.contextPath}/asset/js/common.js"
+	defer></script>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/asset/css/common.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/asset/css/page.css" />
 </head>
 <style>
 /*  페이지네이션  */
@@ -69,18 +72,23 @@
 	color: #666;
 	margin-bottom: 4px;
 }
-@media (max-width: 770px) {
+
+@media ( max-width : 770px) {
 	.search-row {
 		flex-direction: column;
 		align-items: stretch;
 	}
 }
+.error {
+	color: red;
+	font-size: 12px;
+	margin-top: 4px;
+}
 </style>
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index" class="logo">
-				<span class="logo-mark">AM</span>
+			<a href="./index" class="logo"> <span class="logo-mark">AM</span>
 				<span>AUTO MES</span>
 			</a>
 
@@ -162,6 +170,8 @@
 
 		<div class="snb-overlay" id="snbOverlay"></div>
 
+
+
 		<main class="content">
 			<div class="page-head">
 				<div class="page-head-left">
@@ -170,7 +180,8 @@
 				</div>
 				<div class="page-actions">
 					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-						<button class="btn primary" type="button" onclick="openInsertModal()">설비 등록</button>
+						<button class="btn primary" type="button"
+							onclick="openInsertModal()">설비 등록</button>
 					</c:if>
 				</div>
 			</div>
@@ -187,19 +198,25 @@
 
 					<div class="search-row">
 						<!--  설비명 검색 -->
-						<input class="input" type="text" name="machineName" placeholder="설비명 입력" />
+						<input class="input" type="text" name="machineName"
+							placeholder="설비명 입력" />
 
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
-							<option value="" <c:if test="${empty machineStatus}">selected</c:if>>전체</option>
-							<option value="가동중" <c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
-							<option value="점검중" <c:if test="${machineStatus == '점검중'}">selected</c:if>>점검중</option>
-							<option value="고장" <c:if test="${machineStatus == '고장'}">selected</c:if>>고장</option>
+							<option value=""
+								<c:if test="${empty machineStatus}">selected</c:if>>전체</option>
+							<option value="가동중"
+								<c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
+							<option value="점검중"
+								<c:if test="${machineStatus == '점검중'}">selected</c:if>>점검중</option>
+							<option value="고장"
+								<c:if test="${machineStatus == '고장'}">selected</c:if>>고장</option>
 						</select>
 
 						<div class="search-item">
-							<span class="search-label">마지막 점검일</span>
-							<input class="input date-input" type="date" name="lastCheckDate" value="${lastCheckDate}" />
+							<span class="search-label">마지막 점검일</span> <input
+								class="input date-input" type="date" name="lastCheckDate"
+								value="${lastCheckDate}" />
 						</div>
 
 						<!-- 조회 버튼 → MachineListController로 이동 -->
@@ -215,7 +232,8 @@
 						<div class="section-title">
 							<h2>설비 목록</h2>
 							<!--  안내 메시지용  -->
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 								<span>설비 정보를 클릭하면 수정할 수 있습니다.</span>
 								<button type="submit" class="btn">삭제</button>
 							</c:if>
@@ -229,64 +247,53 @@
 									<th>설비 명</th>
 									<th>공정</th>
 									<th>설비 상태</th>
-									<th>마지막 점검일</th>
+									<th>최근 점검일</th>
 									<th>비고</th>
 								</tr>
 
 								<c:forEach var="m" items="${list}">
 									<tr>
-										<td>
-											<input type="checkbox" name="machineKey" value="${m.machineKey}">
-										</td>
+										<td><input type="checkbox" name="machineKey"
+											value="${m.machineKey}"></td>
 
-										<td>
-											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										<td><c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 												<a href="javascript:void(0);"
 													onclick="openEditModal(
 														'${m.machineKey}',
 														'${m.machineCode}',
 														'${m.machineName}',
-														'${m.sequenceNo}',
+														'${m.processKey}',
 														'${m.machineStatus}',
 														'${m.buyDate}',
 														'${m.lastCheckDate}',
 														'${m.remark}'
 													)">
-													${m.machineCode}
-												</a>
-											</c:if>
-
-											<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+													${m.machineCode} </a>
+											</c:if> <c:if
+												test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
 												${m.machineCode}
-											</c:if>
-										</td>
+											</c:if></td>
 
 										<td>${m.machineName}</td>
 										<td>${m.processName}</td>
 
-										<td>
-											<c:if test="${m.machineStatus eq '가동중'}">
+										<td><c:if test="${m.machineStatus eq '가동중'}">
 												<span class="running">가동중</span>
-											</c:if>
-											<c:if test="${m.machineStatus eq '점검중'}">
+											</c:if> <c:if test="${m.machineStatus eq '점검중'}">
 												<span class="checking">점검중</span>
-											</c:if>
-											<c:if test="${m.machineStatus eq '고장'}">
+											</c:if> <c:if test="${m.machineStatus eq '고장'}">
 												<span class="broken">고장</span>
-											</c:if>
-											<c:if test="${m.machineStatus ne '가동중' and m.machineStatus ne '점검중' and m.machineStatus ne '고장'}">
+											</c:if> <c:if
+												test="${m.machineStatus ne '가동중' and m.machineStatus ne '점검중' and m.machineStatus ne '고장'}">
 												<span>${m.machineStatus}</span>
-											</c:if>
-										</td>
+											</c:if></td>
 
-										<td>
-											<c:if test="${not empty m.lastCheckDate}">
+										<td><c:if test="${not empty m.lastCheckDate}">
 												${m.lastCheckDate}
-											</c:if>
-											<c:if test="${empty m.lastCheckDate}">
+											</c:if> <c:if test="${empty m.lastCheckDate}">
 												-
-											</c:if>
-										</td>
+											</c:if></td>
 
 										<td>${m.remark}</td>
 									</tr>
@@ -296,12 +303,14 @@
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${page == i}">
-										<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}"
+										<a
+											href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}"
 											class="active">${i}</a>
 									</c:if>
 
 									<c:if test="${page != i}">
-										<a href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}">${i}</a>
+										<a
+											href="machine?page=${i}&machineName=${machineName}&machineStatus=${machineStatus}&lastCheckDate=${lastCheckDate}">${i}</a>
 									</c:if>
 								</c:forEach>
 							</div>
@@ -309,43 +318,45 @@
 					</form>
 				</div>
 
-<!-- 				<div class="card"> -->
-<!-- 					<div class="section-title"> -->
-<!-- 						<h2>설비 상태 요약</h2> -->
-<!-- 						<span>실시간 기준</span> -->
-<!-- 					</div> -->
+				<!-- 				<div class="card"> -->
+				<!-- 					<div class="section-title"> -->
+				<!-- 						<h2>설비 상태 요약</h2> -->
+				<!-- 						<span>실시간 기준</span> -->
+				<!-- 					</div> -->
 
-<!-- 					<ul class="summary-list"> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>가동 설비</strong> -->
-<!-- 								<p>총 12대 중 9대 가동중</p> -->
-<!-- 							</div> -->
-<!-- 							<span class="badge ok">정상</span> -->
-<!-- 						</li> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>점검 필요</strong> -->
-<!-- 								<p>3대 점검 필요</p> -->
-<!-- 							</div> -->
-<!-- 							<span class="badge warn">주의</span> -->
-<!-- 						</li> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>고장 설비</strong> -->
-<!-- 								<p>1대 고장 발생</p> -->
-<!-- 							</div> -->
-<!-- 							<span class="badge danger">긴급</span> -->
-<!-- 						</li> -->
-<!-- 					</ul> -->
-<!-- 				</div> -->
+				<!-- 					<ul class="summary-list"> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>가동 설비</strong> -->
+				<!-- 								<p>총 12대 중 9대 가동중</p> -->
+				<!-- 							</div> -->
+				<!-- 							<span class="badge ok">정상</span> -->
+				<!-- 						</li> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>점검 필요</strong> -->
+				<!-- 								<p>3대 점검 필요</p> -->
+				<!-- 							</div> -->
+				<!-- 							<span class="badge warn">주의</span> -->
+				<!-- 						</li> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>고장 설비</strong> -->
+				<!-- 								<p>1대 고장 발생</p> -->
+				<!-- 							</div> -->
+				<!-- 							<span class="badge danger">긴급</span> -->
+				<!-- 						</li> -->
+				<!-- 					</ul> -->
+				<!-- 				</div> -->
 			</section>
 		</main>
 
 		<!-- ===== 공통 모달 ===== -->
 		<div id="commonModal" class="modal">
 			<div class="modal-box">
-				<form id="machineForm" action="/slowstarter/machine/add" method="post">
+				<form id="machineForm"
+					action="${pageContext.request.contextPath}/machine/add"
+					method="post" onsubmit="return validateMachineForm()">
 					<!-- 헤더 -->
 					<div class="modal-header">
 						<h3 id="modalTitle">설비 등록</h3>
@@ -357,50 +368,58 @@
 						<input type="hidden" id="machineKey" name="machineKey" />
 
 						<div class="form-grid">
-							<div class="form-group">
-								<label>설비 코드</label>
-								<input type="text" class="input" id="machineCode" name="machineCode" placeholder="자동 생성" readonly />
+							<div class="form-group" id=machineCodeField style="display: none;">
+								<label>설비 코드</label> <input type="text" class="input"
+									id="machineCode" name="machineCode" placeholder="자동 생성"
+									readonly />
 							</div>
 
 							<div class="form-group">
-								<label>설비명</label>
-								<input type="text" class="input" id="machineName" name="machineName" placeholder="설비명 입력" required />
+								<label>설비명</label> <input type="text" class="input"
+									id="machineName" name="machineName" placeholder="설비명 입력" />
+								<div class="error" id="machineNameError"></div>
 							</div>
 
 							<div class="form-group">
-								<label>공정</label>
-								<select class="select" id="processKey" name="processKey" required>
+								<label>공정</label> <select class="select" id="processKey"
+									name="processKey">
 									<option value="">선택</option>
 									<option value="1">가공</option>
 									<option value="2">세척</option>
 									<option value="3">조립</option>
 									<option value="4">성능검사</option>
 								</select>
+								<div class="error" id="processKeyError"></div>
 							</div>
 
 							<div class="form-group" id="buydateField">
-								<label>구매일</label>
-								<input type="date" class="input" id="buyDate" name="buyDate" />
+								<label>구매일</label> <input type="date" class="input" id="buyDate"
+									name="buyDate" />
+								<div class="error" id="buyDateError"></div>
 							</div>
 
 							<div class="form-group" id="statusField" style="display: none;">
-								<label>설비 상태</label>
-								<select class="select" id="machineStatus" name="machineStatus">
+								<label>설비 상태</label> <select class="select" id="machineStatus"
+									name="machineStatus">
 									<option value="">선택</option>
 									<option value="가동중">가동중</option>
 									<option value="점검중">점검중</option>
 									<option value="고장">고장</option>
 								</select>
+								<div class="error" id="machineStatusError"></div>
 							</div>
 
-							<div class="form-group" id="checkDateField" style="display: none;">
-								<label>최근 점검일</label>
-								<input type="date" class="input" id="lastCheckDate" name="lastCheckDate" />
+							<div class="form-group" id="checkDateField"
+								style="display: none;">
+								<label>최근 점검일</label> <input type="date" class="input"
+									id="lastCheckDate" name="lastCheckDate" />
+								<div class="error" id="lastCheckDateError"></div>
 							</div>
 
 							<div class="form-group" style="grid-column: span 2;">
 								<label>비고</label>
-								<textarea class="textarea" id="remark" name="remark" placeholder="비고 입력"></textarea>
+								<textarea class="textarea" id="remark" name="remark"
+									placeholder="비고 입력"></textarea>
 							</div>
 						</div>
 					</div>
@@ -417,18 +436,21 @@
 
 	<script>
 		function openInsertModal() {
+			clearMachineErrors();
 			document.getElementById("modalTitle").innerText = "설비 등록";
-			document.getElementById("machineForm").action = "/slowstarter/machine/add";
+			document.getElementById("machineForm").action = "${pageContext.request.contextPath}/machine/add";
 
 			document.getElementById("machineKey").value = "";
 			document.getElementById("machineCode").value = "";
 			document.getElementById("machineName").value = "";
-			document.getElementById("buydateField").style.display = "block";
+			document.getElementById("buyDate").value = ""
 			document.getElementById("processKey").value = "";
 			document.getElementById("machineStatus").value = "";
 			document.getElementById("lastCheckDate").value = "";
 			document.getElementById("remark").value = "";
 
+			document.getElementById("machineCodeField").style.display = "none";
+			document.getElementById("buydateField").style.display = "block";
 			document.getElementById("statusField").style.display = "none";
 			document.getElementById("checkDateField").style.display = "none";
 
@@ -437,17 +459,20 @@
 
 		function openEditModal(machineKey, machineCode, machineName,
 				processKey, machineStatus, buyDate, lastCheckDate, remark) {
+			clearMachineErrors();
 			document.getElementById("modalTitle").innerText = "설비 수정";
-			document.getElementById("machineForm").action = "/slowstarter/machine/update";
+			document.getElementById("machineForm").action = "${pageContext.request.contextPath}/machine/update";
 			document.getElementById("buydateField").style.display = "none";
 			document.getElementById("machineKey").value = machineKey;
 			document.getElementById("machineCode").value = machineCode;
+			document.getElementById("machineCodeField").style.display = "block";
 			document.getElementById("processKey").style.pointerEvents = "none";
+			
 			document.getElementById("machineStatus").value = machineStatus;
 			document.getElementById("machineName").value = machineName;
 
 			if (buyDate != null && buyDate !== '') {
-				document.getElementById("buyDate").value = buyDate.substring(0, 10);
+				document.getElementById("buyDate").value = buyDate.substring(0,10);
 			} else {
 				document.getElementById("buyDate").value = "";
 			}
@@ -465,7 +490,8 @@
 			}
 
 			if (lastCheckDate != null && lastCheckDate !== '') {
-				document.getElementById("lastCheckDate").value = lastCheckDate.substring(0, 10);
+				document.getElementById("lastCheckDate").value = lastCheckDate
+						.substring(0, 10);
 			} else {
 				document.getElementById("lastCheckDate").value = "";
 			}
@@ -483,8 +509,89 @@
 		}
 
 		function closeModal() {
+			clearMachineErrors();
 			document.getElementById("commonModal").classList.remove("show");
 		}
+		function clearMachineErrors() {
+			document.getElementById("machineNameError").innerText = "";
+			document.getElementById("processKeyError").innerText = "";
+			document.getElementById("buyDateError").innerText = "";
+			document.getElementById("machineStatusError").innerText = "";
+			document.getElementById("lastCheckDateError").innerText = "";
+		}
+		
+		function validateMachineForm() {
+			clearMachineErrors();
+
+			let isValid = true;
+			let modalTitle = document.getElementById("modalTitle").innerText;
+
+			let machineName = document.getElementById("machineName").value;
+			let processKey = document.getElementById("processKey").value;
+			let buyDate = document.getElementById("buyDate").value;
+			let machineStatus = document.getElementById("machineStatus").value;
+			let lastCheckDate = document.getElementById("lastCheckDate").value;
+
+			if (!machineName.trim()) {
+				document.getElementById("machineNameError").innerText = "설비명을 입력하세요.";
+				isValid = false;
+			}
+
+			if (!processKey) {
+				document.getElementById("processKeyError").innerText = "공정을 선택하세요.";
+				isValid = false;
+			}
+
+			if (modalTitle === "설비 등록") {
+				if (!buyDate) {
+					document.getElementById("buyDateError").innerText = "구매일을 입력하세요.";
+					isValid = false;
+				}
+			}
+
+			if (modalTitle === "설비 수정") {
+				if (!machineStatus) {
+					document.getElementById("machineStatusError").innerText = "설비 상태를 선택하세요.";
+					isValid = false;
+				}
+			}
+
+			if (buyDate && lastCheckDate) {
+				if (lastCheckDate < buyDate) {
+					document.getElementById("lastCheckDateError").innerText = "최근 점검일은 구매일보다 빠를 수 없습니다.";
+					isValid = false;
+				}
+			}
+
+			return isValid;
+		}
+		
+		// 설비명
+		document.getElementById("machineName").addEventListener("input", function() {
+		    document.getElementById("machineNameError").innerText = "";
+		});
+
+		// 공정
+		document.getElementById("processKey").addEventListener("change", function() {
+		    document.getElementById("processKeyError").innerText = "";
+		});
+
+		// 구매일
+		document.getElementById("buyDate").addEventListener("input", function() {
+		    document.getElementById("buyDateError").innerText = "";
+		});
+
+		// 상태
+		document.getElementById("machineStatus").addEventListener("change", function() {
+		    document.getElementById("machineStatusError").innerText = "";
+		});
+
+		// 점검일
+		document.getElementById("lastCheckDate").addEventListener("input", function() {
+		    document.getElementById("lastCheckDateError").innerText = "";
+		});
+		
+		
 	</script>
 </body>
 </html>

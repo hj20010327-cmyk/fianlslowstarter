@@ -38,34 +38,55 @@ public class MachineUpdateController extends HttpServlet {
 		}
 
 		// 파라미터 받기
-		int machineKey = Integer.parseInt(request.getParameter("machineKey"));
+		String machineKeyStr = request.getParameter("machineKey");
 		String machineCode = request.getParameter("machineCode");
 		String machineName = request.getParameter("machineName");
-		int processKey = Integer.parseInt(request.getParameter("processKey"));
+		String processKeyStr = request.getParameter("processKey");
 		String machineStatus = request.getParameter("machineStatus");
 		System.out.println("수정 요청 machineStatus" + machineStatus);
 		String buyDateStr = request.getParameter("buyDate");
 		String lastCheckDateStr = request.getParameter("lastCheckDate");
 		String remark = request.getParameter("remark");
 
+		if (machineKeyStr == null || machineKeyStr.trim().equals("")) {
+		    response.sendRedirect(request.getContextPath() + "/machine");
+		    return;
+		}
+
 		if (machineCode == null || machineCode.trim().equals("")) {
-		    response.sendRedirect("/slowstarter/machine");
+		    response.sendRedirect(request.getContextPath() + "/machine");
 		    return;
 		}
 
 		if (machineName == null || machineName.trim().equals("")) {
-		    response.sendRedirect("/slowstarter/machine");
+		    response.sendRedirect(request.getContextPath() + "/machine");
 		    return;
 		}
 
-		Date buyDate = null;
-		if (buyDateStr != null && !buyDateStr.trim().equals("")) {
-		    buyDate = Date.valueOf(buyDateStr);
+		if (processKeyStr == null || processKeyStr.trim().equals("")) {
+		    response.sendRedirect(request.getContextPath() + "/machine");
+		    return;
 		}
 
+		int machineKey = 0;
+		int processKey = 0;
+		Date buyDate = null;
 		Date lastCheckDate = null;
-		if (lastCheckDateStr != null && !lastCheckDateStr.trim().equals("")) {
-		    lastCheckDate = Date.valueOf(lastCheckDateStr);
+
+		try {
+		    machineKey = Integer.parseInt(machineKeyStr);
+		    processKey = Integer.parseInt(processKeyStr);
+
+		    if (buyDateStr != null && !buyDateStr.trim().equals("")) {
+		        buyDate = Date.valueOf(buyDateStr);
+		    }
+
+		    if (lastCheckDateStr != null && !lastCheckDateStr.trim().equals("")) {
+		        lastCheckDate = Date.valueOf(lastCheckDateStr);
+		    }
+		} catch (Exception e) {
+		    response.sendRedirect(request.getContextPath() + "/machine");
+		    return;
 		}
 
 		// DTO에 담기
@@ -85,7 +106,7 @@ public class MachineUpdateController extends HttpServlet {
 		System.out.println("count: " + count);
 
 		// 목록으로 이동
-		response.sendRedirect("/slowstarter/machine");
+		response.sendRedirect(request.getContextPath() + "/machine");
 
 	}
 

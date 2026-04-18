@@ -461,10 +461,13 @@ public class WorkOrderDAO {
 			conn = dataFactory.getConnection();
 
 			String query = "SELECT p.plan_key, p.plan_code, p.plan_qty, p.plan_date, i.item_name "
-					+ "FROM tb_plan p "
-					+ "LEFT JOIN tb_item i ON p.item_key = i.item_key "
-					+ "WHERE p.plan_status = '계획' "
-					+ "ORDER BY p.plan_key";
+			        + "FROM tb_plan p "
+			        + "LEFT JOIN tb_item i ON p.item_key = i.item_key "
+			        + "WHERE p.plan_status = '계획' "
+			        + "AND p.plan_key NOT IN ( "
+			        + "    SELECT w.plan_key FROM tb_work_order w WHERE w.plan_key IS NOT NULL "
+			        + ") " // 작업지시가 들어간 생산계획은 제외하고 조회 
+			        + "ORDER BY p.plan_key";
 
 			ps = conn.prepareStatement(query);
 			rs = ps.executeQuery();

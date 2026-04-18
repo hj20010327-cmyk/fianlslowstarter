@@ -63,6 +63,11 @@
 		align-items: stretch;
 	}
 }
+.error-msg {
+    color: red;
+    font-size: 12px;
+    margin-top: 4px;
+}
 
 </style>
 <body>
@@ -312,7 +317,7 @@
 
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
-			<form id="planForm" action="/slowstarter/plan/add" method="post">
+			<form id="planForm" action="/slowstarter/plan/add" method="post" onsubmit="return validatePlanForm()">
 				<div class="modal-header">
 					<h3 id="modalTitle">생산계획 신규 등록</h3>
 					<button type="button" class="modal-close" onclick="closeModal()">×</button>
@@ -336,6 +341,7 @@
 					<option value="${item.item_key}">${item.item_name}</option>
 				</c:forEach>
 			</select>
+			<span class="error-msg" id="itemError"></span>
 		</div>
 
 		<div class="form-group">
@@ -346,12 +352,14 @@
 		<div class="form-group">
 			<label>마감일</label>
 			<input type="date" class="input" id="due_date" name="due_date" />
+			<span class="error-msg" id="dueDateError"></span>
 		</div>
 
 		<div class="form-group">
 			<label>계획 수량</label>
 			<input type="number" class="input" id="plan_qty" name="plan_qty"
 				placeholder="계획 수량 입력" />
+			<span class="error-msg" id="qtyError"></span>
 		</div>
 
 		<div class="form-group">
@@ -374,6 +382,7 @@
 				<option value="2">보통</option>
 				<option value="3">낮음</option>
 			</select>
+			<span class="error-msg" id="priorityError"></span>
 		</div>
 	</div>
 </div>
@@ -387,6 +396,7 @@
 
 	<script>
 		function openInsertModal() {
+			 document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
 			document.getElementById("modalTitle").innerText = "생산계획 신규 등록";
 			document.getElementById("planForm").action = "/slowstarter/plan/add";
 
@@ -402,6 +412,7 @@
 		}
 
 		function openEditModal(plan_key, plan_code, item_key, plan_date, due_date, plan_qty, status, priority) {
+			document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
 			document.getElementById("modalTitle").innerText = "생산계획 수정";
 			document.getElementById("planForm").action = "/slowstarter/plan/update";
 
@@ -419,6 +430,75 @@
 		function closeModal() {
 			document.getElementById("commonModal").classList.remove("show");
 		}
+		
+		function validatePlanForm() {
+
+		    let isValid = true;
+
+		    // 에러 초기화
+		    document.querySelectorAll(".error-msg").forEach(e => e.innerText = "");
+
+		    let itemKey = document.getElementById("item_key").value;
+		    let planDate = document.getElementById("plan_date").value;
+		    let dueDate = document.getElementById("due_date").value;
+		    let priority = document.getElementById("priority").value;
+		    let planQty = document.getElementById("plan_qty").value;
+
+		    // 제품 선택
+		    if (!itemKey) {
+		        document.getElementById("itemError").innerText = "제품을 선택해주세요.";
+		        isValid = false;
+		    }
+
+		    // 마감일 < 계획일
+		    if (planDate && dueDate && dueDate < planDate) {
+		        document.getElementById("dueDateError").innerText = "마감일은 계획일보다 빠를 수 없습니다.";
+		        isValid = false;
+		    }
+
+		    // 우선순위
+		    if (!priority) {
+		        document.getElementById("priorityError").innerText = "우선순위를 선택해주세요.";
+		        isValid = false;
+		    }
+		    
+		    // 계획수량 0 방지 
+		    if (!planQty || planQty <= 0) {
+		        document.getElementById("qtyError").innerText = "수량은 1 이상 입력해주세요.";
+		        isValid = false;
+		    }
+		    return isValid;
+		}
+		
+		window.onload = function() {
+
+		    // 제품
+		    document.getElementById("item_key").addEventListener("change", function() {
+		        if (this.value) document.getElementById("itemError").innerText = "";
+		    });
+
+		    // 날짜
+		    document.getElementById("due_date").addEventListener("input", function() {
+		        let planDate = document.getElementById("plan_date").value;
+		        let dueDate = this.value;
+		        if (planDate && dueDate && dueDate >= planDate) {
+		            document.getElementById("dueDateError").innerText = "";
+		        }
+		    });
+
+		    // 우선순위
+		    document.getElementById("priority").addEventListener("change", function() {
+		        if (this.value) document.getElementById("priorityError").innerText = "";
+		    });
+
+		    // 수량
+		    document.getElementById("plan_qty").addEventListener("input", function() {
+		        if (this.value > 0) document.getElementById("qtyError").innerText = "";
+		    });
+		};
+		
+			
+		
 	</script>
 </body>
 </html>

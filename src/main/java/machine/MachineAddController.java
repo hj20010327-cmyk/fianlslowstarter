@@ -37,8 +37,6 @@ public class MachineAddController extends HttpServlet {
 		
 		System.out.println("loginUser = " + loginUser);
 		
-		
-
 		if (loginUser == null
 				|| (!"관리자".equals(loginUser.getUser_role()) && !"슈퍼바이저".equals(loginUser.getUser_role()))) {
 			// 이거는 주소로 들어오는사람 막는용도
@@ -50,22 +48,10 @@ public class MachineAddController extends HttpServlet {
 		String machineName = request.getParameter("machineName");
 		String buyDateStr = request.getParameter("buyDate");
 		String remark = request.getParameter("remark");
-		int processKey = Integer.parseInt(request.getParameter("processKey"));
-
+		String processKeyStr = request.getParameter("processKey");
+		int processKey = Integer.parseInt(processKeyStr);
+		Date buyDate = Date.valueOf(buyDateStr);
 		
-		System.out.println("processKeyStr = [" + processKey + "]");
-
-		if (machineName == null || machineName.trim().equals("")) {
-		    response.sendRedirect("/slowstarter/machine");
-		    return;
-		}
-
-		Date buyDate = null;
-		if (buyDateStr != null && !buyDateStr.trim().equals("")) {
-		    buyDate = Date.valueOf(buyDateStr);
-		}
-
-
 		// DTO에 담기
 		MachineDTO dto = new MachineDTO();
 		dto.setMachineName(machineName);

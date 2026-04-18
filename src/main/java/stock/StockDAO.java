@@ -41,13 +41,8 @@ public class StockDAO {
 
     // =========================
     // 목록 조회
-    // type
-    // all     : 전체
-    // stock   : 재고
-    // product : 완제품
-    // item    : 자재
     // =========================
-    public List<StockDTO> selectList(int startRow, int endRow, String keyword, String type) {
+    public List<StockDTO> selectList(int startRow, int endRow, String lotKeyword, String itemType, String itemCodeKeyword, String itemNameKeyword) {
         List<StockDTO> list = new ArrayList<StockDTO>();
 
         Connection conn = null;
@@ -75,7 +70,6 @@ public class StockDAO {
             sql.append("            i.SPEC, ");
             sql.append("            i.UNIT, ");
             sql.append("            i.PRICE, ");
-            sql.append("            ");
             sql.append(getItemTypeCaseSql());
             sql.append(" AS ITEM_TYPE ");
             sql.append("        FROM TB_STOCK s ");
@@ -84,19 +78,25 @@ public class StockDAO {
             sql.append("        WHERE 1=1 ");
 
             // LOT 검색
-            if (keyword != null && !keyword.trim().equals("")) {
+            if (lotKeyword != null && !lotKeyword.trim().equals("")) {
                 sql.append(" AND UPPER(s.LOT) LIKE UPPER(?) ");
             }
 
+            // 품목코드 검색
+            if (itemCodeKeyword != null && !itemCodeKeyword.trim().equals("")) {
+                sql.append(" AND UPPER(i.ITEM_CODE) LIKE UPPER(?) ");
+            }
+
+            // 품목명 검색
+            if (itemNameKeyword != null && !itemNameKeyword.trim().equals("")) {
+                sql.append(" AND UPPER(i.ITEM_NAME) LIKE UPPER(?) ");
+            }
+
             // 구분 검색
-            if ("product".equals(type)) {
+            if ("product".equals(itemType)) {
                 sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
-            } else if ("item".equals(type)) {
+            } else if ("item".equals(itemType)) {
                 sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') ");
-            } else if ("stock".equals(type)) {
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-A%' ");
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-P%' ");
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-M%' ");
             }
 
             sql.append("        ORDER BY s.STOCK_KEY ASC ");
@@ -107,8 +107,16 @@ public class StockDAO {
 
             int idx = 1;
 
-            if (keyword != null && !keyword.trim().equals("")) {
-                ps.setString(idx++, "%" + keyword.trim() + "%");
+            if (lotKeyword != null && !lotKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + lotKeyword.trim() + "%");
+            }
+
+            if (itemCodeKeyword != null && !itemCodeKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + itemCodeKeyword.trim() + "%");
+            }
+
+            if (itemNameKeyword != null && !itemNameKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + itemNameKeyword.trim() + "%");
             }
 
             ps.setInt(idx++, endRow);
@@ -121,6 +129,8 @@ public class StockDAO {
 
                 dto.setStock_key(rs.getInt("STOCK_KEY"));
                 dto.setLot(rs.getString("LOT"));
+                dto.setDone_qc(rs.getInt("DONE_QC"));
+                dto.setWait_qc(rs.getInt("WAIT_QC"));
                 dto.setCurrent_qty(rs.getInt("CURRENT_QTY"));
                 dto.setSafe_qty(rs.getInt("SAFE_QTY"));
                 dto.setUpdated_at(rs.getTimestamp("UPDATED_AT"));
@@ -148,7 +158,7 @@ public class StockDAO {
     // =========================
     // 전체 개수 조회
     // =========================
-    public int getTotalCount(String keyword, String type) {
+    public int getTotalCount(String lotKeyword, String itemType, String itemCodeKeyword, String itemNameKeyword) {
         int total = 0;
 
         Connection conn = null;
@@ -166,26 +176,38 @@ public class StockDAO {
             sql.append("    ON s.ITEM_KEY = i.ITEM_KEY ");
             sql.append("WHERE 1=1 ");
 
-            if (keyword != null && !keyword.trim().equals("")) {
+            if (lotKeyword != null && !lotKeyword.trim().equals("")) {
                 sql.append(" AND UPPER(s.LOT) LIKE UPPER(?) ");
             }
 
-            if ("product".equals(type)) {
+            if (itemCodeKeyword != null && !itemCodeKeyword.trim().equals("")) {
+                sql.append(" AND UPPER(i.ITEM_CODE) LIKE UPPER(?) ");
+            }
+
+            if (itemNameKeyword != null && !itemNameKeyword.trim().equals("")) {
+                sql.append(" AND UPPER(i.ITEM_NAME) LIKE UPPER(?) ");
+            }
+
+            if ("product".equals(itemType)) {
                 sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
-            } else if ("item".equals(type)) {
+            } else if ("item".equals(itemType)) {
                 sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') ");
-            } else if ("stock".equals(type)) {
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-A%' ");
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-P%' ");
-                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-M%' ");
             }
 
             ps = conn.prepareStatement(sql.toString());
 
             int idx = 1;
 
-            if (keyword != null && !keyword.trim().equals("")) {
-                ps.setString(idx++, "%" + keyword.trim() + "%");
+            if (lotKeyword != null && !lotKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + lotKeyword.trim() + "%");
+            }
+
+            if (itemCodeKeyword != null && !itemCodeKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + itemCodeKeyword.trim() + "%");
+            }
+
+            if (itemNameKeyword != null && !itemNameKeyword.trim().equals("")) {
+                ps.setString(idx++, "%" + itemNameKeyword.trim() + "%");
             }
 
             rs = ps.executeQuery();
@@ -205,7 +227,6 @@ public class StockDAO {
 
     // =========================
     // 품목 목록 조회
-    // 등록/수정 모달에서 select에 사용
     // =========================
     public List<StockDTO> selectItemList() {
         List<StockDTO> list = new ArrayList<StockDTO>();
@@ -225,7 +246,6 @@ public class StockDAO {
             sql.append("    i.SPEC, ");
             sql.append("    i.UNIT, ");
             sql.append("    i.PRICE, ");
-            sql.append("    ");
             sql.append(getItemTypeCaseSql());
             sql.append(" AS ITEM_TYPE ");
             sql.append("FROM TB_ITEM i ");
@@ -256,6 +276,90 @@ public class StockDAO {
     }
 
     // =========================
+    // 검색용 LOT 목록
+    // =========================
+    public List<String> selectLotList() {
+        List<String> list = new ArrayList<String>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement("SELECT DISTINCT LOT FROM TB_STOCK ORDER BY LOT ASC");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(rs.getString("LOT"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, ps, rs);
+        }
+
+        return list;
+    }
+
+    // =========================
+    // 검색용 품목코드 목록
+    // =========================
+    public List<String> selectItemCodeList() {
+        List<String> list = new ArrayList<String>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement("SELECT DISTINCT ITEM_CODE FROM TB_ITEM ORDER BY ITEM_CODE ASC");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(rs.getString("ITEM_CODE"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, ps, rs);
+        }
+
+        return list;
+    }
+
+    // =========================
+    // 검색용 품목명 목록
+    // =========================
+    public List<String> selectItemNameList() {
+        List<String> list = new ArrayList<String>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+            ps = conn.prepareStatement("SELECT DISTINCT ITEM_NAME FROM TB_ITEM ORDER BY ITEM_NAME ASC");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(rs.getString("ITEM_NAME"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, ps, rs);
+        }
+
+        return list;
+    }
+
+    // =========================
     // 등록
     // =========================
     public int insert(StockDTO dto) {
@@ -267,9 +371,9 @@ public class StockDAO {
 
             String sql = ""
                     + "INSERT INTO TB_STOCK ( "
-                    + "    STOCK_KEY, LOT, CURRENT_QTY, SAFE_QTY, UPDATED_AT, ITEM_KEY "
+                    + "    STOCK_KEY, LOT, DONE_QC, WAIT_QC, CURRENT_QTY, SAFE_QTY, UPDATED_AT, ITEM_KEY "
                     + ") VALUES ( "
-                    + "    STOCK_SEQ.NEXTVAL, ?, ?, ?, CURRENT_TIMESTAMP, ? "
+                    + "    STOCK_SEQ.NEXTVAL, ?, 0, 0, ?, ?, CURRENT_TIMESTAMP, ? "
                     + ")";
 
             ps = conn.prepareStatement(sql);

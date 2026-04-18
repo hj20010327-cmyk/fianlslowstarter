@@ -9,6 +9,8 @@ public class StockDTO {
     // =========================
     private int stock_key;          // 재고 PK
     private String lot;             // LOT 번호
+    private int done_qc;            // 검사후 수량
+    private int wait_qc;            // 검사전 수량
     private int current_qty;        // 현재고
     private int safe_qty;           // 안전재고
     private Timestamp updated_at;   // 수정일시
@@ -19,7 +21,7 @@ public class StockDTO {
     // =========================
     private String item_code;       // 품목코드
     private String item_name;       // 품목명
-    private String item_type;       // 재고 / 완제품 / 자재
+    private String item_type;       // 완제품 / 자재 / 재고
     private String spec;            // 규격
     private String unit;            // 단위
     private int price;              // 가격
@@ -41,6 +43,22 @@ public class StockDTO {
 
     public void setLot(String lot) {
         this.lot = lot;
+    }
+
+    public int getDone_qc() {
+        return done_qc;
+    }
+
+    public void setDone_qc(int done_qc) {
+        this.done_qc = done_qc;
+    }
+
+    public int getWait_qc() {
+        return wait_qc;
+    }
+
+    public void setWait_qc(int wait_qc) {
+        this.wait_qc = wait_qc;
     }
 
     public int getCurrent_qty() {

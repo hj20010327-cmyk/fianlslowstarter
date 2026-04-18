@@ -46,6 +46,9 @@ public class QualityAddController extends HttpServlet {
             String goodQtyParam = request.getParameter("good_qty");
             String defectQtyParam = request.getParameter("defect_qty");
             String userKeyParam = request.getParameter("user_key");
+            String qcStatusParam = request.getParameter("qc_status");
+            String itemNameParam = request.getParameter("item_name");
+            String defectReasonParam = request.getParameter("defect_reason");
 
             // 필수값 체크
             if (prodKeyParam == null || prodKeyParam.trim().equals("") ||
@@ -53,29 +56,53 @@ public class QualityAddController extends HttpServlet {
                 inspectQtyParam == null || inspectQtyParam.trim().equals("") ||
                 goodQtyParam == null || goodQtyParam.trim().equals("") ||
                 defectQtyParam == null || defectQtyParam.trim().equals("") ||
-                userKeyParam == null || userKeyParam.trim().equals("")) {
+                userKeyParam == null || userKeyParam.trim().equals("") ||
+                qcStatusParam == null || qcStatusParam.trim().equals("") ||
+                itemNameParam == null || itemNameParam.trim().equals("")) {
 
-                response.getWriter().println("<script>alert('등록값이 누락되었습니다.'); history.back();</script>");
+                response.getWriter().println("<script>alert('필수 입력값이 누락되었습니다.'); history.back();</script>");
+                return;
+            }
+
+            int inspectQty = Integer.parseInt(inspectQtyParam);
+            int goodQty = Integer.parseInt(goodQtyParam);
+            int defectQty = Integer.parseInt(defectQtyParam);
+
+            // 수량 체크
+            if (inspectQty < 0 || goodQty < 0 || defectQty < 0) {
+                response.getWriter().println("<script>alert('수량은 0보다 작을 수 없습니다.'); history.back();</script>");
+                return;
+            }
+
+            if (defectQty > inspectQty) {
+                response.getWriter().println("<script>alert('불량수량은 검사수량보다 클 수 없습니다.'); history.back();</script>");
+                return;
+            }
+
+            if (goodQty != (inspectQty - defectQty)) {
+                response.getWriter().println("<script>alert('양품수량이 올바르지 않습니다.'); history.back();</script>");
                 return;
             }
 
             // 검사번호는 DB 최대값 기준으로 자동 생성
             dto.setQuality_code(service.getNextQualityCode());
 
-            // 날짜 제한 없음
-            // 4월이든 5월이든 사용자가 선택한 날짜 그대로 저장
+            // 날짜 저장
             dto.setInspect_date(Date.valueOf(inspectDateParam));
 
             // 수량 정보 세팅
-            dto.setInspect_qty(Integer.parseInt(inspectQtyParam));
-            dto.setGood_qty(Integer.parseInt(goodQtyParam));
-            dto.setDefect_qty(Integer.parseInt(defectQtyParam));
+            dto.setInspect_qty(inspectQty);
+            dto.setGood_qty(goodQty);
+            dto.setDefect_qty(defectQty);
 
             // 기타 정보 세팅
-            dto.setDefect_reason(request.getParameter("defect_reason"));
-            dto.setQc_status(request.getParameter("qc_status"));
-            dto.setProd_key(Integer.parseInt(prodKeyParam));   // WORK_ORDER_KEY
+            dto.setDefect_reason(defectReasonParam);
+            dto.setQc_status(qcStatusParam);
+            dto.setProd_key(Integer.parseInt(prodKeyParam));
             dto.setUser_key(Integer.parseInt(userKeyParam));
+
+            // 필요하면 품목명도 DTO에 세팅
+            dto.setItem_name(itemNameParam);
 
             // 등록 실행
             int result = service.addquality(dto);

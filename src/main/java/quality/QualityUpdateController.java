@@ -36,20 +36,63 @@ public class QualityUpdateController extends HttpServlet {
         }
 
         try {
+            // 파라미터 받기
+            String qualityKeyParam = request.getParameter("quality_key");
+            String inspectDateParam = request.getParameter("inspect_date");
+            String inspectQtyParam = request.getParameter("inspect_qty");
+            String goodQtyParam = request.getParameter("good_qty");
+            String defectQtyParam = request.getParameter("defect_qty");
+            String defectReasonParam = request.getParameter("defect_reason");
+            String qcStatusParam = request.getParameter("qc_status");
+            String userKeyParam = request.getParameter("user_key");
+            String itemNameParam = request.getParameter("item_name");
+
+            // 필수값 체크
+            if (qualityKeyParam == null || qualityKeyParam.trim().equals("") ||
+                inspectDateParam == null || inspectDateParam.trim().equals("") ||
+                inspectQtyParam == null || inspectQtyParam.trim().equals("") ||
+                goodQtyParam == null || goodQtyParam.trim().equals("") ||
+                defectQtyParam == null || defectQtyParam.trim().equals("") ||
+                qcStatusParam == null || qcStatusParam.trim().equals("") ||
+                userKeyParam == null || userKeyParam.trim().equals("") ||
+                itemNameParam == null || itemNameParam.trim().equals("")) {
+
+                response.getWriter().println("<script>alert('필수 입력값이 누락되었습니다.'); history.back();</script>");
+                return;
+            }
+
+            int inspectQty = Integer.parseInt(inspectQtyParam);
+            int goodQty = Integer.parseInt(goodQtyParam);
+            int defectQty = Integer.parseInt(defectQtyParam);
+
+            // 수량 체크
+            if (inspectQty < 0 || goodQty < 0 || defectQty < 0) {
+                response.getWriter().println("<script>alert('수량은 0보다 작을 수 없습니다.'); history.back();</script>");
+                return;
+            }
+
+            if (defectQty > inspectQty) {
+                response.getWriter().println("<script>alert('불량수량은 검사수량보다 클 수 없습니다.'); history.back();</script>");
+                return;
+            }
+
+            if (goodQty != (inspectQty - defectQty)) {
+                response.getWriter().println("<script>alert('양품수량이 올바르지 않습니다.'); history.back();</script>");
+                return;
+            }
+
             QualityDTO dto = new QualityDTO();
 
             // 수정할 값 세팅
-            dto.setQuality_key(Integer.parseInt(request.getParameter("quality_key")));
-            dto.setInspect_date(Date.valueOf(request.getParameter("inspect_date")));
-            dto.setInspect_qty(Integer.parseInt(request.getParameter("inspect_qty")));
-            dto.setGood_qty(Integer.parseInt(request.getParameter("good_qty")));
-            dto.setDefect_qty(Integer.parseInt(request.getParameter("defect_qty")));
-            dto.setDefect_reason(request.getParameter("defect_reason"));
-            dto.setQc_status(request.getParameter("qc_status"));
-            dto.setUser_key(Integer.parseInt(request.getParameter("user_key")));
-
-            // ★ 품목명도 같이 받기
-            dto.setItem_name(request.getParameter("item_name"));
+            dto.setQuality_key(Integer.parseInt(qualityKeyParam));
+            dto.setInspect_date(Date.valueOf(inspectDateParam));
+            dto.setInspect_qty(inspectQty);
+            dto.setGood_qty(goodQty);
+            dto.setDefect_qty(defectQty);
+            dto.setDefect_reason(defectReasonParam);
+            dto.setQc_status(qcStatusParam);
+            dto.setUser_key(Integer.parseInt(userKeyParam));
+            dto.setItem_name(itemNameParam);
 
             QualityService service = new QualityService();
 

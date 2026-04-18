@@ -101,6 +101,21 @@
 .click-row:hover {
 	background-color: #f8fbff;
 }
+
+/* 유효성 검사 빨간 문구 */
+.error-text {
+	display: block;
+	margin-top: 6px;
+	font-size: 12px;
+	color: red;
+	font-weight: 600;
+}
+
+.input-error,
+.select-error,
+.textarea-error {
+	border: 1px solid red !important;
+}
 </style>
 </head>
 
@@ -116,6 +131,7 @@
 
 		<script>
 			const contextPath = '${pageContext.request.contextPath}';
+			const loginUserRole = '${dto.user_role}';
 		</script>
 
 		<div class="header-right">
@@ -206,7 +222,7 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>기준 조건을 선택하세요</span>
+					<span>작업자는 조회만 가능, 관리자/슈퍼바이저만 등록/수정/삭제</span>
 				</div>
 
 				<form action="${pageContext.request.contextPath}/qualityList" method="get">
@@ -255,8 +271,7 @@
 					<form id="deleteForm" action="${pageContext.request.contextPath}/quality/delete" method="post">
 						<div class="section-title">
 							<h2>품질 목록</h2>
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-								<span>목록 클릭 시 수정할 수 있습니다.</span>
+							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">						
 								<button type="button" class="btn" onclick="deleteSelected()">삭제</button>
 							</c:if>
 						</div>
@@ -301,7 +316,9 @@
 											'${m.user_key}'
 											)">
 											<td onclick="event.stopPropagation();">
-												<input type="checkbox" name="quality_key" value="${m.quality_key}">
+												<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<input type="checkbox" name="quality_key" value="${m.quality_key}">
+												</c:if>
 											</td>
 											<td>${m.quality_code}</td>
 											<td>${m.item_name}</td>
@@ -375,6 +392,7 @@
 						<div class="form-group">
 							<label>검사일자</label>
 							<input type="date" class="input" id="inspect_date" name="inspect_date" />
+							<small class="error-text" id="inspect_date_error"></small>
 						</div>
 
 						<div class="form-group" id="prod_select_wrap">
@@ -390,6 +408,7 @@
 									</option>
 								</c:forEach>
 							</select>
+							<small class="error-text" id="prod_key_select_error"></small>
 						</div>
 
 						<div class="form-group" id="prod_view_wrap" style="display:none;">
@@ -400,31 +419,36 @@
 						<div class="form-group">
 							<label>검사수량</label>
 							<input type="number" class="input" id="inspect_qty" name="inspect_qty" placeholder="검사수량 자동입력" readonly />
+							<small class="error-text" id="inspect_qty_error"></small>
 						</div>
 
 						<div class="form-group">
 							<label>양품수량</label>
 							<input type="number" class="input" id="good_qty" name="good_qty" placeholder="양품수량 자동계산" readonly />
+							<small class="error-text" id="good_qty_error"></small>
 						</div>
 
 						<div class="form-group">
 							<label>불량수량</label>
 							<input type="number" class="input" id="defect_qty" name="defect_qty" placeholder="불량수량 입력" />
+							<small class="error-text" id="defect_qty_error"></small>
 						</div>
 
 						<div class="form-group">
 							<label>상태</label>
 							<select class="select" id="qc_status" name="qc_status">
+								<option value="">선택</option>
 								<option value="합격">합격</option>
 								<option value="불합격">불합격</option>
 								<option value="재검">재검</option>
 							</select>
+							<small class="error-text" id="qc_status_error"></small>
 						</div>
 
-						<!-- 등록 때는 자동입력, 수정 때는 직접 수정 가능 -->
 						<div class="form-group">
 							<label>품목명</label>
 							<input type="text" class="input" id="item_name_view" name="item_name" />
+							<small class="error-text" id="item_name_view_error"></small>
 						</div>
 
 						<div class="form-group">
@@ -435,6 +459,7 @@
 									<option value="${u.user_key}">${u.user_name}</option>
 								</c:forEach>
 							</select>
+							<small class="error-text" id="user_key_error"></small>
 						</div>
 
 						<div class="form-group" style="grid-column: span 2;">
@@ -453,7 +478,121 @@
 	</div>
 
 	<script>
+		function clearValidation() {
+			const errorTexts = document.querySelectorAll(".error-text");
+			for (let i = 0; i < errorTexts.length; i++) {
+				errorTexts[i].innerText = "";
+			}
+
+			const inputs = document.querySelectorAll(".input, .select, .textarea");
+			for (let i = 0; i < inputs.length; i++) {
+				inputs[i].classList.remove("input-error");
+				inputs[i].classList.remove("select-error");
+				inputs[i].classList.remove("textarea-error");
+			}
+		}
+
+		function showError(inputId, errorId, message) {
+			const input = document.getElementById(inputId);
+			const error = document.getElementById(errorId);
+
+			if (input) {
+				if (input.tagName === "SELECT") {
+					input.classList.add("select-error");
+				} else if (input.tagName === "TEXTAREA") {
+					input.classList.add("textarea-error");
+				} else {
+					input.classList.add("input-error");
+				}
+			}
+
+			if (error) {
+				error.innerText = message;
+			}
+		}
+
+		function validateQualityForm() {
+			clearValidation();
+
+			let isValid = true;
+
+			const modalTitle = document.getElementById("modalTitle").innerText;
+			const inspectDate = document.getElementById("inspect_date").value.trim();
+			const inspectQty = document.getElementById("inspect_qty").value.trim();
+			const goodQty = document.getElementById("good_qty").value.trim();
+			const defectQty = document.getElementById("defect_qty").value.trim();
+			const qcStatus = document.getElementById("qc_status").value.trim();
+			const itemName = document.getElementById("item_name_view").value.trim();
+			const userKey = document.getElementById("user_key").value.trim();
+			const prodKey = document.getElementById("prod_key_hidden").value.trim();
+			const prodKeySelect = document.getElementById("prod_key_select").value.trim();
+
+			if (inspectDate === "") {
+				showError("inspect_date", "inspect_date_error", "검사일자를 입력해주세요.");
+				isValid = false;
+			}
+
+			if (modalTitle === "품질 등록" && prodKeySelect === "") {
+				showError("prod_key_select", "prod_key_select_error", "작업지시 코드를 선택해주세요.");
+				isValid = false;
+			}
+
+			if (prodKey === "" && modalTitle === "품질 등록") {
+				showError("prod_key_select", "prod_key_select_error", "작업지시 코드를 선택해주세요.");
+				isValid = false;
+			}
+
+			if (inspectQty === "") {
+				showError("inspect_qty", "inspect_qty_error", "검사수량을 확인해주세요.");
+				isValid = false;
+			}
+
+			if (goodQty === "") {
+				showError("good_qty", "good_qty_error", "양품수량을 확인해주세요.");
+				isValid = false;
+			}
+
+			if (defectQty === "") {
+				showError("defect_qty", "defect_qty_error", "불량수량을 입력해주세요.");
+				isValid = false;
+			}
+
+			if (qcStatus === "") {
+				showError("qc_status", "qc_status_error", "상태를 선택해주세요.");
+				isValid = false;
+			}
+
+			if (itemName === "") {
+				showError("item_name_view", "item_name_view_error", "품목명을 입력해주세요.");
+				isValid = false;
+			}
+
+			if (userKey === "") {
+				showError("user_key", "user_key_error", "담당자를 선택해주세요.");
+				isValid = false;
+			}
+
+			if (inspectQty !== "" && defectQty !== "") {
+				const inspect = parseInt(inspectQty, 10);
+				const defect = parseInt(defectQty, 10);
+
+				if (defect > inspect) {
+					showError("defect_qty", "defect_qty_error", "불량수량은 검사수량보다 클 수 없습니다.");
+					isValid = false;
+				}
+			}
+
+			return isValid;
+		}
+
 		function openInsertModal() {
+			if (loginUserRole !== "관리자" && loginUserRole !== "슈퍼바이저") {
+				alert("등록 권한이 없습니다.");
+				return;
+			}
+
+			clearValidation();
+
 			document.getElementById("modalTitle").innerText = "품질 등록";
 			document.getElementById("qualityForm").action = contextPath + "/quality/add";
 
@@ -466,12 +605,12 @@
 			document.getElementById("inspect_qty").value = "";
 			document.getElementById("good_qty").value = "";
 			document.getElementById("defect_qty").value = "";
-			document.getElementById("qc_status").value = "합격";
+			document.getElementById("qc_status").value = "";
 			document.getElementById("prod_key_select").value = "";
 			document.getElementById("prod_key_hidden").value = "";
 			document.getElementById("prod_name_view").value = "";
 			document.getElementById("item_name_view").value = "";
-			document.getElementById("item_name_view").readOnly = true;   // 등록은 자동입력만
+			document.getElementById("item_name_view").readOnly = true;
 			document.getElementById("defect_reason").value = "";
 			document.getElementById("user_key").value = "${dto.user_key}";
 
@@ -479,6 +618,13 @@
 		}
 
 		function openEditModal(qualityKey, qualityCode, inspectDate, inspectQty, goodQty, defectQty, defectReason, qcStatus, prodKey, prodName, itemName, userKey) {
+			// 작업자는 수정 모달 못 열게 막기
+			if (loginUserRole !== "관리자" && loginUserRole !== "슈퍼바이저") {
+				return;
+			}
+
+			clearValidation();
+
 			document.getElementById("modalTitle").innerText = "품질 수정";
 			document.getElementById("qualityForm").action = contextPath + "/quality/update";
 
@@ -495,7 +641,7 @@
 			document.getElementById("prod_key_hidden").value = prodKey;
 			document.getElementById("prod_name_view").value = prodName;
 			document.getElementById("item_name_view").value = itemName;
-			document.getElementById("item_name_view").readOnly = false;  // 수정은 직접 수정 가능
+			document.getElementById("item_name_view").readOnly = false;
 			document.getElementById("user_key").value = userKey;
 
 			if (defectReason == 'null') {
@@ -508,6 +654,7 @@
 		}
 
 		function closeModal() {
+			clearValidation();
 			document.getElementById("commonModal").classList.remove("show");
 		}
 
@@ -540,6 +687,7 @@
 		}
 
 		document.addEventListener("DOMContentLoaded", function() {
+			const qualityForm = document.getElementById("qualityForm");
 			const inspectQty = document.getElementById("inspect_qty");
 			const goodQty = document.getElementById("good_qty");
 			const defectQty = document.getElementById("defect_qty");
@@ -552,17 +700,23 @@
 				const defect = parseInt(defectQty.value || 0);
 
 				if (defect > inspect) {
-					alert("불량수량은 검사수량보다 클 수 없습니다.");
 					defectQty.value = inspect;
 					goodQty.value = 0;
+					showError("defect_qty", "defect_qty_error", "불량수량은 검사수량보다 클 수 없습니다.");
 					return;
 				}
 
+				document.getElementById("defect_qty_error").innerText = "";
+				defectQty.classList.remove("input-error");
 				goodQty.value = inspect - defect;
 			}
 
 			if (defectQty) {
-				defectQty.addEventListener("input", calcGoodQty);
+				defectQty.addEventListener("input", function() {
+					document.getElementById("defect_qty_error").innerText = "";
+					defectQty.classList.remove("input-error");
+					calcGoodQty();
+				});
 			}
 
 			if (prodKeySelect) {
@@ -573,14 +727,35 @@
 
 					prodKeyHidden.value = this.value;
 
-					if (stockQty != null) {
+					if (stockQty != null && this.value !== "") {
 						inspectQty.value = stockQty;
 						defectQty.value = "";
 						goodQty.value = stockQty;
+					} else {
+						inspectQty.value = "";
+						defectQty.value = "";
+						goodQty.value = "";
 					}
 
 					if (itemNameView) {
 						itemNameView.value = itemName != null ? itemName : "";
+					}
+
+					document.getElementById("prod_key_select_error").innerText = "";
+					prodKeySelect.classList.remove("select-error");
+					document.getElementById("inspect_qty_error").innerText = "";
+					document.getElementById("good_qty_error").innerText = "";
+					document.getElementById("item_name_view_error").innerText = "";
+					inspectQty.classList.remove("input-error");
+					goodQty.classList.remove("input-error");
+					itemNameView.classList.remove("input-error");
+				});
+			}
+
+			if (qualityForm) {
+				qualityForm.addEventListener("submit", function(e) {
+					if (!validateQualityForm()) {
+						e.preventDefault();
 					}
 				});
 			}

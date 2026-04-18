@@ -54,7 +54,6 @@
             background-color: #f8f9fa;
         }
 
-        /* 품질관리처럼 검색 조건 한 줄 정렬 */
         .search-inline-wrap {
             display: flex;
             align-items: flex-end;
@@ -130,7 +129,7 @@
                 </ul>
             </div>
 
-            <!-- 재고관리 메뉴 : 구조는 그대로 두고 글씨만 추가 -->
+            <!-- 공통 레이아웃/사이드바 구조는 그대로 유지 -->
             <div class="snb-section">
                 <div class="snb-title">재고관리</div>
                 <ul class="snb-menu">
@@ -195,6 +194,7 @@
                         <div class="search-inline-item">
                             <select class="select" name="itemType">
                                 <option value="all" ${itemType eq 'all' ? 'selected' : ''}>전체</option>
+                                <option value="stock" ${itemType eq 'stock' ? 'selected' : ''}>재고</option>
                                 <option value="product" ${itemType eq 'product' ? 'selected' : ''}>완제품</option>
                                 <option value="item" ${itemType eq 'item' ? 'selected' : ''}>자재</option>
                             </select>
@@ -220,7 +220,7 @@
 
                         <div class="section-title">
                             <h2>재고 목록</h2>
-                            <span>처음에는 전체 데이터가 나오고, 구분 선택 시 완제품 / 자재만 볼 수 있습니다.</span>
+                            <span>처음에는 전체 데이터가 나오고, 구분 선택 시 재고 / 완제품 / 자재만 볼 수 있습니다.</span>
                             <c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
                                 <button type="submit" class="btn">삭제</button>
                             </c:if>
@@ -251,15 +251,8 @@
 
                                             <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.stock_key}</td>
 
-                                            <!-- ★ 수정 : 전체면 재고, 완제품 선택이면 완제품, 자재 선택이면 자재 -->
-                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">
-                                                <c:choose>
-                                                    <c:when test="${itemType eq 'all'}">재고</c:when>
-                                                    <c:when test="${itemType eq 'product'}">완제품</c:when>
-                                                    <c:when test="${itemType eq 'item'}">자재</c:when>
-                                                    <c:otherwise>${s.item_type}</c:otherwise>
-                                                </c:choose>
-                                            </td>
+                                            <!-- 구분은 실제 데이터 구분값 그대로 출력 -->
+                                            <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_type}</td>
 
                                             <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_code}</td>
                                             <td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_name}</td>
@@ -309,6 +302,18 @@
                     <div class="modal-body">
                         <div class="form-grid">
                             <div class="form-group" style="grid-column: span 2;">
+                                <label>품목 선택</label>
+                                <select class="select" name="item_key" id="modal_item_key" required>
+                                    <option value="">선택</option>
+                                    <c:forEach var="item" items="${itemList}">
+                                        <option value="${item.item_key}">
+                                            [${item.item_type}] ${item.item_code} / ${item.item_name}
+                                        </option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="grid-column: span 2;">
                                 <label>LOT 번호</label>
                                 <input type="text" class="input" name="lot" id="modal_lot" required />
                             </div>
@@ -321,11 +326,6 @@
                             <div class="form-group">
                                 <label>안전재고</label>
                                 <input type="number" class="input" name="safe_qty" id="modal_safe_qty" value="0" />
-                            </div>
-
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label>품목번호 (item_key)</label>
-                                <input type="number" class="input" name="item_key" id="modal_item_key" required />
                             </div>
                         </div>
                     </div>

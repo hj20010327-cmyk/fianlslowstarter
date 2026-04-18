@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import stock.StockDTO;
-import stock.StockService;
-
 @WebServlet("/stock")
 public class StockController extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -38,12 +35,16 @@ public class StockController extends HttpServlet {
         int endRow = page * pageSize;
 
         StockService service = new StockService();
+
+        // 목록 / 개수 / 품목목록 조회
         List<StockDTO> list = service.getList(startRow, endRow, keyword, itemType);
         int totalCount = service.getTotalCount(keyword, itemType);
+        List<StockDTO> itemList = service.getItemList();
 
         int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
         request.setAttribute("list", list);
+        request.setAttribute("itemList", itemList);
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("totalPage", totalPage);
         request.setAttribute("currentPage", page);
@@ -70,6 +71,7 @@ public class StockController extends HttpServlet {
                     String ids = String.join(",", stockKeys);
                     service.remove(ids);
                 }
+
             } else {
                 String stockKeyStr = request.getParameter("stock_key");
                 String lot = request.getParameter("lot");

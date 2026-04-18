@@ -19,7 +19,10 @@ public class StockDTO {
     // =========================
     private String item_code;       // 품목코드
     private String item_name;       // 품목명
-    private String item_type;       // 완제품 / 자재 / 기타
+    private String item_type;       // 재고 / 완제품 / 자재
+    private String spec;            // 규격
+    private String unit;            // 단위
+    private int price;              // 가격
 
     // =========================
     // getter / setter
@@ -94,5 +97,29 @@ public class StockDTO {
 
     public void setItem_type(String item_type) {
         this.item_type = item_type;
+    }
+
+    public String getSpec() {
+        return spec;
+    }
+
+    public void setSpec(String spec) {
+        this.spec = spec;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

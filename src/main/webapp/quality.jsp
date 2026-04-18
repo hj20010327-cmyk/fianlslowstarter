@@ -203,7 +203,6 @@
 				</div>
 			</div>
 
-			<!-- 검색 조건 -->
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
@@ -214,13 +213,11 @@
 					<input type="hidden" name="page" value="1">
 
 					<div class="search-inline-wrap">
-						<!-- 검사번호 직접 입력 -->
 						<div class="search-inline-item">
 							<input class="input" type="text" name="qualityCode"
 								placeholder="검사 번호 입력" value="${qualityCode}" />
 						</div>
 
-						<!-- 품목명 검색 -->
 						<div class="search-inline-item">
 							<select class="select" name="itemName">
 								<option value="">품목명 선택</option>
@@ -230,7 +227,6 @@
 							</select>
 						</div>
 
-						<!-- 상태 검색 -->
 						<div class="search-inline-item">
 							<select class="select" name="status">
 								<option value="" ${empty status ? 'selected' : ''}>전체</option>
@@ -240,7 +236,6 @@
 							</select>
 						</div>
 
-						<!-- 검사일자 검색 -->
 						<div class="search-inline-item date-area">
 							<label class="search-small-label">검사일자</label>
 							<input class="input date-input" type="date" name="inspectDate"
@@ -255,7 +250,6 @@
 				</form>
 			</section>
 
-			<!-- 목록 -->
 			<section class="panel-grid">
 				<div class="card">
 					<form id="deleteForm" action="${pageContext.request.contextPath}/quality/delete" method="post">
@@ -343,7 +337,6 @@
 								</tbody>
 							</table>
 
-							<!-- 페이징 -->
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
 									<c:if test="${currentPage == i}">
@@ -364,12 +357,10 @@
 		</main>
 	</div>
 
-	<!-- 등록 / 수정 모달 -->
 	<div id="commonModal" class="modal">
 		<div class="modal-box">
 			<form id="qualityForm" action="${pageContext.request.contextPath}/quality/add" method="post">
 
-				<!-- 숨겨서 보내는 값 -->
 				<input type="hidden" id="quality_key" name="quality_key" />
 				<input type="hidden" id="quality_code" name="quality_code" />
 				<input type="hidden" id="prod_key_hidden" name="prod_key" />
@@ -386,7 +377,6 @@
 							<input type="date" class="input" id="inspect_date" name="inspect_date" />
 						</div>
 
-						<!-- 등록 모달에서는 작업지시 선택 -->
 						<div class="form-group" id="prod_select_wrap">
 							<label>작업지시 코드</label>
 							<select class="select" id="prod_key_select">
@@ -402,7 +392,6 @@
 							</select>
 						</div>
 
-						<!-- 수정 모달에서는 작업지시 표시만 -->
 						<div class="form-group" id="prod_view_wrap" style="display:none;">
 							<label>작업지시 코드</label>
 							<input type="text" class="input" id="prod_name_view" readonly />
@@ -432,10 +421,10 @@
 							</select>
 						</div>
 
-						<!-- 등록 때는 readonly / 수정 때는 직접 수정 가능 -->
+						<!-- 등록 때는 자동입력, 수정 때는 직접 수정 가능 -->
 						<div class="form-group">
 							<label>품목명</label>
-							<input type="text" class="input" id="item_name_view" name="item_name" readonly />
+							<input type="text" class="input" id="item_name_view" name="item_name" />
 						</div>
 
 						<div class="form-group">
@@ -464,16 +453,13 @@
 	</div>
 
 	<script>
-		// 등록 모달 열기
 		function openInsertModal() {
 			document.getElementById("modalTitle").innerText = "품질 등록";
 			document.getElementById("qualityForm").action = contextPath + "/quality/add";
 
-			// 등록일 때는 작업지시 선택 보이기
 			document.getElementById("prod_select_wrap").style.display = "";
 			document.getElementById("prod_view_wrap").style.display = "none";
 
-			// 값 초기화
 			document.getElementById("quality_key").value = "";
 			document.getElementById("quality_code").value = "";
 			document.getElementById("inspect_date").value = "";
@@ -485,23 +471,20 @@
 			document.getElementById("prod_key_hidden").value = "";
 			document.getElementById("prod_name_view").value = "";
 			document.getElementById("item_name_view").value = "";
-			document.getElementById("item_name_view").readOnly = true; // 등록은 직접 수정 불가
+			document.getElementById("item_name_view").readOnly = true;   // 등록은 자동입력만
 			document.getElementById("defect_reason").value = "";
 			document.getElementById("user_key").value = "${dto.user_key}";
 
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		// 수정 모달 열기
 		function openEditModal(qualityKey, qualityCode, inspectDate, inspectQty, goodQty, defectQty, defectReason, qcStatus, prodKey, prodName, itemName, userKey) {
 			document.getElementById("modalTitle").innerText = "품질 수정";
 			document.getElementById("qualityForm").action = contextPath + "/quality/update";
 
-			// 수정일 때는 작업지시 표시만
 			document.getElementById("prod_select_wrap").style.display = "none";
 			document.getElementById("prod_view_wrap").style.display = "";
 
-			// 기존 값 세팅
 			document.getElementById("quality_key").value = qualityKey;
 			document.getElementById("quality_code").value = qualityCode;
 			document.getElementById("inspect_date").value = inspectDate.substring(0, 10);
@@ -512,7 +495,7 @@
 			document.getElementById("prod_key_hidden").value = prodKey;
 			document.getElementById("prod_name_view").value = prodName;
 			document.getElementById("item_name_view").value = itemName;
-			document.getElementById("item_name_view").readOnly = false; // 수정에서는 품목명 직접 수정 가능
+			document.getElementById("item_name_view").readOnly = false;  // 수정은 직접 수정 가능
 			document.getElementById("user_key").value = userKey;
 
 			if (defectReason == 'null') {
@@ -524,12 +507,10 @@
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		// 모달 닫기
 		function closeModal() {
 			document.getElementById("commonModal").classList.remove("show");
 		}
 
-		// 삭제
 		function deleteSelected() {
 			const checked = document.querySelectorAll('input[name="quality_key"]:checked');
 
@@ -543,7 +524,6 @@
 			}
 		}
 
-		// 전체 체크
 		function toggleAllCheckboxes() {
 			const checkboxes = document.querySelectorAll('input[name="quality_key"]');
 			let allChecked = true;
@@ -567,7 +547,6 @@
 			const prodKeyHidden = document.getElementById("prod_key_hidden");
 			const itemNameView = document.getElementById("item_name_view");
 
-			// 불량수량 입력하면 양품수량 자동 계산
 			function calcGoodQty() {
 				const inspect = parseInt(inspectQty.value || 0);
 				const defect = parseInt(defectQty.value || 0);
@@ -586,15 +565,12 @@
 				defectQty.addEventListener("input", calcGoodQty);
 			}
 
-			// 등록 모달에서 작업지시 선택 시
-			// 검사수량, 품목명 자동입력
 			if (prodKeySelect) {
 				prodKeySelect.addEventListener("change", function() {
 					const selected = this.options[this.selectedIndex];
 					const stockQty = selected.getAttribute("data-stockqty");
 					const itemName = selected.getAttribute("data-itemname");
 
-					// 실제로 서버에 보낼 prod_key
 					prodKeyHidden.value = this.value;
 
 					if (stockQty != null) {

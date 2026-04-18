@@ -16,6 +16,11 @@ public class StockService {
         return dao.getTotalCount(keyword, type);
     }
 
+    // 품목 목록 조회
+    public List<StockDTO> getItemList() {
+        return dao.selectItemList();
+    }
+
     // 등록
     public int register(StockDTO dto) {
         if (dto != null) {

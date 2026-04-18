@@ -23,9 +23,27 @@ public class StockDAO {
     }
 
     // =========================
+    // 품목코드 기준 구분
+    // CP-A : 완제품
+    // CP-P / CP-M : 자재
+    // 나머지 : 재고
+    // =========================
+    private String getItemTypeCaseSql() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CASE ");
+        sb.append("    WHEN i.ITEM_CODE LIKE 'CP-A%' THEN '완제품' ");
+        sb.append("    WHEN i.ITEM_CODE LIKE 'CP-P%' THEN '자재' ");
+        sb.append("    WHEN i.ITEM_CODE LIKE 'CP-M%' THEN '자재' ");
+        sb.append("    ELSE '재고' ");
+        sb.append("END ");
+        return sb.toString();
+    }
+
+    // =========================
     // 목록 조회
     // type
     // all     : 전체
+    // stock   : 재고
     // product : 완제품
     // item    : 자재
     // =========================
@@ -46,18 +64,20 @@ public class StockDAO {
             sql.append("        SELECT ");
             sql.append("            s.STOCK_KEY, ");
             sql.append("            s.LOT, ");
+            sql.append("            s.DONE_QC, ");
+            sql.append("            s.WAIT_QC, ");
             sql.append("            s.CURRENT_QTY, ");
             sql.append("            s.SAFE_QTY, ");
             sql.append("            s.UPDATED_AT, ");
             sql.append("            s.ITEM_KEY, ");
             sql.append("            i.ITEM_CODE, ");
             sql.append("            i.ITEM_NAME, ");
-            sql.append("            CASE ");
-            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-A%' THEN '완제품' ");
-            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-P%' THEN '자재' ");
-            sql.append("                WHEN i.ITEM_CODE LIKE 'CP-M%' THEN '자재' ");   // ★ 추가 : CP-M도 자재
-            sql.append("                ELSE '자재' ");                                 // ★ 수정 : 기타 → 자재
-            sql.append("            END AS ITEM_TYPE ");
+            sql.append("            i.SPEC, ");
+            sql.append("            i.UNIT, ");
+            sql.append("            i.PRICE, ");
+            sql.append("            ");
+            sql.append(getItemTypeCaseSql());
+            sql.append(" AS ITEM_TYPE ");
             sql.append("        FROM TB_STOCK s ");
             sql.append("        LEFT OUTER JOIN TB_ITEM i ");
             sql.append("            ON s.ITEM_KEY = i.ITEM_KEY ");
@@ -68,13 +88,15 @@ public class StockDAO {
                 sql.append(" AND UPPER(s.LOT) LIKE UPPER(?) ");
             }
 
-            // 완제품만
+            // 구분 검색
             if ("product".equals(type)) {
                 sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
-            }
-            // 자재만
-            else if ("item".equals(type)) {
-                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') "); // ★ 수정
+            } else if ("item".equals(type)) {
+                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') ");
+            } else if ("stock".equals(type)) {
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-A%' ");
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-P%' ");
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-M%' ");
             }
 
             sql.append("        ORDER BY s.STOCK_KEY ASC ");
@@ -107,6 +129,9 @@ public class StockDAO {
                 dto.setItem_code(rs.getString("ITEM_CODE"));
                 dto.setItem_name(rs.getString("ITEM_NAME"));
                 dto.setItem_type(rs.getString("ITEM_TYPE"));
+                dto.setSpec(rs.getString("SPEC"));
+                dto.setUnit(rs.getString("UNIT"));
+                dto.setPrice(rs.getInt("PRICE"));
 
                 list.add(dto);
             }
@@ -148,7 +173,11 @@ public class StockDAO {
             if ("product".equals(type)) {
                 sql.append(" AND i.ITEM_CODE LIKE 'CP-A%' ");
             } else if ("item".equals(type)) {
-                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') "); // ★ 수정
+                sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') ");
+            } else if ("stock".equals(type)) {
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-A%' ");
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-P%' ");
+                sql.append(" AND i.ITEM_CODE NOT LIKE 'CP-M%' ");
             }
 
             ps = conn.prepareStatement(sql.toString());
@@ -172,6 +201,58 @@ public class StockDAO {
         }
 
         return total;
+    }
+
+    // =========================
+    // 품목 목록 조회
+    // 등록/수정 모달에서 select에 사용
+    // =========================
+    public List<StockDTO> selectItemList() {
+        List<StockDTO> list = new ArrayList<StockDTO>();
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnection();
+
+            StringBuilder sql = new StringBuilder();
+            sql.append("SELECT ");
+            sql.append("    i.ITEM_KEY, ");
+            sql.append("    i.ITEM_CODE, ");
+            sql.append("    i.ITEM_NAME, ");
+            sql.append("    i.SPEC, ");
+            sql.append("    i.UNIT, ");
+            sql.append("    i.PRICE, ");
+            sql.append("    ");
+            sql.append(getItemTypeCaseSql());
+            sql.append(" AS ITEM_TYPE ");
+            sql.append("FROM TB_ITEM i ");
+            sql.append("ORDER BY i.ITEM_KEY ASC ");
+
+            ps = conn.prepareStatement(sql.toString());
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                StockDTO dto = new StockDTO();
+                dto.setItem_key(rs.getInt("ITEM_KEY"));
+                dto.setItem_code(rs.getString("ITEM_CODE"));
+                dto.setItem_name(rs.getString("ITEM_NAME"));
+                dto.setSpec(rs.getString("SPEC"));
+                dto.setUnit(rs.getString("UNIT"));
+                dto.setPrice(rs.getInt("PRICE"));
+                dto.setItem_type(rs.getString("ITEM_TYPE"));
+                list.add(dto);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            close(conn, ps, rs);
+        }
+
+        return list;
     }
 
     // =========================

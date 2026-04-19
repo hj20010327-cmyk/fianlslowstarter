@@ -106,8 +106,10 @@
 					<p>제품 제조 공정 흐름과 표준 작업정보를 관리합니다</p>
 				</div>
 				<div class="page-actions">
+					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 					<button class="btn primary" type="button"
 						onclick="openInsertModal()">신규 등록</button>
+					</c:if>
 				</div>
 			</div>
 			<section class="card" style="margin-bottom: 20px">
@@ -117,16 +119,9 @@
 				</div>
 				<form method="get" action="process">
 					<div class="search-row">
-						<input class="input" type="text" name="keyword" value="${param.keyword}" placeholder="완제품명" />
+						<input class="input" type="text" name="keyword"
+							value="${param.keyword}" placeholder="완제품명" />
 
-						<%--	<select class="select">
-							<option>제품명</option>
-							<option>컴프레셔 완제품A형</option>
-							<option>컴프레셔 완제품B형</option>
-							<option>컴프레셔 완제품C형</option>
-							<option>컴프레셔 완제품D형</option>
-							<option>컴프레셔 완제품E형</option>
-						</select>  --%>
 
 						<select class="select">
 							<option>선택</option>
@@ -149,7 +144,10 @@
 								${param.process_name == '성능검사' ? 'selected' : '' }>성능검사</option>
 
 						</select>
+						<span>
 						<button class="btn primary" type="submit">조회</button>
+						<a href="/slowstarter/process" class="btn">초기화</a>
+						</span>
 					</div>
 				</form>
 			</section>
@@ -173,12 +171,16 @@
 							<table>
 								<thead>
 									<tr>
-										<th>선택</th>
+										<th>
+										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										선택
+										</c:if>
+										</th>
 										<th>공정코드</th>
 										<th>제품명</th>
 										<th>공정순서</th>
 										<th>공정명</th>
-										<th>상태</th>
+										<th>사용여부</th>
 										<th>공정설명</th>
 									</tr>
 								</thead>
@@ -187,8 +189,11 @@
 										<tr>
 
 
-											<td><input type="checkbox" name="process_key"
-												value="${process.process_key}"></td>
+											<td><c:if
+													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<input type="checkbox" name="process_key"
+														value="${process.process_key}">
+												</c:if></td>
 											<td><c:if
 													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 													<a href="javascript:void(0);"
@@ -202,10 +207,10 @@
 												'${process.item_key}'		
 												)">
 														${ process.process_code }</a>
-												</c:if> <c:if
-													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
-												${ process.process_code }
-											</c:if></td>
+												</c:if> 
+												<c:if test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+												${ process.process_code}</c:if>
+												</td>
 											<td>${ process.item_name }</td>
 											<td>${ process.sequence_no }</td>
 											<td>${ process.process_name }</td>
@@ -363,9 +368,8 @@ window.addEventListener("load", () => {
 								readonly />
 						</div>
 
-
 						<div class="form-group">
-							<label>공정 코드</label> <input type="text" name="process_code"
+							<input type="hidden" name="process_code"
 								id="process_code" class="input" placeholder="자동입력" readonly />
 						</div>
 

@@ -11,11 +11,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>BOM 상세</title>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/common.css" />
-<link rel="stylesheet" href="${pageContext.request.contextPath}/asset/css/bom-detail.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/asset/css/common.css" />
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/asset/css/bom-detail.css" />
 
 
-<script src="./asset/js/common.js" defer></script>
+<script src="${pageContext.request.contextPath}/asset/js/common.js"
+	defer></script>
+<script src="${pageContext.request.contextPath}/asset/js/bom_detail.js"
+	defer></script>
 
 
 
@@ -49,7 +54,7 @@
 
 .product-list li {
 	padding: 12px 14px;
-	border: 1px solid #e2e8f0;                                                
+	border: 1px solid #e2e8f0;
 	border-radius: 10px;
 	cursor: pointer;
 	background: #fff;
@@ -128,56 +133,7 @@
 	color: #64748b;
 }
 </style>
-<script>
 
-
-function loadBom(productId, el) {
-
-	  // UI active 처리
-	  document.querySelectorAll(".product-list li")
-	    .forEach(li => li.classList.remove("active"));
-
-	  el.classList.add("active");
-
-	  // 제목 변경 (안전 처리)
-	  const title = document.getElementById("selectedTitle");
-	  if (title) {
-	    title.innerText = el.innerText;
-	  }
-
-	  // 데이터 가져오기
-	  const data = sampleData[productId];
-
-	  // 기존 DOM 완전 초기화 (중요)
-	  const container = document.getElementById("bomTree");
-	  if (!container) return;
-
-	  container.innerHTML = "";
-
-	  // 트리 렌더
-	  container.appendChild(buildNode(data));
-	}
-
-
-
-	
-
-	  // 자식
-	  if (hasChild) {
-
-	    const childBox = document.createElement("div");
-	    childBox.className = "bom-child";
-	    childBox.style.marginLeft = "16px";
-
-	    node.children.forEach(child => {
-	      childBox.appendChild(buildNode(child));
-	    });
-
-	    wrapper.appendChild(childBox);
-	  }
-
-	  return wrapper;
-</script>
 </head>
 
 <body>
@@ -193,8 +149,6 @@ function loadBom(productId, el) {
 
 		<script>
 			const contextPath = '${pageContext.request.contextPath}';
-			
-			
 		</script>
 
 		<div class="header-right">
@@ -220,8 +174,8 @@ function loadBom(productId, el) {
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li class="active"><a href="./bom">BOM</a></li>
-					<li><a href="./process">공정</a></li>
+					<li class="active"><a href="/slowstarter/bom">BOM</a></li>
+					<li><a href="/slowstarter/process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
 				</ul>
 			</div>
@@ -272,107 +226,100 @@ function loadBom(productId, el) {
 					<h1>BOM관리</h1>
 					<p>제품별 자재 구성과 소요량을 관리하는 페이지입니다.</p>
 				</div>
-				<div class="page-actions">
-					<button class="btn primary" type="button"
-						onclick="openInsertModal('BOM 신규 등록')">신규 등록</button>
-				</div>
 			</div>
-			
-			
+
+
 			<!-- ===== 2분할 시작 ===== -->
-<div class="bom-container">
+			<div class="bom-container">
 
-  <!-- LEFT -->
-  <section class="card bom-left">
-    <div class="section-title">
-      <h2>완제품 목록</h2>
-      <span>클릭 시 우측 표시</span>
-    </div>
+				<!-- LEFT -->
 
-   <ul class="product-list">
-  <c:forEach var="p" items="${itemList}">
-    <li onclick="loadBom('${p.item_key}', this)">
-      ${p.item_name}
-    </li>
-  </c:forEach>
-</ul>
 
-<div class="bom-area">
 
-  
+				<section class="card bom-left">
+					<div class="section-title">
+						<h2>완제품 목록</h2>
+						<span>클릭 시 우측 표시</span>
+					</div>
 
-  <div id="bomTree"></div>
+					<ul class="product-list">
+						<c:forEach var="p" items="${itemList}">
+							<li><a href="/slowstarter/bom/detail?item_key=${p.item_key}">
+									${p.item_name} </a></li>
+						</c:forEach>
+					</ul>
 
-</div>
-  </section>
+					<div class="bom-area">
 
-  <!-- RIGHT -->
-  <section class="card bom-right">
-    <div class="section-title">
-      <h2>BOM 구조</h2>
-      <span id="selectedName">완제품을 선택하세요</span>
-    </div>
 
-   
-  <c:forEach var="p" items="${itemList}">
 
-  <!-- 완제품 제목 -->
-  <h3 class="product-title">
-    ${p.item_name}
-  </h3>
+						<div id="bomTree"></div>
 
-  <!-- 자재 테이블 -->
-  <table class="bom-table">
-    <thead>
-      <tr>
-        <th>코드</th>
-        <th>이름</th>
-        <th>규격</th>
-        <th>수량</th>
-        <th>단위</th>
-      </tr>
-    </thead>
+					</div>
+				</section>
 
-    <tbody>
+				<!-- RIGHT -->
+				<section class="card bom-right">
+					<div class="section-title">
+						<h2>BOM 구조</h2>
+						<span id="selectedName">완제품을 선택하세요</span>
+					</div>
 
-      <c:forEach var="m" items="${material}">
 
-        <c:if test="${m.parent_item_key == p.item_key}">
+					<c:forEach var="p" items="${itemList}">
+						<div class="bom-block" id="bom-${p.item_key}"
+							style="display: none;">
 
-          <tr>
-            <td>${m.item_code}</td>
-            <td>${m.item_name}</td>
-            <td>${m.spec}</td>
-            <td>${m.safe_qty}</td>
-            <td>${m.unit}</td>
-          </tr>
+							<!-- 완제품 제목 -->
+							<h3 class="product-title">${p.item_name}</h3>
 
-        </c:if>
+							<!-- 자재 테이블 -->
+							<table class="bom-table">
+								<thead>
+									<tr>
+										<th>코드</th>
+										<th>이름</th>
+										<th>규격</th>
+										<th>수량</th>
+										<th>단위</th>
+									</tr>
+								</thead>
 
-      </c:forEach>
+								<tbody>
 
-    </tbody>
-  </table>
+									<c:forEach var="m" items="${material}">
 
-  <br/>
+										<c:if test="${m.parent_item_key == p.item_key}">
 
-</c:forEach>
-	
-	
-	
-	
-    
-  </section>
+											<tr>
+												<td>${m.item_code}</td>
+												<td>${m.item_name}</td>
+												<td>${m.spec}</td>
+												<td>${m.safe_qty}</td>
+												<td>${m.unit}</td>
+											</tr>
 
-</div>
-<!-- ===== 2분할 끝 ===== -->
+										</c:if>
+
+
+									</c:forEach>
+									
+								
+
+								</tbody>
+							</table>
+
+							<br />
+						</div>
+					</c:forEach>
 
 
 
 
 
+				</section>
 
-	
-
+			</div>
+			<!-- ===== 2분할 끝 ===== -->
 </body>
 </html>

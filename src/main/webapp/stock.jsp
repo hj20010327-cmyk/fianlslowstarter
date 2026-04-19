@@ -246,7 +246,7 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>작업자는 조회만 가능, 관리자/슈퍼바이저만 등록/수정/삭제</span>
+					<span>작업자는 조회만 가능, 관리자/슈퍼바이저만 등록/수정/삭제를 할수 있습니다.</span>
 				</div>
 
 				<form action="${pageContext.request.contextPath}/stock" method="get">

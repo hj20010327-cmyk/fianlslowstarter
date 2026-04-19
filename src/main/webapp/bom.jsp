@@ -13,6 +13,8 @@
 <title>AUTO MES | BOM관리</title>
 <script src="./asset/js/common.js" defer></script>
 <script src="./asset/js/bom.js" defer></script>
+<script src="${pageContext.request.contextPath}/asset/js/bom_detail.js"
+	defer></script>
 
 
 <link rel="stylesheet" href="./asset/css/common.css" />
@@ -108,8 +110,10 @@
 					<p>제품별 자재 구성과 소요량을 관리하는 페이지입니다.</p>
 				</div>
 				<div class="page-actions">
-					<button class="btn primary" type="button"
-						onclick="openInsertModal('BOM 신규 등록')">신규 등록</button>
+					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+						<button class="btn primary" type="button"
+							onclick="openInsertModal('BOM 신규 등록')">신규 등록</button>
+					</c:if>
 				</div>
 			</div>
 			<section class="card" style="margin-bottom: 20px">
@@ -126,9 +130,10 @@
 							<option value="3">컴프레셔 완제품 C형</option>
 							<option value="4">컴프레셔 완제품 D형</option>
 							<option value="5">컴프레셔 완제품 E형</option>
-						</select>
-
-						<button class="btn primary" type="submit">조회</button>
+						</select> <span>
+							<button class="btn primary" type="submit">조회</button> <a
+							href="/slowstarter/bom" class="btn">초기화</a>
+						</span>
 					</div>
 				</form>
 			</section>
@@ -144,8 +149,6 @@
 										style="background: #4a90e2; color: white;"
 										onclick="location.href='${pageContext.request.contextPath}/bom/detail'">
 										BOM 상세페이지</button>
-								</span>
-								<span>
 									<button type="submit" class="btn" value="삭제"
 										style="background: #4a90e2; color: white;">삭제</button> <input
 									type="hidden" name="cmd" value="delete">
@@ -157,7 +160,10 @@
 							<table>
 								<thead>
 									<tr>
-										<th>선택</th>
+										<th><c:if
+												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										선택
+										</c:if></th>
 										<th>BOM코드</th>
 										<th>완제품명</th>
 										<th>자재명</th>
@@ -169,8 +175,11 @@
 
 									<c:forEach var="bom" items="${list}">
 										<tr>
-											<td><input type="checkbox" name="bom_key"
-												value="${bom.bom_key}"></td>
+											<td><c:if
+													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<input type="checkbox" name="bom_key"
+														value="${bom.bom_key}">
+												</c:if></td>
 
 											<td><c:if
 													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
@@ -188,7 +197,15 @@
 													${bom.bom_code}
 											</c:if></td>
 
-											<td>${bom.parent_item_name}</td>
+											<td><c:if
+													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<a
+														href="/slowstarter/bom/detail?item_key=${bom.parent_item_key}">
+														${bom.parent_item_name} </a>
+												</c:if> <c:if
+													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
+													${bom.parent_item_name}
+													</c:if></td>
 											<td>${bom.item_name}</td>
 											<td>${bom.qty}</td>
 											<td>${bom.remark}</td>
@@ -197,7 +214,6 @@
 
 								</tbody>
 							</table>
-
 							<div class="page" style="text-align: center;">
 
 								<c:set var="total" value="${map.totalCount }" />
@@ -294,8 +310,8 @@
 
 
 						<div class="form-group">
-							<label>BOM코드</label> <input type="text" name="bom_code"
-								id="bom_code" class="input" placeholder="자동 생성" readonly />
+							<input type="hidden" name="bom_code" id="bom_code" class="input"
+								placeholder="자동 생성" readonly />
 						</div>
 
 						<div class="form-group">
@@ -311,7 +327,7 @@
 						<div class="form-group">
 							<label>자재명</label> <select name="item_key" id="item_key"
 								class="modal-select">
-								<option value="" selected>-- 선택하세요 --</option>
+								<option value="" selected>선택하세요</option>
 								<c:forEach var="item" items="${itemname}">
 									<option value="${item.item_key}">${item.item_name}</option>
 								</c:forEach>

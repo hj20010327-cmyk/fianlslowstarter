@@ -137,7 +137,6 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-					<li><a href="./master">기준관리</a></li>
 					<li><a href="./bom">BOM</a></li>
 					<li><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
@@ -155,8 +154,6 @@
 				<div class="snb-title">재고관리</div>
 				<ul class="snb-menu">
 					<li><a href="./stock">재고</a></li>
-					<li><a href="./product">완제품</a></li>
-					<li><a href="./item">자재</a></li>
 				</ul>
 			</div>
 
@@ -177,7 +174,9 @@
 				<div class="snb-title">시스템</div>
 				<ul class="snb-menu">
 					<li class="active"><a href="./board">게시판</a></li>
-					<li><a href="./user">사용자관리</a></li>
+					<c:if test='${dto.user_role eq "슈퍼바이저"}'>
+						<li><a href="./user">사용자관리</a></li>
+					</c:if>
 					<li><a href="./mypage">마이페이지</a></li>
 				</ul>
 			</div>

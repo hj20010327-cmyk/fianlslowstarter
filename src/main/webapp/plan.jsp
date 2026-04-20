@@ -176,14 +176,14 @@
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
 						<select class="select" name="item_key">
-							<option value="" <c:if test="${empty item_key}">selected</c:if>>전체</option>
+							<option value="" <c:if test="${empty item_key}">selected</c:if>>품목명 검색</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_key}"
 									<c:if test="${item_key == item.item_key}">selected</c:if>>
 									${item.item_name}</option>
 							</c:forEach>
 						</select> <select class="select" name="status">
-							<option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
+							<option value="" <c:if test="${empty status}">selected</c:if>>상태 검색</option>
 							<option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
 							<option value="진행중"
 								<c:if test="${status == '진행중'}">selected</c:if>>진행중</option>
@@ -352,12 +352,13 @@
 
 						<div class="form-group">
 							<label>계획일</label> <input type="date" class="input"
-								id="plan_date" name="plan_date" />
+								id="plan_date" name="plan_date"/>
+							 <span class="error-msg" id="planDateError"></span>
 						</div>
 
 						<div class="form-group">
 							<label>마감일</label> <input type="date" class="input" id="due_date"
-								name="due_date" /> <span class="error-msg" id="dueDateError"></span>
+								name="due_date"/> <span class="error-msg" id="dueDateError"></span>
 						</div>
 
 						<div class="form-group">
@@ -454,6 +455,18 @@
 		    // 제품 선택
 		    if (!itemKey) {
 		        document.getElementById("itemError").innerText = "제품을 선택해주세요.";
+		        isValid = false;
+		    }
+		    
+		    //  계획일 필수
+		    if (!planDate) {
+		        document.getElementById("planDateError").innerText = "계획일을 입력해주세요.";
+		        isValid = false;
+		    }
+
+		    //  마감일 필수
+		    if (!dueDate) {
+		        document.getElementById("dueDateError").innerText = "마감일을 입력해주세요.";
 		        isValid = false;
 		    }
 

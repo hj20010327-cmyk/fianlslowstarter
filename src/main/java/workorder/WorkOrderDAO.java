@@ -38,6 +38,7 @@ public class WorkOrderDAO {
 			         + "w.created_at, "
 			         + "w.plan_key, "
 			         + "p.plan_code, "
+			         + "i.item_key AS item_key, "
 			         + "i.item_name AS item_name, "
 			         + "u1.user_name AS order_user_name, "
 			         + "u2.user_name AS work_user_name "
@@ -64,6 +65,7 @@ public class WorkOrderDAO {
 				dto.setOrder_user_name(rs.getString("order_user_name"));
 				dto.setWork_user_name(rs.getString("work_user_name"));
 				dto.setItem_name(rs.getString("item_name"));
+				dto.setItem_key(rs.getInt("item_key"));
 
 				list.add(dto);
 			}
@@ -192,6 +194,7 @@ public class WorkOrderDAO {
 					+ "w.created_at, "
 					+ "w.plan_key, "
 					+ "p.plan_code, "
+					+ "i.item_key AS item_key, "
 					+ "i.item_name AS item_name, "
 					+ "u1.user_name AS order_user_name, "
 					+ "u2.user_name AS work_user_name "
@@ -247,6 +250,7 @@ public class WorkOrderDAO {
 				dto.setOrder_user_name(rs.getString("order_user_name"));
 				dto.setWork_user_name(rs.getString("work_user_name"));
 				dto.setItem_name(rs.getString("item_name"));
+				dto.setItem_key(rs.getInt("item_key"));
 
 				list.add(dto);
 			}
@@ -284,6 +288,7 @@ public class WorkOrderDAO {
 					+ "           w.created_at, "
 					+ "           w.plan_key, "
 					+ "           p.plan_code, "
+					+ "           i.item_key AS item_key, "
 					+ "           i.item_name AS item_name, "
 					+ "           u1.user_name AS order_user_name, "
 					+ "           u2.user_name AS work_user_name "
@@ -317,6 +322,7 @@ public class WorkOrderDAO {
 				dto.setOrder_user_name(rs.getString("order_user_name"));
 				dto.setWork_user_name(rs.getString("work_user_name"));
 				dto.setItem_name(rs.getString("item_name"));
+				dto.setItem_key(rs.getInt("item_key"));
 
 				list.add(dto);
 			}
@@ -375,6 +381,7 @@ public class WorkOrderDAO {
 					+ "           w.created_at, "
 					+ "           w.plan_key, "
 					+ "           p.plan_code, "
+					+ "           i.item_key AS item_key, "
 					+ "           i.item_name AS item_name, "
 					+ "           u1.user_name AS order_user_name, "
 					+ "           u2.user_name AS work_user_name "
@@ -407,6 +414,7 @@ public class WorkOrderDAO {
 				dto.setCreated_at(rs.getDate("created_at"));
 				dto.setPlan_key(rs.getInt("plan_key"));
 				dto.setPlan_code(rs.getString("plan_code"));
+				dto.setItem_key(rs.getInt("item_key"));
 				dto.setOrder_user_name(rs.getString("order_user_name"));
 				dto.setWork_user_name(rs.getString("work_user_name"));
 				dto.setItem_name(rs.getString("item_name"));
@@ -542,7 +550,8 @@ public class WorkOrderDAO {
 					+ "           w.created_at, "
 					+ "           w.plan_key, "
 					+ "           p.plan_code, "
-					+ "           i.item_name AS item_name"
+					+ "           i.item_key AS item_key, "
+					+ "           i.item_name AS item_name,"
 					+ "           u1.user_name AS order_user_name, "
 					+ "           u2.user_name AS work_user_name "
 					+ "    FROM tb_work_order w "
@@ -609,6 +618,7 @@ public class WorkOrderDAO {
 				dto.setCreated_at(rs.getDate("created_at"));
 				dto.setPlan_key(rs.getInt("plan_key"));
 				dto.setPlan_code(rs.getString("plan_code"));
+				dto.setItem_key(rs.getInt("item_key"));
 				dto.setOrder_user_name(rs.getString("order_user_name"));
 				dto.setWork_user_name(rs.getString("work_user_name"));
 				dto.setItem_name(rs.getString("item_name"));
@@ -725,6 +735,68 @@ public class WorkOrderDAO {
 	    }
 
 	    return list;
+	}
+	
+	public int completeWorkOrder(int workOrderKey) {
+		int result = 0;
+
+		try {
+			Context ctx = new InitialContext();
+			DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+			conn = dataFactory.getConnection();
+
+			// 1. 작업지시 수량, item_key 조회
+			String selectQuery = "SELECT w.order_qty, p.item_key "
+					+ "FROM tb_work_order w "
+					+ "LEFT JOIN tb_plan p ON w.plan_key = p.plan_key "
+					+ "WHERE w.work_order_key = ?";
+
+			ps = conn.prepareStatement(selectQuery);
+			ps.setInt(1, workOrderKey);
+			rs = ps.executeQuery();
+
+			int orderQty = 0;
+			int itemKey = 0;
+
+			if (rs.next()) {
+				orderQty = rs.getInt("order_qty");
+				itemKey = rs.getInt("item_key");
+			}
+
+			rs.close();
+			ps.close();
+
+			// 2. 재고 테이블에서 검사전수량 + 현재고 증가
+			String updateQuery = "UPDATE tb_stock "
+					+ "SET wait_qc = wait_qc + ?, "
+					+ "    current_qty = current_qty + ? "
+					+ "WHERE item_key = ?";
+
+			ps = conn.prepareStatement(updateQuery);
+			ps.setInt(1, orderQty);
+			ps.setInt(2, orderQty);
+			ps.setInt(3, itemKey);
+
+			result = ps.executeUpdate();
+
+			ps.close();
+
+			// 3. 완료 처리된 작업지시 삭제
+			String deleteQuery = "DELETE FROM tb_work_order WHERE work_order_key = ?";
+			ps = conn.prepareStatement(deleteQuery);
+			ps.setInt(1, workOrderKey);
+
+			ps.executeUpdate();
+
+			System.out.println("workorder complete + delete 결과 : " + result);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeAll();
+		}
+
+		return result;
 	}
 	
 	

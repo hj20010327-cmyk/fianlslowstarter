@@ -29,6 +29,8 @@ console.log(document.getElementById("qty"));
 		
 		document.getElementById("cmd").value = "update";
 		
+		
+		
 		document.getElementById("bom_key").value = bom_key;
 		document.getElementById("bom_code").value = bom_code;
 		document.getElementById("qty").value = qty; 

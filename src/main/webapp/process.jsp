@@ -55,7 +55,6 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
-				<li><a href="./item">품목관리</a></li>
 					<li><a href="./bom">BOM</a></li>
 					<li class="active"><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
@@ -122,8 +121,27 @@
 				</div>
 				<form method="get" action="process">
 					<div class="search-row">
-						<input class="input" type="text" name="keyword"
-							value="${param.keyword}" placeholder="완제품명" /> <select
+					
+					
+					<select class="select" name="keyword">
+    <option value="">완제품 선택</option>
+
+    <option value="A형"
+        ${param.keyword == 'A형' ? 'selected' : ''}>컴프레셔 완제품 A형</option>
+    <option value="B형"
+        ${param.keyword == 'B형' ? 'selected' : ''}>컴프레셔 완제품 B형</option>
+    <option value="C형"
+        ${param.keyword == 'C형' ? 'selected' : ''}>컴프레셔 완제품 C형</option>
+    <option value="D형"
+        ${param.keyword == 'D형' ? 'selected' : ''}>컴프레셔 완제품 D형</option>
+    <option value="E형"
+        ${param.keyword == 'E형' ? 'selected' : ''}>컴프레셔 완제품 E형</option>
+
+    
+
+</select>
+					
+						 <select
 							class="select">
 							<option>선택</option>
 							<option>사용</option>
@@ -312,7 +330,33 @@ window.addEventListener("load", () => {
 
 
 </script>
-				
+				<div class="card">
+					<div class="section-title">
+						<h2>요약 / 상태</h2>
+						<span>오늘 기준</span>
+					</div>
+					<ul class="summary-list">
+						<li>
+							<div>
+								<strong>최신 버전</strong>
+								<p>B210 제품이 V2로 운영 중입니다.</p>
+							</div> <span class="badge ok">적용</span>
+						</li>
+						<li>
+							<div>
+								<strong>변경 요청</strong>
+								<p>설계 변경 요청이 1건 있습니다.</p>
+							</div> <span class="badge warn">1건</span>
+						</li>
+						<li>
+							<div>
+								<strong>미연결 품목</strong>
+								<p>BOM 미연결 자재가 없습니다.</p>
+							</div> <span class="badge ok">정상</span>
+						</li>
+					</ul>
+				</div>
+
 			</section>
 		</main>
 	</div>

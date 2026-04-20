@@ -231,7 +231,6 @@
 				</div>
 			</div>
 
-
 			<!-- ===== 2분할 시작 ===== -->
 			<div class="bom-container">
 
@@ -250,6 +249,9 @@
 							<li><a href="/slowstarter/bom/detail?item_key=${p.item_key}">
 									${p.item_name} </a></li>
 						</c:forEach>
+
+
+
 					</ul>
 
 					<div class="bom-area">
@@ -273,17 +275,17 @@
 						<div class="bom-block" id="bom-${p.item_key}"
 							style="display: none;">
 
-							<!-- 완제품 제목 -->
-							<h3 class="product-title">${p.item_name}</h3>
 
 							<!-- 자재 테이블 -->
+							
+
 							<table class="bom-table">
 								<thead>
 									<tr>
 										<th>코드</th>
 										<th>이름</th>
-										<th>규격</th>
 										<th>수량</th>
+										<th>가격</th>
 										<th>단위</th>
 									</tr>
 								</thead>
@@ -292,13 +294,16 @@
 
 									<c:forEach var="m" items="${material}">
 
+
 										<c:if test="${m.parent_item_key == p.item_key}">
 
 											<tr>
 												<td>${m.item_code}</td>
 												<td>${m.item_name}</td>
-												<td>${m.spec}</td>
-												<td>${m.safe_qty}</td>
+												<td>
+												${m.qty}
+												</td>
+												<td>${m.price}</td>
 												<td>${m.unit}</td>
 											</tr>
 
@@ -306,14 +311,15 @@
 
 
 									</c:forEach>
-									
-								
+
+
 
 								</tbody>
 							</table>
-
+							
 							<br />
 						</div>
+
 					</c:forEach>
 
 

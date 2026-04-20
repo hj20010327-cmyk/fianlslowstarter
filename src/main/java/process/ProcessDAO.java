@@ -81,6 +81,7 @@ public class ProcessDAO {
 						+ "			i.item_name As Item_name From tb_process p  "
 						+ "			left join tb_item i on p.item_key = i.item_key  "
 						+ "			where 1=1 and (? is null or p.process_name like '%' || ? || '%' ) "
+						+ " and (? = 0 or p.item_key = ?) "
 						+ "			and (? is null or i.item_name like '%' || ? || '%' )   "
 						+ "			ORDER BY p.process_key ) p  "
 						+ "					WHERE rownum <= ? ) WHERE rnum >= ? ");
@@ -88,10 +89,13 @@ public class ProcessDAO {
 		) {
 			ps.setString(1, processDTO.getProcess_name());
 			ps.setString(2, processDTO.getProcess_name());
-			ps.setString(3, processDTO.getKeyword());
-			ps.setString(4, processDTO.getKeyword());
-			ps.setInt(5, processDTO.getEnd());
-			ps.setInt(6, processDTO.getStart());
+			ps.setInt(3, processDTO.getItem_key());
+			ps.setInt(4, processDTO.getItem_key());
+			
+			ps.setString(5, processDTO.getKeyword());
+			ps.setString(6, processDTO.getKeyword());
+			ps.setInt(7, processDTO.getEnd());
+			ps.setInt(8, processDTO.getStart());
 
 			try (ResultSet rs = ps.executeQuery();) {
 				while (rs.next()) {

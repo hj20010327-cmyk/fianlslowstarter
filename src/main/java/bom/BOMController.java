@@ -42,6 +42,8 @@ public class BOMController extends HttpServlet {
 			parent_item_key = Integer.parseInt(sParent);
 		} catch (Exception e) {
 		}
+		
+		request.setAttribute("selectedParent", parent_item_key);
 
 		// 페이징
 		int size = 10;

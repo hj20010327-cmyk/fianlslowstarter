@@ -27,6 +27,14 @@ public class ProcessController extends HttpServlet {
 		String keyword = request.getParameter("keyword");
 		String process_name = request.getParameter("process_name");
 		String status = request.getParameter("status");
+		String sItemKey = request.getParameter("item_key");
+		int item_key = 0;
+
+		try {
+		    item_key = Integer.parseInt(sItemKey);
+		} catch(Exception e) {}
+
+	
 		
 		// 페이징 
 		int size = 10; 
@@ -53,6 +61,7 @@ public class ProcessController extends HttpServlet {
 		processDTO.setKeyword(keyword);
 		processDTO.setProcess_name(process_name);
 		processDTO.setStatus(status);
+		processDTO.setItem_key(item_key);
 		
 		// 서비스 
 		ProcessService processservice = new ProcessService(); 

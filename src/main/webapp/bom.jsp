@@ -59,6 +59,7 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
+					<li><a href="./item">품목관리</a></li>
 					<li class="active"><a href="./bom">BOM</a></li>
 					<li><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
@@ -125,14 +126,14 @@
 				</div>
 				<form method="get" action="bom">
 					<div class="search-row bom_search">
-						<select name="parent_item_key" class="modal-select">
-							<option value="">완제품 선택</option>
-							<option value="1">컴프레셔 완제품 A형</option>
-							<option value="2">컴프레셔 완제품 B형</option>
-							<option value="3">컴프레셔 완제품 C형</option>
-							<option value="4">컴프레셔 완제품 D형</option>
-							<option value="5">컴프레셔 완제품 E형</option>
-						</select> <span>
+						<select name="parent_item_key"
+								id="parent_item_key" class="modal-select">
+								<option value="" ${selectedParent == 0 ? 'selected' : ''}>선택하세요</option>
+								<c:forEach var="item" items="${itemList}">
+									<option value="${item.item_key}" 
+									  ${item.item_key == selectedParent ? 'selected' : ''}>${item.item_name}</option>
+								</c:forEach>
+							</select> <span>
 							<button class="btn primary" type="submit">조회</button> <a
 							href="/slowstarter/bom" class="btn">초기화</a>
 						</span>
@@ -190,8 +191,8 @@
 											'${bom.bom_code}',
 											'${bom.qty}',
 											'${bom.remark}',
-											'${bom.item_name}',
-											'${bom.parent_item_name}'
+											'${bom.item_key}',
+											'${bom.parent_item_key}'
 											)">
 														${bom.bom_code} </a>
 												</c:if> <c:if
@@ -288,7 +289,7 @@
 						<div class="form-group">
 							<label>완제품명</label> <select name="parent_item_key"
 								id="parent_item_key" class="modal-select">
-								<option value="" dsiablied selected>선택하세요</option>
+								<option value=""  selected>선택하세요</option>
 								<c:forEach var="item" items="${itemList}">
 									<option value="${item.item_key}">${item.item_name}</option>
 								</c:forEach>

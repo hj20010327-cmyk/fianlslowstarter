@@ -43,7 +43,7 @@ public class BOMDAO {
 					+ "    FROM (   SELECT b.bom_key, b.bom_code, b.qty, b.remark, b.item_key, b.parent_item_key, "
 					+ "	 (SELECT i.item_name  FROM tb_item i  WHERE i.item_key = b.item_key) AS item_name, "
 					+ "	 (SELECT i.item_name  FROM tb_item i WHERE i.item_key = b.parent_item_key) AS parent_item_name "
-					+ "        FROM tb_bom b ORDER BY b.bom_key ) b "
+					+ "        FROM tb_bom b ORDER BY b.bom_key desc) b "
 					+ "    WHERE rownum <= ? "
 					+ " ) "
 					+ "WHERE rnum >= ?" );
@@ -358,6 +358,7 @@ public class BOMDAO {
 				    	    + "    b.parent_item_key, "
 				    	    + "    p.item_name AS parent_name, "
 				    	    + "    b.item_key, "
+				    	    + "    b.qty, "
 				    	    + "    c.item_code,  "
 				    	    + "    c.item_name,  "
 				    	    + "    c.spec,  "
@@ -382,6 +383,7 @@ public class BOMDAO {
 				            BOMDTO dto = new BOMDTO();
 				            dto.setItem_code(rs.getString("item_code"));
 				            dto.setItem_name(rs.getString("item_name"));
+				            dto.setQty(rs.getInt("qty"));
 				            dto.setSpec(rs.getString("spec"));
 				            dto.setUnit(rs.getString("unit"));
 				            dto.setPrice(rs.getInt("price"));

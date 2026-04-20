@@ -17,39 +17,42 @@
 
 <style>
 /* =========================
-   [수정] 전체적으로 조금 작게
+   [수정] 전체 폰트 조금 축소
 ========================= */
 .content {
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .page-head h1 {
-	font-size: 22px;
+	font-size: 20px;
 }
 
 .page-head p {
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .section-title h2 {
-	font-size: 18px;
+	font-size: 16px;
 }
 
 .btn {
-	padding: 8px 14px;
-	font-size: 13px;
+	padding: 7px 12px;
+	font-size: 12px;
 }
 
 .input, .select, .textarea {
-	font-size: 13px;
-	padding: 10px 12px;
+	font-size: 12px;
+	padding: 8px 10px;
 }
 
 table th, table td {
-	font-size: 13px;
-	padding: 12px 10px;
+	font-size: 11px;
+	padding: 9px 5px;
 }
 
+/* =========================
+   페이징
+========================= */
 .pagination {
 	display: flex;
 	justify-content: center;
@@ -65,7 +68,7 @@ table th, table td {
 	text-decoration: none;
 	color: #495057;
 	border-radius: 5px;
-	font-size: 13px;
+	font-size: 12px;
 	transition: all 0.2s;
 }
 
@@ -91,10 +94,13 @@ table th, table td {
 	font-weight: bold;
 }
 
+/* =========================
+   검색 줄
+========================= */
 .search-inline-wrap {
 	display: flex;
 	align-items: flex-end;
-	gap: 10px;
+	gap: 8px;
 	flex-wrap: nowrap;
 }
 
@@ -104,15 +110,15 @@ table th, table td {
 }
 
 .search-inline-item.date-area {
-	flex: 0 0 165px;
+	flex: 0 0 150px;
 	display: flex;
 	flex-direction: column;
 }
 
 .search-small-label {
-	font-size: 12px;
+	font-size: 11px;
 	color: #666;
-	margin-bottom: 6px;
+	margin-bottom: 5px;
 }
 
 .search-inline-btns {
@@ -128,6 +134,9 @@ table th, table td {
 	width: 100%;
 }
 
+/* =========================
+   클릭 행
+========================= */
 .click-row {
 	cursor: pointer;
 }
@@ -136,7 +145,9 @@ table th, table td {
 	background-color: #f8fbff;
 }
 
-/* 유효성 검사 빨간 문구 */
+/* =========================
+   유효성 검사
+========================= */
 .error-text {
 	display: block;
 	margin-top: 5px;
@@ -151,18 +162,97 @@ table th, table td {
 	border: 1px solid red !important;
 }
 
-/* [수정] 의미 없는 가로 스크롤 제거 */
+/* =========================
+   [핵심] 스크롤 제거
+========================= */
 .table-wrap {
-	overflow-x: visible;
+	overflow-x: hidden !important;
 }
 
-/* [수정] 모달 스크롤 제거 */
+.table-wrap table {
+	width: 100%;
+	table-layout: fixed;
+}
+
+/* =========================
+   공통 셀 처리
+========================= */
+.table-wrap th,
+.table-wrap td {
+	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: center;
+	vertical-align: middle;
+}
+
+/* =========================
+   [핵심] 관리자/슈퍼바이저용 테이블
+   - 선택 체크박스 열 있음
+========================= */
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1) { width: 42px; }   /* 선택 */
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) { width: 58px; }   /* 검사번호 */
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3) { width: 125px; }  /* 품목명 */
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4) { width: 68px; }   /* 생산명 */
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) { width: 76px; }   /* 검사일자 */
+.admin-table th:nth-child(6),
+.admin-table td:nth-child(6) { width: 70px; }   /* 등록일 */
+.admin-table th:nth-child(7),
+.admin-table td:nth-child(7) { width: 52px; }   /* 검사수량 */
+.admin-table th:nth-child(8),
+.admin-table td:nth-child(8) { width: 52px; }   /* 양품수량 */
+.admin-table th:nth-child(9),
+.admin-table td:nth-child(9) { width: 52px; }   /* 불량수량 */
+.admin-table th:nth-child(10),
+.admin-table td:nth-child(10) { width: 80px; }  /* 불량사유 */
+.admin-table th:nth-child(11),
+.admin-table td:nth-child(11) { width: 42px; }  /* 상태 */
+.admin-table th:nth-child(12),
+.admin-table td:nth-child(12) { width: 58px; }  /* 담당자명 */
+
+/* =========================
+   [핵심] 작업자용 테이블
+   - 선택 체크박스 열 없음
+   - 품목명 폭 넓힘
+========================= */
+.worker-table th:nth-child(1),
+.worker-table td:nth-child(1) { width: 58px; }   /* 검사번호 */
+.worker-table th:nth-child(2),
+.worker-table td:nth-child(2) { width: 155px; }  /* 품목명 */
+.worker-table th:nth-child(3),
+.worker-table td:nth-child(3) { width: 70px; }   /* 생산명 */
+.worker-table th:nth-child(4),
+.worker-table td:nth-child(4) { width: 80px; }   /* 검사일자 */
+.worker-table th:nth-child(5),
+.worker-table td:nth-child(5) { width: 72px; }   /* 등록일 */
+.worker-table th:nth-child(6),
+.worker-table td:nth-child(6) { width: 55px; }   /* 검사수량 */
+.worker-table th:nth-child(7),
+.worker-table td:nth-child(7) { width: 55px; }   /* 양품수량 */
+.worker-table th:nth-child(8),
+.worker-table td:nth-child(8) { width: 55px; }   /* 불량수량 */
+.worker-table th:nth-child(9),
+.worker-table td:nth-child(9) { width: 88px; }   /* 불량사유 */
+.worker-table th:nth-child(10),
+.worker-table td:nth-child(10) { width: 48px; }  /* 상태 */
+.worker-table th:nth-child(11),
+.worker-table td:nth-child(11) { width: 62px; }  /* 담당자명 */
+
+/* =========================
+   모달 스크롤 제거
+========================= */
 #commonModal {
 	overflow: hidden;
 }
 
 #commonModal .modal-box {
-	width: 660px;
+	width: 640px;
 	max-height: none !important;
 	overflow: visible !important;
 }
@@ -173,38 +263,38 @@ table th, table td {
 	padding-bottom: 0;
 }
 
-/* [수정] 전체 모달 틀과 폰트 조금 축소 */
 #commonModal .modal-header h3 {
-	font-size: 24px;
+	font-size: 22px;
 }
 
 #commonModal .modal-header,
 #commonModal .modal-body,
 #commonModal .modal-footer {
-	font-size: 13px;
+	font-size: 12px;
 }
 
 #commonModal .modal-close {
-	font-size: 24px;
+	font-size: 22px;
 }
 
-/* [수정] 품목명이 잘리지 않게 왼쪽 칸 조금 넓게 */
+/* =========================
+   모달 폼 폭 조정
+========================= */
 .form-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-	gap: 14px 14px;
+	gap: 12px 12px;
 	align-items: end;
 }
 
-/* [수정] 상태, 담당자명 칸은 너무 넓지 않게 */
 .form-group.status-group,
 .form-group.user-group {
-	max-width: 190px;
+	max-width: 180px;
 }
 
 .form-group label {
-	font-size: 13px;
-	margin-bottom: 6px;
+	font-size: 12px;
+	margin-bottom: 5px;
 	display: block;
 }
 
@@ -218,12 +308,6 @@ table th, table td {
 	display: flex;
 	gap: 8px;
 	align-items: center;
-}
-
-th.action-cell,
-td.action-cell {
-	text-align: center;
-	white-space: nowrap;
 }
 </style>
 </head>
@@ -391,7 +475,14 @@ td.action-cell {
 						</div>
 
 						<div class="table-wrap">
-							<table>
+							<c:choose>
+								<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+									<table class="admin-table">
+								</c:when>
+								<c:otherwise>
+									<table class="worker-table">
+								</c:otherwise>
+							</c:choose>
 								<thead>
 									<tr>
 										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
@@ -435,14 +526,14 @@ td.action-cell {
 											</c:if>
 
 											<td>${m.quality_code}</td>
-											<td>${m.item_name}</td>
+											<td title="${m.item_name}">${m.item_name}</td>
 											<td>${m.prod_name}</td>
 											<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
 											<td><fmt:formatDate value="${m.created_at}" pattern="yyyy-MM-dd"/></td>
 											<td>${m.inspect_qty}</td>
 											<td>${m.good_qty}</td>
 											<td>${m.defect_qty}</td>
-											<td>${m.defect_reason}</td>
+											<td title="${m.defect_reason}">${m.defect_reason}</td>
 											<td>
 												<c:choose>
 													<c:when test="${m.qc_status eq '합격'}">
@@ -450,6 +541,9 @@ td.action-cell {
 													</c:when>
 													<c:when test="${m.qc_status eq '불합격'}">
 														<span class="status-fail">불합격</span>
+													</c:when>
+													<c:when test="${m.qc_status eq '완료'}">
+														<span class="status-pass">완료</span>
 													</c:when>
 													<c:otherwise>
 														<span class="status-re">재검</span>
@@ -539,13 +633,13 @@ td.action-cell {
 
 						<div class="form-group">
 							<label>검사수량</label>
-							<input type="number" class="input" id="inspect_qty" name="inspect_qty" placeholder="검사수량 자동입력" readonly />
+							<input type="number" class="input" id="inspect_qty" name="inspect_qty" placeholder="검사수량 자동입력" />
 							<small class="error-text" id="inspect_qty_error"></small>
 						</div>
 
 						<div class="form-group">
 							<label>양품수량</label>
-							<input type="number" class="input" id="good_qty" name="good_qty" placeholder="양품수량 자동계산" readonly />
+							<input type="number" class="input" id="good_qty" name="good_qty" placeholder="양품수량 자동계산" />
 							<small class="error-text" id="good_qty_error"></small>
 						</div>
 
@@ -813,7 +907,7 @@ td.action-cell {
 			if (confirm("선택한 품질 데이터를 완료 처리하시겠습니까?")) {
 				const form = document.getElementById("listForm");
 				document.getElementById("listAction").value = "completeSelected";
-				form.action = contextPath + "/qualityList";
+				form.action = contextPath + "/qualityComplete";
 				form.submit();
 			}
 		}
@@ -856,6 +950,7 @@ td.action-cell {
 
 				document.getElementById("defect_qty_error").innerText = "";
 				defectQty.classList.remove("input-error");
+
 				goodQty.value = inspect - defect;
 			}
 
@@ -863,6 +958,14 @@ td.action-cell {
 				defectQty.addEventListener("input", function() {
 					document.getElementById("defect_qty_error").innerText = "";
 					defectQty.classList.remove("input-error");
+					calcGoodQty();
+				});
+			}
+
+			if (inspectQty) {
+				inspectQty.addEventListener("input", function() {
+					document.getElementById("inspect_qty_error").innerText = "";
+					inspectQty.classList.remove("input-error");
 					calcGoodQty();
 				});
 			}
@@ -878,7 +981,7 @@ td.action-cell {
 					if (stockQty != null && this.value !== "") {
 						inspectQty.value = stockQty;
 						defectQty.value = "";
-						goodQty.value = stockQty;
+						goodQty.value = "";
 					} else {
 						inspectQty.value = "";
 						defectQty.value = "";
@@ -894,6 +997,7 @@ td.action-cell {
 					document.getElementById("inspect_qty_error").innerText = "";
 					document.getElementById("good_qty_error").innerText = "";
 					document.getElementById("item_name_view_error").innerText = "";
+
 					inspectQty.classList.remove("input-error");
 					goodQty.classList.remove("input-error");
 					itemNameView.classList.remove("input-error");

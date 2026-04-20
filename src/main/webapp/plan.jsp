@@ -352,12 +352,13 @@
 
 						<div class="form-group">
 							<label>계획일</label> <input type="date" class="input"
-								id="plan_date" name="plan_date" />
+								id="plan_date" name="plan_date"/>
+							 <span class="error-msg" id="planDateError"></span>
 						</div>
 
 						<div class="form-group">
 							<label>마감일</label> <input type="date" class="input" id="due_date"
-								name="due_date" /> <span class="error-msg" id="dueDateError"></span>
+								name="due_date"/> <span class="error-msg" id="dueDateError"></span>
 						</div>
 
 						<div class="form-group">
@@ -454,6 +455,18 @@
 		    // 제품 선택
 		    if (!itemKey) {
 		        document.getElementById("itemError").innerText = "제품을 선택해주세요.";
+		        isValid = false;
+		    }
+		    
+		    //  계획일 필수
+		    if (!planDate) {
+		        document.getElementById("planDateError").innerText = "계획일을 입력해주세요.";
+		        isValid = false;
+		    }
+
+		    //  마감일 필수
+		    if (!dueDate) {
+		        document.getElementById("dueDateError").innerText = "마감일을 입력해주세요.";
 		        isValid = false;
 		    }
 

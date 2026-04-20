@@ -20,7 +20,7 @@ import product.*;
 /**
  * Servlet implementation class bomcontroller
  */
-@WebServlet("/bom")
+@WebServlet("/bom/detail")
 public class BOMController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 

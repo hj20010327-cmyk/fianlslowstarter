@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class BOMDetailController
  */
-@WebServlet("/bom/detail")
+@WebServlet("/bom")
 public class BOMDetailController extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

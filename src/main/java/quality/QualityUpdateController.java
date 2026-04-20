@@ -2,6 +2,7 @@ package quality;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -49,7 +50,6 @@ public class QualityUpdateController extends HttpServlet {
 
             // 필수값 체크
             if (qualityKeyParam == null || qualityKeyParam.trim().equals("") ||
-                inspectDateParam == null || inspectDateParam.trim().equals("") ||
                 inspectQtyParam == null || inspectQtyParam.trim().equals("") ||
                 goodQtyParam == null || goodQtyParam.trim().equals("") ||
                 defectQtyParam == null || defectQtyParam.trim().equals("") ||
@@ -85,7 +85,14 @@ public class QualityUpdateController extends HttpServlet {
 
             // 수정할 값 세팅
             dto.setQuality_key(Integer.parseInt(qualityKeyParam));
-            dto.setInspect_date(Date.valueOf(inspectDateParam));
+
+            // [수정] 수정에서도 날짜 비었을 때 오늘 날짜로 안전 처리
+            if (inspectDateParam == null || inspectDateParam.trim().equals("")) {
+                dto.setInspect_date(Date.valueOf(LocalDate.now()));
+            } else {
+                dto.setInspect_date(Date.valueOf(inspectDateParam));
+            }
+
             dto.setInspect_qty(inspectQty);
             dto.setGood_qty(goodQty);
             dto.setDefect_qty(defectQty);
@@ -110,4 +117,4 @@ public class QualityUpdateController extends HttpServlet {
             response.getWriter().println("<script>alert('품질 수정 중 오류가 발생했습니다.'); history.back();</script>");
         }
     }
-}
+} 

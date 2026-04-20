@@ -173,3 +173,41 @@ public class QualityDTO {
         this.stock_qty = stock_qty;
     }
 }
+
+/*
+ * =========================================
+ * 완료 처리 결과 전달용 클래스
+ * - 새 파일 안 만들고 DTO 파일 아래에 같이 선언
+ * - 같은 package(quality) 안에서 사용 가능
+ * =========================================
+ */
+class QualityCompleteResult {
+
+    private int successCount;           // 완료 성공 건수
+    private int alreadyCompletedCount;  // 이미 완료된 건수
+    private int failCount;              // 실패 건수
+
+    public int getSuccessCount() {
+        return successCount;
+    }
+
+    public void setSuccessCount(int successCount) {
+        this.successCount = successCount;
+    }
+
+    public int getAlreadyCompletedCount() {
+        return alreadyCompletedCount;
+    }
+
+    public void setAlreadyCompletedCount(int alreadyCompletedCount) {
+        this.alreadyCompletedCount = alreadyCompletedCount;
+    }
+
+    public int getFailCount() {
+        return failCount;
+    }
+
+    public void setFailCount(int failCount) {
+        this.failCount = failCount;
+    }
+}

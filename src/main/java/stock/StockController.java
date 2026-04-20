@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 public class StockController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // =========================
+    // 목록 조회
+    // =========================
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -43,21 +46,19 @@ public class StockController extends HttpServlet {
 
         StockService service = new StockService();
 
+        // 목록 / 개수
         List<StockDTO> list = service.getList(startRow, endRow, lotKeyword, itemType, itemCodeKeyword, itemNameKeyword);
         int totalCount = service.getTotalCount(lotKeyword, itemType, itemCodeKeyword, itemNameKeyword);
 
+        // 드롭다운용 데이터
         List<StockDTO> itemList = service.getItemList();
         List<String> lotList = service.getLotList();
-        List<String> itemCodeList = service.getItemCodeList();
-        List<String> itemNameList = service.getItemNameList();
 
         int totalPage = (int) Math.ceil((double) totalCount / pageSize);
 
         request.setAttribute("list", list);
         request.setAttribute("itemList", itemList);
         request.setAttribute("lotList", lotList);
-        request.setAttribute("itemCodeList", itemCodeList);
-        request.setAttribute("itemNameList", itemNameList);
 
         request.setAttribute("totalCount", totalCount);
         request.setAttribute("totalPage", totalPage);
@@ -72,6 +73,9 @@ public class StockController extends HttpServlet {
         request.getRequestDispatcher("stock.jsp").forward(request, response);
     }
 
+    // =========================
+    // 등록 / 수정 / 삭제
+    // =========================
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -82,6 +86,9 @@ public class StockController extends HttpServlet {
         StockService service = new StockService();
 
         try {
+            // =========================
+            // 삭제
+            // =========================
             if ("delete".equals(cmd)) {
                 String[] stockKeys = request.getParameterValues("codes");
 
@@ -91,8 +98,12 @@ public class StockController extends HttpServlet {
                 }
 
             } else {
+                // =========================
+                // 등록 / 수정 공통 파라미터
+                // [수정] LOT 입력 제거
+                // [수정] 재고수량 사용
+                // =========================
                 String stockKeyStr = request.getParameter("stock_key");
-                String lot = request.getParameter("lot");
                 String currentQtyStr = request.getParameter("current_qty");
                 String safeQtyStr = request.getParameter("safe_qty");
                 String itemKeyStr = request.getParameter("item_key");
@@ -102,33 +113,31 @@ public class StockController extends HttpServlet {
                 int safe_qty = (safeQtyStr != null && !safeQtyStr.isEmpty()) ? Integer.parseInt(safeQtyStr.trim()) : 0;
                 int item_key = (itemKeyStr != null && !itemKeyStr.isEmpty()) ? Integer.parseInt(itemKeyStr.trim()) : 0;
 
-                if (lot == null || lot.trim().equals("")) {
-                    String msg = URLEncoder.encode("LOT 번호를 입력해주세요.", "UTF-8");
-                    response.sendRedirect(request.getContextPath() + "/stock?errorMsg=" + msg);
-                    return;
-                }
-
-                if (current_qty < 0 || safe_qty < 0) {
-                    String msg = URLEncoder.encode("수량은 0 이상만 입력할 수 있습니다.", "UTF-8");
-                    response.sendRedirect(request.getContextPath() + "/stock?errorMsg=" + msg);
-                    return;
-                }
-
+                // 품목 선택 검사
                 if (item_key <= 0) {
                     String msg = URLEncoder.encode("품목을 선택해주세요.", "UTF-8");
                     response.sendRedirect(request.getContextPath() + "/stock?errorMsg=" + msg);
                     return;
                 }
 
+                // 수량 검사
+                if (current_qty < 0 || safe_qty < 0) {
+                    String msg = URLEncoder.encode("수량은 0 이상만 입력할 수 있습니다.", "UTF-8");
+                    response.sendRedirect(request.getContextPath() + "/stock?errorMsg=" + msg);
+                    return;
+                }
+
                 StockDTO dto = new StockDTO();
                 dto.setStock_key(stock_key);
-                dto.setLot(lot);
                 dto.setCurrent_qty(current_qty);
                 dto.setSafe_qty(safe_qty);
                 dto.setItem_key(item_key);
 
                 int result = 0;
 
+                // =========================
+                // 수정
+                // =========================
                 if ("update".equals(cmd)) {
                     result = service.update(dto);
                     if (result <= 0) {
@@ -137,6 +146,9 @@ public class StockController extends HttpServlet {
                         return;
                     }
                 } else {
+                    // =========================
+                    // 등록
+                    // =========================
                     result = service.register(dto);
                     if (result <= 0) {
                         String msg = URLEncoder.encode("재고 등록 실패", "UTF-8");

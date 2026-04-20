@@ -16,22 +16,56 @@
 <link rel="stylesheet" href="./asset/css/page.css" />
 
 <style>
+/* =========================
+   [수정] 전체적으로 조금 작게
+========================= */
+.content {
+	font-size: 14px;
+}
+
+.page-head h1 {
+	font-size: 22px;
+}
+
+.page-head p {
+	font-size: 13px;
+}
+
+.section-title h2 {
+	font-size: 18px;
+}
+
+.btn {
+	padding: 8px 14px;
+	font-size: 13px;
+}
+
+.input, .select, .textarea {
+	font-size: 13px;
+	padding: 10px 12px;
+}
+
+table th, table td {
+	font-size: 13px;
+	padding: 12px 10px;
+}
+
 .pagination {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-top: 25px;
-	margin-bottom: 10px;
-	gap: 8px;
+	margin-top: 20px;
+	margin-bottom: 8px;
+	gap: 6px;
 }
 
 .pagination a {
-	padding: 10px 15px;
+	padding: 8px 12px;
 	border: 1px solid #dee2e6;
 	text-decoration: none;
 	color: #495057;
 	border-radius: 5px;
-	font-size: 14px;
+	font-size: 13px;
 	transition: all 0.2s;
 }
 
@@ -60,7 +94,7 @@
 .search-inline-wrap {
 	display: flex;
 	align-items: flex-end;
-	gap: 12px;
+	gap: 10px;
 	flex-wrap: nowrap;
 }
 
@@ -70,13 +104,13 @@
 }
 
 .search-inline-item.date-area {
-	flex: 0 0 180px;
+	flex: 0 0 165px;
 	display: flex;
 	flex-direction: column;
 }
 
 .search-small-label {
-	font-size: 13px;
+	font-size: 12px;
 	color: #666;
 	margin-bottom: 6px;
 }
@@ -84,7 +118,7 @@
 .search-inline-btns {
 	display: flex;
 	align-items: flex-end;
-	gap: 10px;
+	gap: 8px;
 	flex: 0 0 auto;
 }
 
@@ -105,8 +139,8 @@
 /* 유효성 검사 빨간 문구 */
 .error-text {
 	display: block;
-	margin-top: 6px;
-	font-size: 12px;
+	margin-top: 5px;
+	font-size: 11px;
 	color: red;
 	font-weight: 600;
 }
@@ -115,6 +149,81 @@
 .select-error,
 .textarea-error {
 	border: 1px solid red !important;
+}
+
+/* [수정] 의미 없는 가로 스크롤 제거 */
+.table-wrap {
+	overflow-x: visible;
+}
+
+/* [수정] 모달 스크롤 제거 */
+#commonModal {
+	overflow: hidden;
+}
+
+#commonModal .modal-box {
+	width: 660px;
+	max-height: none !important;
+	overflow: visible !important;
+}
+
+#commonModal .modal-body {
+	max-height: none !important;
+	overflow: visible !important;
+	padding-bottom: 0;
+}
+
+/* [수정] 전체 모달 틀과 폰트 조금 축소 */
+#commonModal .modal-header h3 {
+	font-size: 24px;
+}
+
+#commonModal .modal-header,
+#commonModal .modal-body,
+#commonModal .modal-footer {
+	font-size: 13px;
+}
+
+#commonModal .modal-close {
+	font-size: 24px;
+}
+
+/* [수정] 품목명이 잘리지 않게 왼쪽 칸 조금 넓게 */
+.form-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+	gap: 14px 14px;
+	align-items: end;
+}
+
+/* [수정] 상태, 담당자명 칸은 너무 넓지 않게 */
+.form-group.status-group,
+.form-group.user-group {
+	max-width: 190px;
+}
+
+.form-group label {
+	font-size: 13px;
+	margin-bottom: 6px;
+	display: block;
+}
+
+.form-group.item-group input,
+.form-group.prod-group select,
+.form-group.prod-view-group input {
+	width: 100%;
+}
+
+.top-action-wrap {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+th.action-cell,
+td.action-cell {
+	text-align: center;
+	white-space: nowrap;
 }
 </style>
 </head>
@@ -218,7 +327,7 @@
 				</div>
 			</div>
 
-			<section class="card" style="margin-bottom: 20px">
+			<section class="card" style="margin-bottom: 18px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
 				</div>
@@ -266,11 +375,17 @@
 
 			<section class="panel-grid">
 				<div class="card">
-					<form id="deleteForm" action="${pageContext.request.contextPath}/quality/delete" method="post">
+					<form id="listForm" action="${pageContext.request.contextPath}/quality/delete" method="post">
+						<input type="hidden" id="listAction" name="action" value="" />
+
 						<div class="section-title">
 							<h2>품질 목록</h2>
-							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">						
-								<button type="button" class="btn" onclick="deleteSelected()">삭제</button>
+
+							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+								<div class="top-action-wrap">
+									<button type="button" class="btn primary" onclick="completeSelected()">완료</button>
+									<button type="button" class="btn" onclick="deleteSelected()">삭제</button>
+								</div>
 							</c:if>
 						</div>
 
@@ -278,7 +393,6 @@
 							<table>
 								<thead>
 									<tr>
-										<%-- 작업자 로그인 시에는 선택 컬럼 자체를 안 보이게 처리 --%>
 										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 											<th style="cursor:pointer;" onclick="toggleAllCheckboxes()">선택</th>
 										</c:if>
@@ -286,7 +400,7 @@
 										<th>품목명</th>
 										<th>생산명</th>
 										<th>검사일자</th>
-										<th>마감일</th>
+										<th>등록일</th>
 										<th>검사수량</th>
 										<th>양품수량</th>
 										<th>불량수량</th>
@@ -312,8 +426,7 @@
 											'${m.item_name}',
 											'${m.user_key}'
 											)">
-											
-											<%-- 작업자 로그인 시에는 체크박스 칸(td) 자체를 안 보이게 처리 --%>
+
 											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 												<td onclick="event.stopPropagation();">
 													<input type="checkbox" name="quality_key" value="${m.quality_key}">
@@ -324,7 +437,7 @@
 											<td>${m.item_name}</td>
 											<td>${m.prod_name}</td>
 											<td><fmt:formatDate value="${m.inspect_date}" pattern="yyyy-MM-dd"/></td>
-											<td><fmt:formatDate value="${m.due_date}" pattern="yyyy-MM-dd"/></td>
+											<td><fmt:formatDate value="${m.created_at}" pattern="yyyy-MM-dd"/></td>
 											<td>${m.inspect_qty}</td>
 											<td>${m.good_qty}</td>
 											<td>${m.defect_qty}</td>
@@ -348,13 +461,12 @@
 
 									<c:if test="${empty list}">
 										<tr>
-											<%-- 선택 컬럼 유무에 따라 colspan 맞춤 처리 --%>
 											<c:choose>
 												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-													<td colspan="12" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
+													<td colspan="12" style="text-align:center; padding:26px;">데이터가 없습니다.</td>
 												</c:when>
 												<c:otherwise>
-													<td colspan="11" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
+													<td colspan="11" style="text-align:center; padding:26px;">데이터가 없습니다.</td>
 												</c:otherwise>
 											</c:choose>
 										</tr>
@@ -403,7 +515,7 @@
 							<small class="error-text" id="inspect_date_error"></small>
 						</div>
 
-						<div class="form-group" id="prod_select_wrap">
+						<div class="form-group prod-group" id="prod_select_wrap">
 							<label>작업지시 코드</label>
 							<select class="select" id="prod_key_select">
 								<option value="">선택</option>
@@ -419,7 +531,7 @@
 							<small class="error-text" id="prod_key_select_error"></small>
 						</div>
 
-						<div class="form-group" id="prod_view_wrap" style="display:none;">
+						<div class="form-group prod-view-group" id="prod_view_wrap" style="display:none;">
 							<label>작업지시 코드</label>
 							<input type="text" class="input" id="prod_name_view" readonly />
 						</div>
@@ -442,7 +554,7 @@
 							<small class="error-text" id="defect_qty_error"></small>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group status-group">
 							<label>상태</label>
 							<select class="select" id="qc_status" name="qc_status">
 								<option value="">선택</option>
@@ -453,13 +565,13 @@
 							<small class="error-text" id="qc_status_error"></small>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group item-group">
 							<label>품목명</label>
 							<input type="text" class="input" id="item_name_view" name="item_name" />
 							<small class="error-text" id="item_name_view_error"></small>
 						</div>
 
-						<div class="form-group">
+						<div class="form-group user-group">
 							<label>담당자명</label>
 							<select class="select" id="user_key" name="user_key">
 								<option value="">선택</option>
@@ -486,6 +598,14 @@
 	</div>
 
 	<script>
+		function getTodayDateString() {
+			const today = new Date();
+			const year = today.getFullYear();
+			const month = String(today.getMonth() + 1).padStart(2, "0");
+			const day = String(today.getDate()).padStart(2, "0");
+			return year + "-" + month + "-" + day;
+		}
+
 		function clearValidation() {
 			const errorTexts = document.querySelectorAll(".error-text");
 			for (let i = 0; i < errorTexts.length; i++) {
@@ -609,7 +729,7 @@
 
 			document.getElementById("quality_key").value = "";
 			document.getElementById("quality_code").value = "";
-			document.getElementById("inspect_date").value = "";
+			document.getElementById("inspect_date").value = getTodayDateString();
 			document.getElementById("inspect_qty").value = "";
 			document.getElementById("good_qty").value = "";
 			document.getElementById("defect_qty").value = "";
@@ -626,7 +746,6 @@
 		}
 
 		function openEditModal(qualityKey, qualityCode, inspectDate, inspectQty, goodQty, defectQty, defectReason, qcStatus, prodKey, prodName, itemName, userKey) {
-			// 작업자는 수정 모달 못 열게 막기
 			if (loginUserRole !== "관리자" && loginUserRole !== "슈퍼바이저") {
 				return;
 			}
@@ -675,7 +794,26 @@
 			}
 
 			if (confirm("선택한 품질 데이터를 삭제하시겠습니까?")) {
-				document.getElementById("deleteForm").submit();
+				const form = document.getElementById("listForm");
+				document.getElementById("listAction").value = "";
+				form.action = contextPath + "/quality/delete";
+				form.submit();
+			}
+		}
+
+		function completeSelected() {
+			const checked = document.querySelectorAll('input[name="quality_key"]:checked');
+
+			if (checked.length === 0) {
+				alert("완료할 항목을 선택하세요.");
+				return;
+			}
+
+			if (confirm("선택한 품질 데이터를 완료 처리하시겠습니까?")) {
+				const form = document.getElementById("listForm");
+				document.getElementById("listAction").value = "completeSelected";
+				form.action = contextPath + "/qualityList";
+				form.submit();
 			}
 		}
 
@@ -702,6 +840,7 @@
 			const prodKeySelect = document.getElementById("prod_key_select");
 			const prodKeyHidden = document.getElementById("prod_key_hidden");
 			const itemNameView = document.getElementById("item_name_view");
+			const commonModal = document.getElementById("commonModal");
 
 			function calcGoodQty() {
 				const inspect = parseInt(inspectQty.value || 0);
@@ -760,10 +899,22 @@
 				});
 			}
 
+			if (document.getElementById("inspect_date") && !document.getElementById("inspect_date").value) {
+				document.getElementById("inspect_date").value = getTodayDateString();
+			}
+
 			if (qualityForm) {
 				qualityForm.addEventListener("submit", function(e) {
 					if (!validateQualityForm()) {
 						e.preventDefault();
+					}
+				});
+			}
+
+			if (commonModal) {
+				commonModal.addEventListener("click", function(e) {
+					if (e.target === commonModal) {
+						e.stopPropagation();
 					}
 				});
 			}

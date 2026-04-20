@@ -8,32 +8,33 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.sql.DataSource;
-
 public class QualityDAO {
 
     Connection conn = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
 
+    // =========================
     // DB 연결
+    // =========================
     private void getConnection() throws Exception {
-        Context ctx = new InitialContext();
-        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+        javax.naming.Context ctx = new javax.naming.InitialContext();
+        javax.sql.DataSource dataFactory = (javax.sql.DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
         conn = dataFactory.getConnection();
     }
 
+    // =========================
     // 자원 닫기
+    // =========================
     private void closeAll() {
         if (rs != null) try { rs.close(); } catch (SQLException e) { e.printStackTrace(); }
         if (ps != null) try { ps.close(); } catch (SQLException e) { e.printStackTrace(); }
         if (conn != null) try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
     }
 
+    // =========================
     // 목록 조회용 DTO 세팅
-    // ★ ITEM_NAME을 TB_ITEM이 아니라 TB_QUALITY의 ITEM_NAME으로 받는다
+    // =========================
     private QualityDTO makeDto(ResultSet rs) throws Exception {
         QualityDTO dto = new QualityDTO();
 
@@ -52,16 +53,15 @@ public class QualityDAO {
         dto.setItem_key(rs.getInt("ITEM_KEY"));
         dto.setUser_name(rs.getString("USER_NAME"));
         dto.setDue_date(rs.getDate("DUE_DATE"));
-
-        // ★ 핵심: 품목명은 이제 품질 테이블에 저장된 값 사용
         dto.setItem_name(rs.getString("ITEM_NAME"));
-
         dto.setProd_name(rs.getString("WORK_ORDER_CODE"));
 
         return dto;
     }
 
-    // 담당자 목록 (테스트 계정 제외)
+    // =========================
+    // 담당자 목록
+    // =========================
     public List<QualityDTO> getUserList() {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -92,8 +92,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 작업지시 목록 조회
-    // 등록 모달에서 작업지시 선택 시 자동으로 품목명/현재고 가져오기용
+    // =========================
     public List<QualityDTO> getWorkOrderList() {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -134,7 +135,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 검색용 검사번호 목록
+    // =========================
     public List<String> getQualityCodeList() {
         List<String> list = new ArrayList<String>();
 
@@ -158,8 +161,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 검색용 품목명 목록
-    // ★ 이제 TB_QUALITY의 ITEM_NAME 기준으로 검색 목록 생성
+    // =========================
     public List<String> getItemNameList() {
         List<String> list = new ArrayList<String>();
 
@@ -187,7 +191,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 다음 검사번호 생성
+    // =========================
     public String getNextQualityCode() {
         String nextCode = "Q-001";
 
@@ -215,8 +221,9 @@ public class QualityDAO {
         return nextCode;
     }
 
+    // =========================
     // 목록 페이징 조회
-    // ★ q.ITEM_NAME 사용
+    // =========================
     public List<QualityDTO> selectPage(int startRow, int endRow) {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -272,7 +279,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 전체 개수
+    // =========================
     public int getTotalCount() {
         int count = 0;
 
@@ -296,8 +305,9 @@ public class QualityDAO {
         return count;
     }
 
+    // =========================
     // 검색 페이징 조회
-    // ★ 검색 품목명도 q.ITEM_NAME 기준
+    // =========================
     public List<QualityDTO> searchPage(String qualityCode, String itemName, String status, String inspectDate, int startRow, int endRow) {
         List<QualityDTO> list = new ArrayList<QualityDTO>();
 
@@ -389,8 +399,9 @@ public class QualityDAO {
         return list;
     }
 
+    // =========================
     // 검색 개수
-    // ★ 검색 품목명도 q.ITEM_NAME 기준
+    // =========================
     public int getSearchCount(String qualityCode, String itemName, String status, String inspectDate) {
         int count = 0;
 
@@ -455,10 +466,9 @@ public class QualityDAO {
         return count;
     }
 
+    // =========================
     // 등록
-    // 1. TB_QUALITY 저장
-    // 2. ITEM_NAME도 같이 저장
-    // 3. TB_STOCK WAIT_QC 증가
+    // =========================
     public int addquality(QualityDTO dto) {
         int result = 0;
 
@@ -488,7 +498,7 @@ public class QualityDAO {
             psInsert.setString(7, dto.getQc_status());
             psInsert.setInt(8, dto.getUser_key());
             psInsert.setInt(9, dto.getProd_key());
-            psInsert.setString(10, dto.getItem_name());   // ★ 추가
+            psInsert.setString(10, dto.getItem_name());
 
             result = psInsert.executeUpdate();
 
@@ -529,9 +539,9 @@ public class QualityDAO {
         return result;
     }
 
+    // =========================
     // 수정
-    // ★ 이제 TB_ITEM 수정 절대 안 함
-    // ★ TB_QUALITY의 ITEM_NAME만 수정
+    // =========================
     public int updatequality(QualityDTO dto) {
         int result = 0;
 
@@ -561,7 +571,7 @@ public class QualityDAO {
             psQuality.setString(5, dto.getDefect_reason());
             psQuality.setString(6, dto.getQc_status());
             psQuality.setInt(7, dto.getUser_key());
-            psQuality.setString(8, dto.getItem_name());    // ★ 추가
+            psQuality.setString(8, dto.getItem_name());
             psQuality.setInt(9, dto.getQuality_key());
 
             result = psQuality.executeUpdate();
@@ -585,7 +595,9 @@ public class QualityDAO {
         return result;
     }
 
+    // =========================
     // 삭제
+    // =========================
     public int deleteQuality(String[] qualityKeys) {
         int result = 0;
 
@@ -607,5 +619,243 @@ public class QualityDAO {
         }
 
         return result;
+    }
+
+    // =========================
+    // 완료 처리
+    // - 성공 / 이미 완료 / 실패 건수 반환
+    // =========================
+    public QualityCompleteResult completeQuality(String[] qualityKeys) {
+        QualityCompleteResult completeResult = new QualityCompleteResult();
+
+        if (qualityKeys == null || qualityKeys.length == 0) {
+            return completeResult;
+        }
+
+        try {
+            getConnection();
+            conn.setAutoCommit(false);
+
+            for (String key : qualityKeys) {
+                if (key == null || key.trim().equals("")) {
+                    continue;
+                }
+
+                int qualityKey = Integer.parseInt(key);
+
+                // 완료 대상 조회
+                QualityCompleteDTO dto = getCompleteTarget(conn, qualityKey);
+                if (dto == null) {
+                    completeResult.setFailCount(completeResult.getFailCount() + 1);
+                    continue;
+                }
+
+                // 이미 생산실적이 있으면 이미 완료 건수 증가
+                if (existsProductionByQualityKey(conn, qualityKey)) {
+                    completeResult.setAlreadyCompletedCount(
+                            completeResult.getAlreadyCompletedCount() + 1);
+                    continue;
+                }
+
+                // 재고 반영
+                int stockResult = updateStockAfterComplete(conn, dto);
+                if (stockResult <= 0) {
+                    completeResult.setFailCount(completeResult.getFailCount() + 1);
+                    continue;
+                }
+
+                // 생산실적 등록
+                int prodResult = insertProductionAfterComplete(conn, dto);
+                if (prodResult <= 0) {
+                    completeResult.setFailCount(completeResult.getFailCount() + 1);
+                    continue;
+                }
+
+                // 완료 성공
+                completeResult.setSuccessCount(
+                        completeResult.getSuccessCount() + 1);
+            }
+
+            conn.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                if (conn != null) conn.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } finally {
+            try { if (conn != null) conn.setAutoCommit(true); } catch (Exception e) {}
+            closeAll();
+        }
+
+        return completeResult;
+    }
+
+    // =========================
+    // 완료 대상 조회용 내부 DTO
+    // =========================
+    private static class QualityCompleteDTO {
+        private int qualityKey;
+        private int workOrderKey;
+        private int inspectQty;
+        private int goodQty;
+        private int defectQty;
+        private int itemKey;
+        private int workUserKey;
+    }
+
+    // =========================
+    // 완료 대상 조회
+    // - 생산실적 테이블에 필요한 값까지 같이 가져옴
+    // =========================
+    private QualityCompleteDTO getCompleteTarget(Connection conn, int qualityKey) throws Exception {
+        PreparedStatement psLocal = null;
+        ResultSet rsLocal = null;
+
+        try {
+            String sql = ""
+                    + "SELECT q.QUALITY_KEY, "
+                    + "       q.WORK_ORDER_KEY, "
+                    + "       q.INSPECT_QTY, "
+                    + "       q.GOOD_QTY, "
+                    + "       q.DEFECT_QTY, "
+                    + "       plan.ITEM_KEY, "
+                    + "       w.WORK_USER_KEY "
+                    + "FROM TB_QUALITY q "
+                    + "LEFT OUTER JOIN TB_WORK_ORDER w "
+                    + "    ON q.WORK_ORDER_KEY = w.WORK_ORDER_KEY "
+                    + "LEFT OUTER JOIN TB_PLAN plan "
+                    + "    ON w.PLAN_KEY = plan.PLAN_KEY "
+                    + "WHERE q.QUALITY_KEY = ?";
+
+            psLocal = conn.prepareStatement(sql);
+            psLocal.setInt(1, qualityKey);
+            rsLocal = psLocal.executeQuery();
+
+            if (rsLocal.next()) {
+                QualityCompleteDTO dto = new QualityCompleteDTO();
+                dto.qualityKey = rsLocal.getInt("QUALITY_KEY");
+                dto.workOrderKey = rsLocal.getInt("WORK_ORDER_KEY");
+                dto.inspectQty = rsLocal.getInt("INSPECT_QTY");
+                dto.goodQty = rsLocal.getInt("GOOD_QTY");
+                dto.defectQty = rsLocal.getInt("DEFECT_QTY");
+                dto.itemKey = rsLocal.getInt("ITEM_KEY");
+                dto.workUserKey = rsLocal.getInt("WORK_USER_KEY");
+                return dto;
+            }
+
+        } finally {
+            try { if (rsLocal != null) rsLocal.close(); } catch (Exception e) {}
+            try { if (psLocal != null) psLocal.close(); } catch (Exception e) {}
+        }
+
+        return null;
+    }
+
+    // =========================
+    // 이미 생산실적 등록됐는지 체크
+    // =========================
+    private boolean existsProductionByQualityKey(Connection conn, int qualityKey) throws Exception {
+        PreparedStatement psLocal = null;
+        ResultSet rsLocal = null;
+
+        try {
+            String sql = "SELECT COUNT(*) CNT FROM TB_PRODUCTION WHERE QUALITY_KEY = ?";
+            psLocal = conn.prepareStatement(sql);
+            psLocal.setInt(1, qualityKey);
+            rsLocal = psLocal.executeQuery();
+
+            if (rsLocal.next()) {
+                return rsLocal.getInt("CNT") > 0;
+            }
+
+        } finally {
+            try { if (rsLocal != null) rsLocal.close(); } catch (Exception e) {}
+            try { if (psLocal != null) psLocal.close(); } catch (Exception e) {}
+        }
+
+        return false;
+    }
+
+    // =========================
+    // 완료 시 재고 반영
+    // =========================
+    private int updateStockAfterComplete(Connection conn, QualityCompleteDTO dto) throws Exception {
+        PreparedStatement psLocal = null;
+
+        try {
+            String sql = ""
+                    + "UPDATE TB_STOCK "
+                    + "SET WAIT_QC = CASE "
+                    + "                  WHEN WAIT_QC - ? < 0 THEN 0 "
+                    + "                  ELSE WAIT_QC - ? "
+                    + "              END, "
+                    + "    DONE_QC = DONE_QC + ?, "
+                    + "    CURRENT_QTY = CURRENT_QTY + ?, "
+                    + "    UPDATED_AT = SYSDATE "
+                    + "WHERE ITEM_KEY = ?";
+
+            psLocal = conn.prepareStatement(sql);
+            psLocal.setInt(1, dto.inspectQty);
+            psLocal.setInt(2, dto.inspectQty);
+            psLocal.setInt(3, dto.goodQty);
+            psLocal.setInt(4, dto.goodQty);
+            psLocal.setInt(5, dto.itemKey);
+
+            return psLocal.executeUpdate();
+
+        } finally {
+            try { if (psLocal != null) psLocal.close(); } catch (Exception e) {}
+        }
+    }
+
+    // =========================
+    // 완료 시 생산실적 등록
+    // - 실제 TB_PRODUCTION 컬럼 구조에 맞춤
+    // =========================
+    private int insertProductionAfterComplete(Connection conn, QualityCompleteDTO dto) throws Exception {
+        PreparedStatement psLocal = null;
+
+        try {
+            String prodCode = makeProductionCode();
+
+            String sql = ""
+                    + "INSERT INTO TB_PRODUCTION ( "
+                    + "    PROD_KEY, "
+                    + "    PROD_CODE, "
+                    + "    PROD_DATE, "
+                    + "    GOOD_QTY, "
+                    + "    DEFECT_QTY, "
+                    + "    CREATED_AT, "
+                    + "    WORK_USER_KEY, "
+                    + "    QUALITY_KEY, "
+                    + "    WORK_ORDER_KEY "
+                    + ") VALUES ( "
+                    + "    SEQ_PRODUCTION.NEXTVAL, ?, SYSDATE, ?, ?, SYSDATE, ?, ?, ? "
+                    + ")";
+
+            psLocal = conn.prepareStatement(sql);
+            psLocal.setString(1, prodCode);
+            psLocal.setInt(2, dto.goodQty);
+            psLocal.setInt(3, dto.defectQty);
+            psLocal.setInt(4, dto.workUserKey);
+            psLocal.setInt(5, dto.qualityKey);
+            psLocal.setInt(6, dto.workOrderKey);
+
+            return psLocal.executeUpdate();
+
+        } finally {
+            try { if (psLocal != null) psLocal.close(); } catch (Exception e) {}
+        }
+    }
+
+    // =========================
+    // 생산실적 코드 자동 생성
+    // =========================
+    private String makeProductionCode() throws Exception {
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMddHHmmssSSS");
+        return "PROD-" + sdf.format(new java.util.Date());
     }
 }

@@ -2,6 +2,7 @@ package quality;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,7 +53,6 @@ public class QualityAddController extends HttpServlet {
 
             // 필수값 체크
             if (prodKeyParam == null || prodKeyParam.trim().equals("") ||
-                inspectDateParam == null || inspectDateParam.trim().equals("") ||
                 inspectQtyParam == null || inspectQtyParam.trim().equals("") ||
                 goodQtyParam == null || goodQtyParam.trim().equals("") ||
                 defectQtyParam == null || defectQtyParam.trim().equals("") ||
@@ -87,8 +87,13 @@ public class QualityAddController extends HttpServlet {
             // 검사번호는 DB 최대값 기준으로 자동 생성
             dto.setQuality_code(service.getNextQualityCode());
 
-            // 날짜 저장
-            dto.setInspect_date(Date.valueOf(inspectDateParam));
+            // [수정] 날짜 기본값 처리
+            // 화면에서 날짜를 안 넘겨도 오늘 날짜로 기본 저장되게 처리
+            if (inspectDateParam == null || inspectDateParam.trim().equals("")) {
+                dto.setInspect_date(Date.valueOf(LocalDate.now()));
+            } else {
+                dto.setInspect_date(Date.valueOf(inspectDateParam));
+            }
 
             // 수량 정보 세팅
             dto.setInspect_qty(inspectQty);
@@ -101,7 +106,7 @@ public class QualityAddController extends HttpServlet {
             dto.setProd_key(Integer.parseInt(prodKeyParam));
             dto.setUser_key(Integer.parseInt(userKeyParam));
 
-            // 필요하면 품목명도 DTO에 세팅
+            // 품목명 저장
             dto.setItem_name(itemNameParam);
 
             // 등록 실행

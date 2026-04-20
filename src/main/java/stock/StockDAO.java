@@ -41,6 +41,7 @@ public class StockDAO {
 
     // =========================
     // 목록 조회
+    // - 최근 업데이트가 위로 오도록 정렬
     // =========================
     public List<StockDTO> selectList(int startRow, int endRow, String lotKeyword, String itemType, String itemCodeKeyword, String itemNameKeyword) {
         List<StockDTO> list = new ArrayList<StockDTO>();
@@ -99,7 +100,7 @@ public class StockDAO {
                 sql.append(" AND (i.ITEM_CODE LIKE 'CP-P%' OR i.ITEM_CODE LIKE 'CP-M%') ");
             }
 
-            sql.append("        ORDER BY s.STOCK_KEY ASC ");
+            sql.append("        ORDER BY s.UPDATED_AT DESC, s.STOCK_KEY ASC ");
             sql.append("    ) A WHERE ROWNUM <= ? ");
             sql.append(") WHERE rnum >= ? ");
 
@@ -249,7 +250,7 @@ public class StockDAO {
             sql.append(getItemTypeCaseSql());
             sql.append(" AS ITEM_TYPE ");
             sql.append("FROM TB_ITEM i ");
-            sql.append("ORDER BY i.ITEM_KEY ASC ");
+            sql.append("ORDER BY i.ITEM_CODE ASC ");
 
             ps = conn.prepareStatement(sql.toString());
             rs = ps.executeQuery();
@@ -304,63 +305,10 @@ public class StockDAO {
     }
 
     // =========================
-    // 검색용 품목코드 목록
-    // =========================
-    public List<String> selectItemCodeList() {
-        List<String> list = new ArrayList<String>();
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getConnection();
-            ps = conn.prepareStatement("SELECT DISTINCT ITEM_CODE FROM TB_ITEM ORDER BY ITEM_CODE ASC");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(rs.getString("ITEM_CODE"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(conn, ps, rs);
-        }
-
-        return list;
-    }
-
-    // =========================
-    // 검색용 품목명 목록
-    // =========================
-    public List<String> selectItemNameList() {
-        List<String> list = new ArrayList<String>();
-
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = getConnection();
-            ps = conn.prepareStatement("SELECT DISTINCT ITEM_NAME FROM TB_ITEM ORDER BY ITEM_NAME ASC");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                list.add(rs.getString("ITEM_NAME"));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            close(conn, ps, rs);
-        }
-
-        return list;
-    }
-
-    // =========================
     // 등록
+    // [수정] LOT 번호 없이 등록
+    // DONE_QC / WAIT_QC 는 0으로 시작
+    // UPDATED_AT 는 자동 현재시간
     // =========================
     public int insert(StockDTO dto) {
         Connection conn = null;
@@ -373,14 +321,13 @@ public class StockDAO {
                     + "INSERT INTO TB_STOCK ( "
                     + "    STOCK_KEY, LOT, DONE_QC, WAIT_QC, CURRENT_QTY, SAFE_QTY, UPDATED_AT, ITEM_KEY "
                     + ") VALUES ( "
-                    + "    STOCK_SEQ.NEXTVAL, ?, 0, 0, ?, ?, CURRENT_TIMESTAMP, ? "
+                    + "    STOCK_SEQ.NEXTVAL, NULL, 0, 0, ?, ?, CURRENT_TIMESTAMP, ? "
                     + ")";
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, dto.getLot());
-            ps.setInt(2, dto.getCurrent_qty());
-            ps.setInt(3, dto.getSafe_qty());
-            ps.setInt(4, dto.getItem_key());
+            ps.setInt(1, dto.getCurrent_qty());
+            ps.setInt(2, dto.getSafe_qty());
+            ps.setInt(3, dto.getItem_key());
 
             return ps.executeUpdate();
 
@@ -394,6 +341,8 @@ public class StockDAO {
 
     // =========================
     // 수정
+    // [수정] LOT 수정 제거
+    // 최근업데이트 자동 갱신
     // =========================
     public int update(StockDTO dto) {
         Connection conn = null;
@@ -404,19 +353,17 @@ public class StockDAO {
 
             String sql = ""
                     + "UPDATE TB_STOCK "
-                    + "SET LOT = ?, "
-                    + "    CURRENT_QTY = ?, "
+                    + "SET CURRENT_QTY = ?, "
                     + "    SAFE_QTY = ?, "
                     + "    UPDATED_AT = CURRENT_TIMESTAMP, "
                     + "    ITEM_KEY = ? "
                     + "WHERE STOCK_KEY = ?";
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1, dto.getLot());
-            ps.setInt(2, dto.getCurrent_qty());
-            ps.setInt(3, dto.getSafe_qty());
-            ps.setInt(4, dto.getItem_key());
-            ps.setInt(5, dto.getStock_key());
+            ps.setInt(1, dto.getCurrent_qty());
+            ps.setInt(2, dto.getSafe_qty());
+            ps.setInt(3, dto.getItem_key());
+            ps.setInt(4, dto.getStock_key());
 
             return ps.executeUpdate();
 

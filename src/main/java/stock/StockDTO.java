@@ -11,9 +11,9 @@ public class StockDTO {
     private String lot;             // LOT 번호
     private int done_qc;            // 검사후 수량
     private int wait_qc;            // 검사전 수량
-    private int current_qty;        // 현재고
+    private int current_qty;        // 재고수량 / 현재고
     private int safe_qty;           // 안전재고
-    private Timestamp updated_at;   // 수정일시
+    private Timestamp updated_at;   // 최근 업데이트
     private int item_key;           // 품목 KEY
 
     // =========================
@@ -26,9 +26,6 @@ public class StockDTO {
     private String unit;            // 단위
     private int price;              // 가격
 
-    // =========================
-    // getter / setter
-    // =========================
     public int getStock_key() {
         return stock_key;
     }

@@ -48,7 +48,7 @@
 				<div style="color: red; margin-bottom: 10px;">${error}</div>
 			</c:if>
 
-			<form class="auth-form" method="post" action="signup">
+			<form id="signupForm" class="auth-form" method="post" action="signup">
 				<div class="auth-split">
 					<div class="auth-row">
 						<label for="name">이름</label> <input id="name" name="name"
@@ -83,15 +83,16 @@
 				</div>
 
 				<div class="auth-row">
-					<label for="userId">아이디</label> <input id="userId" name="id"
+					<label for="userId">아이디</label> <input id="user_id" name="id"
 						class="auth-input" type="text" placeholder="아이디 입력" value="${id}" data-required/>
 				</div>
 
 				<div class="auth-split">
 					<div class="auth-row">
 						<label for="pw">비밀번호</label> 
+						<div id="pwRuleMsg" class="pw-msg-error"></div>
 						<div class="input-wrap">
-						<input id="pw" name="pw" class="auth-input" type="password" placeholder="비밀번호 입력" data-required/>
+						<input id="user_pw" name="pw" class="auth-input" type="password" placeholder="비밀번호 입력" data-required/>
 							<span class="eye-toggle" data-target="pw">
 							<i class="fa-solid fa-eye"></i>
 							</span>
@@ -101,7 +102,7 @@
 					<div class="auth-row">
 						<label for="pwCheck">비밀번호 확인</label> 
 						<div class="input-wrap">
-							<input id="pwCheck"
+							<input id="user_pw_check"
 							name="pwCheck" class="auth-input" type="password"
 							placeholder="비밀번호 확인" data-required/>
 							<span class="eye-toggle" data-target="pwCheck">

@@ -95,14 +95,18 @@ const CommonUI = {
     },
 
     bindModalOutsideClick() {
-        document.addEventListener("click", (e) => {
-            if (!this.modal || !this.modalBox) return;
+    document.addEventListener("mousedown", (e) => {
+        if (!this.modal || !this.modalBox) return;
 
-            if (this.modal.classList.contains("show") && e.target === this.modal) {
-                this.closeModal();
-            }
-        });
-    },
+        if (!this.modal.classList.contains("show")) return;
+
+        // 모달 박스 안 클릭이면 무시
+        if (this.modalBox.contains(e.target)) return;
+
+        // 바깥 클릭이면 닫기
+        this.closeModal();
+    });
+},
 
     bindModalEscapeKey() {
         document.addEventListener("keydown", (e) => {

@@ -101,8 +101,6 @@
 				<div class="page-actions">
 					<button class="btn" type="button"
 						onclick="location.href='${pageContext.request.contextPath}/production'">초기화</button>
-					<button class="btn primary" type="button" id="btnAddProduction">신규
-						등록</button>
 				</div>
 			</div>
 
@@ -123,7 +121,7 @@
 						value="${startDate}" /> <input class="input" type="date"
 						name="endDate" value="${endDate}" /> <input class="input"
 						type="text" name="keyword" value="${keyword}"
-						placeholder="품목코드 / 품목명 / 생산코드" />
+						placeholder="품목코드 / 품목명 / 실적코드" />
 
 					<button class="btn primary" type="submit">조회</button>
 				</form>
@@ -139,16 +137,12 @@
 						<table>
 							<thead>
 								<tr>
-									<th>생산코드</th>
+									<th>실적코드</th>
 									<th>생산일</th>
 									<th>작업지시</th>
 									<th>품목명</th>
 									<th>작업자</th>
-									<th>계획수량</th>
-									<th>양품수량</th>
-									<th>불량수량</th>
-									<th>달성률</th>
-									<th>관리</th>
+									<th>생산수량</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -159,32 +153,7 @@
 										<td>${p.work_order_code}</td>
 										<td>${p.item_name}</td>
 										<td>${p.work_user_name}</td>
-										<td>${p.plan_qty}</td>
 										<td>${p.good_qty}</td>
-										<td>${p.defect_qty}</td>
-										<td>${p.achievement_rate}%</td>
-										<c:if test="${p.work_user_key eq dto.user_key}">
-										<td>
-											<button type="button" class="btn small prod-edit-link"
-												data-prod-key="${p.prod_key}"
-												data-prod-code="${p.prod_code}"
-												data-prod-date="${p.prod_date}"
-												data-work-order-key="${p.work_order_key}"
-												data-work-order-code="${p.work_order_code}"
-												data-plan-key="${p.plan_key}"
-												data-plan-code="${p.plan_code}"
-												data-plan-qty="${p.plan_qty}"
-												data-item-name="${p.item_name}"
-												data-work-user-key="${p.work_user_key}"
-												data-work-user-name="${p.work_user_name}"
-												data-quality-key="${p.quality_key}"
-												data-good-qty="${p.good_qty}"
-												data-defect-qty="${p.defect_qty}"
-												data-inspect-qty="${p.inspect_qty}"
-												data-qc-status="${p.qc_status}"
-												data-defect-reason="${p.defect_reason}">수정</button>
-										</td>
-										</c:if>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -257,7 +226,7 @@
 
 						<!-- 양품수량 -->
 						<div class="form-group">
-							<label>양품수량</label> <input type="text" class="input" id="good_qty" readonly>
+							<label>양품수량</label> <input type="text" class="input" id="good_qty">
 						</div>
 
 						<!-- 품질상태 -->

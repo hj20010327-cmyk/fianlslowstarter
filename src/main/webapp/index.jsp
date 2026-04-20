@@ -51,6 +51,7 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
+					<li><a href="./item">품목관리</a></li>
 					<li><a href="./bom">BOM</a></li>
 					<li><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
@@ -117,9 +118,11 @@
 					<div class="card-meta">양품 기준</div>
 				</div>
 				<div class="card">
+				<a href="#workOrder">
 					<div class="card-label">오늘 작업지시</div>
 					<div class="card-value">${dashboard.todayWorkorderCnt}</div>
 					<div class="card-meta">당일 등록 기준</div>
+					</a>
 				</div>
 				<div class="card">
 					<div class="card-label">오늘 불량 수량</div>
@@ -127,9 +130,11 @@
 					<div class="card-meta">검사 기준</div>
 				</div>
 				<div class="card">
-					<div class="card-label">재고 부족 품목</div>
-					<div class="card-value">${dashboard.lowStockCnt}</div>
-					<div class="card-meta">안전재고 이하</div>
+					<a href="#stockdetail">
+						<div class="card-label">재고 부족 품목</div>
+						<div class="card-value">${dashboard.lowStockCnt}</div>
+						<div class="card-meta">안전재고 이하</div>
+					</a>
 				</div>
 			</section>
 
@@ -154,7 +159,7 @@
 			</section>
 
 				<div class="card">
-					<div class="section-title">
+					<div id="workOrder" class="section-title">
 						<c:choose>
 							<c:when test="${dto.user_role eq '작업자'}">
 								<h2>오늘 나의 작업지시</h2>
@@ -194,14 +199,15 @@
 
 			<section class="grid-bottom">
 				<div class="card" style="margin-top: 20px;">
-					<div class="section-title">
+					<div id="stockdetail" class="section-title">
 						<h2>재고 부족 품목</h2>
 						<a href="./stock" style="font-size:14px; color:gray">더보기</a>
 					</div>
 					<ul class="status-list">
 						<c:forEach var="s" items="${dashboard.lowStockList}">
-							<li><span>${s.item_code} / ${s.item_name}</span> <span
-								class="badge danger">${s.current_qty} / ${s.safe_qty}</span></li>
+							<li><a href="/slowstarter/stock?p=1&itemType=all&lotKeyword=&itemCodeKeyword=${s.item_code}&itemNameKeyword=">
+							<span>${s.item_code} / ${s.item_name}</span> <span
+								class="badge danger">${s.current_qty} / ${s.safe_qty}</span></a></li>
 						</c:forEach>
 					</ul>
 				</div>

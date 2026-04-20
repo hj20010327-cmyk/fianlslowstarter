@@ -10,6 +10,8 @@ const AuthPage = {
         this.bindPasswordMatchCheck();
         this.bindRequiredFieldHighlight();
         this.bindPasswordToggle();
+        this.bindSignupValidation();
+        
     },
 
     cacheDom() {
@@ -73,28 +75,48 @@ const AuthPage = {
     },
 
     bindPasswordMatchCheck() {
-        if (!this.userPw || !this.userPwCheck || !this.pwCheckMsg) return;
+    if (!this.userPw || !this.userPwCheck || !this.pwCheckMsg) return;
 
-        const checkPw = () => {
-            this.pwCheckMsg.classList.remove("pw-msg-success", "pw-msg-error");
+    const checkPw = () => {
+        this.pwCheckMsg.classList.remove("pw-msg-success", "pw-msg-error");
 
-            if (!this.userPwCheck.value) {
-                this.pwCheckMsg.textContent = "";
-                return;
-            }
+        const pw = this.userPw.value;
+        const pwCheck = this.userPwCheck.value;
 
-            if (this.userPw.value === this.userPwCheck.value) {
-                this.pwCheckMsg.textContent = "비밀번호가 일치합니다.";
-                this.pwCheckMsg.classList.add("pw-msg-success");
-            } else {
-                this.pwCheckMsg.textContent = "비밀번호가 일치하지 않습니다.";
-                this.pwCheckMsg.classList.add("pw-msg-error");
-            }
-        };
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
 
-        this.userPw.addEventListener("input", checkPw);
-        this.userPwCheck.addEventListener("input", checkPw);
-    },
+        if (!pw) {
+            this.pwCheckMsg.textContent = "";
+            return;
+        }
+
+        // 규칙 실패
+        if (!regex.test(pw)) {
+            this.pwCheckMsg.textContent = "영문 대/소문자, 숫자, 특수문자 포함 8자 이상";
+            this.pwCheckMsg.classList.add("pw-msg-error");
+            return;
+        }
+
+        // 규칙 성공
+        if (!pwCheck) {
+            this.pwCheckMsg.textContent = "사용 가능한 비밀번호입니다.";
+            this.pwCheckMsg.classList.add("pw-msg-success");
+            return;
+        }
+
+        // 일치 검사
+        if (pw === pwCheck) {
+            this.pwCheckMsg.textContent = "비밀번호가 일치합니다.";
+            this.pwCheckMsg.classList.add("pw-msg-success");
+        } else {
+            this.pwCheckMsg.textContent = "비밀번호가 일치하지 않습니다.";
+            this.pwCheckMsg.classList.add("pw-msg-error");
+        }
+    };
+
+    this.userPw.addEventListener("input", checkPw);
+    this.userPwCheck.addEventListener("input", checkPw);
+},
 
     bindRequiredFieldHighlight() {
         if (!this.requiredInputs.length) return;
@@ -145,5 +167,87 @@ const AuthPage = {
                 }
             });
         });
-    }
+    },
+    
+bindSignupValidation() {
+    const form = document.getElementById("signupForm");
+    if (!form) return;
+
+    const requiredInputs = form.querySelectorAll("[data-required]");
+
+    form.addEventListener("submit", (e) => {
+
+        // 1. 필수값 체크 + 포커스 이동
+        for (let input of requiredInputs) {
+            if (!input.value.trim()) {
+                e.preventDefault();
+
+                input.classList.add("input-error");
+                input.focus();
+                input.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                return;
+            }
+        }
+
+        // 2. 비밀번호 규칙 검사
+        const pw = document.getElementById("user_pw");
+const pwCheck = document.getElementById("user_pw_check");
+const pwRuleMsg = document.getElementById("pwRuleMsg");
+
+const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+
+// 메시지 초기화
+pwRuleMsg.textContent = "";
+
+// ❌ 비밀번호 규칙 실패
+if (!regex.test(pw.value)) {
+    e.preventDefault();
+
+    pwRuleMsg.textContent = "영문 대/소문자, 숫자, 특수문자 포함 8자 이상 입력해주세요.";
+    pwRuleMsg.classList.add("pw-msg-error");
+
+    pw.classList.add("input-error");
+    pw.focus();
+    return;
+}
+
+// ❌ 비밀번호 불일치
+if (pw.value !== pwCheck.value) {
+    e.preventDefault();
+
+    pwRuleMsg.textContent = "비밀번호가 일치하지 않습니다.";
+    pwRuleMsg.classList.add("pw-msg-error");
+
+    pwCheck.classList.add("input-error");
+    pwCheck.focus();
+    return;
+}
+
+// ✅ 통과
+pwRuleMsg.textContent = "";
+pwRuleMsg.classList.remove("pw-msg-error");
+    });
+
+    // ================================
+    // 실시간 에러 제거 + 엔터 이동
+    // ================================
+    requiredInputs.forEach((input, idx) => {
+
+        input.addEventListener("input", () => {
+            if (input.value.trim()) {
+                input.classList.remove("input-error");
+            }
+        });
+
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                if (requiredInputs[idx + 1]) {
+                    requiredInputs[idx + 1].focus();
+                }
+            }
+        });
+    });
+}
 };

@@ -21,32 +21,39 @@ public class ProductionSaveController extends HttpServlet {
 
 		request.setCharacterEncoding("UTF-8");
 
-		String cmd = request.getParameter("cmd");
+	    String cmd = request.getParameter("cmd");
 
-		ProductionDTO dto = new ProductionDTO();
+	    String prodKeyStr = request.getParameter("prod_key");
+	    String prodCode = request.getParameter("prod_code");
+	    String prodDate = request.getParameter("prod_date");
+	    String workOrderKeyStr = request.getParameter("work_order_key");
+	    String qualityKeyStr = request.getParameter("quality_key");
 
-		dto.setProd_key(parseInt(request.getParameter("prod_key")));
-		dto.setProd_code(request.getParameter("prod_code"));
-		dto.setProd_date(request.getParameter("prod_date"));
+	    if (prodDate == null || prodDate.trim().isEmpty()
+	            || workOrderKeyStr == null || workOrderKeyStr.trim().isEmpty()
+	            || qualityKeyStr == null || qualityKeyStr.trim().isEmpty()) {
+	        response.sendRedirect(request.getContextPath() + "/production?msg=fail");
+	        return;
+	    }
 
-		dto.setWork_order_key(parseInt(request.getParameter("work_order_key")));
-		dto.setQuality_key(parseInt(request.getParameter("quality_key")));
+	    ProductionDTO dto = new ProductionDTO();
+	    dto.setProd_key(parseIntSafe(prodKeyStr));
+	    dto.setProd_code(prodCode);
+	    dto.setProd_date(prodDate);
+	    dto.setWork_order_key(parseIntSafe(workOrderKeyStr));
+	    dto.setQuality_key(parseIntSafe(qualityKeyStr));
 
-		if ("update".equals(cmd)) {
-			service.updateProduction(dto);
-		} else {
-			service.insertProduction(dto);
-		}
+	    if ("update".equals(cmd)) {
+	        service.updateProduction(dto);
+	    } else {
+	        service.insertProduction(dto);
+	    }
 
-		response.sendRedirect(request.getContextPath() + "/production");
+	    response.sendRedirect(request.getContextPath() + "/production");
 	}
 
-	private int parseInt(String str) {
-		try {
-			return Integer.parseInt(str);
-		} catch (Exception e) {
-			return 0;
-		}
+	private int parseIntSafe(String str) {
+	    return Integer.parseInt(str.trim());
 	}
 
 }

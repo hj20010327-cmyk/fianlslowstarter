@@ -122,15 +122,16 @@ public class WorkOrderDAO {
 			conn = dataFactory.getConnection();
 
 			String query = "UPDATE tb_work_order "
-					+ "SET work_user_key = ?, order_qty = ?, work_date = ? "
+					+ "SET plan_key = ?, work_user_key = ?, order_qty = ?, work_date = ? "
 					+ "WHERE work_order_key = ?";
 
 			ps = conn.prepareStatement(query);
 
-			ps.setInt(1, dto.getWork_user_key());
-			ps.setInt(2, dto.getOrder_qty());
-			ps.setDate(3, dto.getWork_date());
-			ps.setInt(4, dto.getWork_order_key());
+			ps.setInt(1, dto.getPlan_key());
+			ps.setInt(2, dto.getWork_user_key());
+			ps.setInt(3, dto.getOrder_qty());
+			ps.setDate(4, dto.getWork_date());
+			ps.setInt(5, dto.getWork_order_key());
 
 			result = ps.executeUpdate();
 			System.out.println("workorder update의 결과:" + result);
@@ -541,7 +542,7 @@ public class WorkOrderDAO {
 					+ "           w.created_at, "
 					+ "           w.plan_key, "
 					+ "           p.plan_code, "
-					+ "           i.item_name AS item_name, "
+					+ "           i.item_name AS item_name"
 					+ "           u1.user_name AS order_user_name, "
 					+ "           u2.user_name AS work_user_name "
 					+ "    FROM tb_work_order w "
@@ -687,6 +688,43 @@ public class WorkOrderDAO {
 		}
 
 		return count;
+	}
+	
+	public List<WorkOrderDTO> selectAllPlanList() {
+	    List<WorkOrderDTO> list = new ArrayList<>();
+
+	    try {
+	        Context ctx = new InitialContext();
+	        DataSource dataFactory = (DataSource) ctx.lookup("java:/comp/env/jdbc/oracle");
+	        conn = dataFactory.getConnection();
+
+	        String query =
+	            "SELECT p.plan_key, p.plan_code, p.plan_qty, p.plan_date, i.item_name " +
+	            "FROM tb_plan p " +
+	            "LEFT JOIN tb_item i ON p.item_key = i.item_key " +
+	            "WHERE p.plan_status = '계획' " +
+	            "ORDER BY p.plan_key";
+
+	        ps = conn.prepareStatement(query);
+	        rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            WorkOrderDTO dto = new WorkOrderDTO();
+	            dto.setPlan_key(rs.getInt("plan_key"));
+	            dto.setPlan_code(rs.getString("plan_code"));
+	            dto.setPlan_qty(rs.getInt("plan_qty"));
+	            dto.setPlan_date(rs.getDate("plan_date"));
+	            dto.setItem_name(rs.getString("item_name"));
+	            list.add(dto);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeAll();
+	    }
+
+	    return list;
 	}
 	
 	

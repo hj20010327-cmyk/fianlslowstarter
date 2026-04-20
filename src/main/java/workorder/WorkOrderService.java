@@ -68,4 +68,9 @@ public class WorkOrderService {
 		return dao.getSearchCount(workOrderCode, itemName, workDate, workUserKey);
 	}
 	
+	public List selectAllPlanList() {
+	    WorkOrderDAO dao = new WorkOrderDAO();
+	    return dao.selectAllPlanList();
+	}
+	
 }

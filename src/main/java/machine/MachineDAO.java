@@ -27,9 +27,10 @@ public class MachineDAO {
 			conn = dataFactory.getConnection();
 
 			// SQL 준비
-			String query = "select * from tb_machine where rownum<=4 order by machine_key";
-			ps = conn.prepareStatement(query);
-
+			String query =
+				    "SELECT * FROM ( " +
+				    "  SELECT * FROM tb_machine ORDER BY last_check_date DESC NULLS LAST " +
+				    ") WHERE ROWNUM <= 4";
 			// SQL 실행 및 결과 확보
 			rs = ps.executeQuery();
 
@@ -215,7 +216,7 @@ public class MachineDAO {
 	        	    "    SELECT m.*, p.process_name, p.sequence_no " +
 	        	    "    FROM tb_machine m " +
 	        	    "    LEFT OUTER JOIN tb_process p ON m.process_key = p.process_key " +
-	        	    "    ORDER BY m.machine_key " +
+	        	    "    ORDER BY m.last_check_date DESC NULLS LAST " +
 	        	    "  ) A WHERE ROWNUM <= ? " +
 	        	    ") WHERE rnum >= ?";
 
@@ -301,7 +302,7 @@ public class MachineDAO {
 	            query += " and m.machine_status = ?";
 	        }
 	        // 정렬
-	        query += " order by m.machine_key";
+	        query += " order by m.last_check_date DESC NULLS LAST";
 	        
 	        // SQL 준비 
 	        ps = conn.prepareStatement(query);

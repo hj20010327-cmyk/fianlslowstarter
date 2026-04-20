@@ -43,9 +43,12 @@ public class WorkOrderUpdateController extends HttpServlet {
 			int work_user_key = Integer.parseInt(request.getParameter("edit_work_user_key"));
 			int order_qty = Integer.parseInt(request.getParameter("edit_order_qty"));
 			Date work_date = Date.valueOf(request.getParameter("edit_work_date"));
+			int plan_key = Integer.parseInt(request.getParameter("edit_plan_key"));
+			
 			
 			WorkOrderDTO dto = new WorkOrderDTO();
 			dto.setWork_order_key(work_order_key);
+			dto.setPlan_key(plan_key);
 			dto.setWork_user_key(work_user_key);
 			dto.setOrder_qty(order_qty);
 			dto.setWork_date(work_date);

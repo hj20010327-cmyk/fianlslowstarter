@@ -70,6 +70,22 @@
 	font-size: 12px;
 	margin-top: 4px;
 }
+
+.no-border {
+	border: none !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	padding-left: 0 !important;
+}
+.link-item {
+    color: #0d6efd;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-item:hover {
+    color: #0a58ca;
+}
 </style>
 <body>
 	<header class="header">
@@ -177,20 +193,19 @@
 					<div class="search-row">
 						<input class="input" type="text" name="workOrderCode"
 							value="${workOrderCode}" placeholder="작업지시 코드 입력" />
-							
-					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-						<select class="select" name="workUserKey">
-						    <option value="">전체 작업자</option>
-						    <c:forEach var="u" items="${userList}">
-						        <option value="${u.work_user_key}"
-						            <c:if test="${workUserKey eq u.work_user_key}">selected</c:if>>
-						            ${u.work_user_name}
-						        </option>
-						    </c:forEach>
-						</select>
-					</c:if>
-							
-						 <select class="select" name="itemName">
+
+						<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+							<select class="select" name="workUserKey">
+								<option value="">전체 작업자</option>
+								<c:forEach var="u" items="${userList}">
+									<option value="${u.work_user_key}"
+										<c:if test="${workUserKey eq u.work_user_key}">selected</c:if>>
+										${u.work_user_name}</option>
+								</c:forEach>
+							</select>
+						</c:if>
+
+						<select class="select" name="itemName">
 							<option value="">전체</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_name}"
@@ -242,11 +257,11 @@
 									<tr>
 										<c:if
 											test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-											<td colspan="8">${dto.user_name}님은 작업지시가 없습니다.</td>
+											<td colspan="8">${dto.user_name}님은작업지시가없습니다.</td>
 										</c:if>
 
 										<c:if test="${dto.user_role eq '작업자'}">
-											<td colspan="7">${dto.user_name}님은 작업지시가 없습니다.</td>
+											<td colspan="7">${dto.user_name}님은작업지시가없습니다.</td>
 										</c:if>
 									</tr>
 								</c:if>
@@ -284,7 +299,28 @@
 
 
 										<td>${w.plan_code}</td>
-										<td>${w.item_name}</td>
+										<td>
+
+										<c:if test="${fn:contains(w.item_name, 'A형')}">
+									        <a href="/slowstarter/bom/detail?item_key=1" class="link-item">${w.item_name}</a>
+									    </c:if>
+									
+									    <c:if test="${fn:contains(w.item_name, 'B형')}">
+									        <a href="/slowstarter/bom/detail?item_key=2" class="link-item">${w.item_name}</a>
+									    </c:if>
+									
+									    <c:if test="${fn:contains(w.item_name, 'C형')}">
+									        <a href="/slowstarter/bom/detail?item_key=3" class="link-item">${w.item_name}</a>
+									    </c:if>
+									
+									    <c:if test="${fn:contains(w.item_name, 'D형')}">
+									        <a href="/slowstarter/bom/detail?item_key=4" class="link-item">${w.item_name}</a>
+									    </c:if>
+									
+									    <c:if test="${fn:contains(w.item_name, 'E형')}">
+									        <a href="/slowstarter/bom/detail?item_key=5" class="link-item">${w.item_name}</a>
+									    </c:if>
+								
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
 										<td>${w.order_user_name}</td>
@@ -374,8 +410,21 @@
 							</div>
 
 							<div class="form-group">
+								<label>생산계획</label> <select class="input" id="plan_key"
+									name="plan_key">
+									<option value="">생산계획 선택</option>
+									<c:forEach var="p" items="${planList}">
+										<option value="${p.plan_key}" data-qty="${p.plan_qty}"
+											data-date="${p.plan_date}" data-item="${p.item_name}">
+											${p.plan_code}</option>
+									</c:forEach>
+								</select> <span class="error-msg" id="planError"></span>
+							</div>
+
+							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="order_qty" name="order_qty" placeholder="지시 수량 입력" min="1" />
+									id="order_qty" name="order_qty" placeholder="지시 수량 입력" min="1"
+									readonly />
 							</div>
 
 							<div class="form-group">
@@ -389,17 +438,7 @@
 									id="dateError"></span>
 							</div>
 
-							<div class="form-group">
-								<label>생산계획</label> <select class="input" id="plan_key"
-									name="plan_key">
-									<option value="">생산계획 선택</option>
-									<c:forEach var="p" items="${planList}">
-										<option value="${p.plan_key}" data-qty="${p.plan_qty}"
-											data-date="${p.plan_date}" data-item="${p.item_name}">
-											${p.plan_code}</option>
-									</c:forEach>
-								</select> <span class="error-msg" id="planError"></span>
-							</div>
+
 
 						</div>
 					</div>
@@ -412,6 +451,25 @@
 								<label>작업지시 코드</label> <input type="text" class="input"
 									id="edit_work_order_code" readonly />
 							</div>
+
+							<div class="form-group">
+								<label>계획 코드</label> <select class="input" id="edit_plan_key"
+									name="edit_plan_key">
+									<option value="">계획 선택</option>
+									<c:forEach var="p" items="${editPlanList}">
+										<option value="${p.plan_key}" data-code="${p.plan_code}"
+											data-qty="${p.plan_qty}" data-date="${p.plan_date}"
+											data-item="${p.item_name}">${p.plan_code}</option>
+									</c:forEach>
+								</select> <span class="error-msg" id="editPlanError"></span>
+							</div>
+
+							<div class="form-group">
+								<label>품목명</label> <input type="text" class="input"
+									id="edit_item_name" readonly />
+							</div>
+
+
 
 							<div class="form-group">
 								<label>지시자</label> <input type="text" class="input"
@@ -439,12 +497,6 @@
 									id="edit_work_date" name="edit_work_date" /> <span
 									class="error-msg" id="editDateError"></span>
 							</div>
-
-							<div class="form-group">
-								<label>계획 코드</label> <input type="text" class="input"
-									id="edit_plan_code" readonly />
-							</div>
-
 						</div>
 					</div>
 				</div>
@@ -467,7 +519,13 @@
 
 			document.getElementById("work_order_key").value = "";
 			document.getElementById("order_user_name").value = "${dto.user_name}";
+			document.getElementById("order_user_name").classList.add("no-border");
+			document.getElementById("order_user_name").readOnly = true;
+			document.getElementById("order_user_name").style.pointerEvents = "none";
 			document.getElementById("order_qty").value = "";
+			document.getElementById("order_qty").classList.add("no-border");
+			document.getElementById("order_qty").readOnly = true;
+			document.getElementById("order_qty").style.pointerEvents = "none";
 			document.getElementById("work_date").value = "";
 			document.getElementById("plan_key").value = "";
 			document.getElementById("item_name").value = "";
@@ -488,12 +546,41 @@
 			document.getElementById("work_order_key").value = key;
 
 			document.getElementById("edit_work_order_code").value = code;
+			document.getElementById("edit_work_order_code").classList.add("no-border");
+			document.getElementById("edit_work_order_code").readOnly = true;
+			document.getElementById("edit_work_order_code").style.pointerEvents = "none";
+
 			document.getElementById("edit_order_user_name").value = userName;
-			document.getElementById("edit_order_qty").value = qty;
-			document.getElementById("edit_work_date").value = date;
-			document.getElementById("edit_plan_code").value = planCode;
+			document.getElementById("edit_order_user_name").classList.add("no-border");
+			document.getElementById("edit_order_user_name").readOnly = true;
+			document.getElementById("edit_order_user_name").style.pointerEvents = "none";
 
 			document.getElementById("edit_work_user_key").value = workUserKey;
+
+			// 현재 계획 선택
+			document.getElementById("edit_plan_key").value = planKey;
+
+			// 선택된 계획 기준으로 자동 세팅
+			var select = document.getElementById("edit_plan_key");
+			var selectedOption = select.options[select.selectedIndex];
+
+			if (selectedOption) {
+				var itemName = selectedOption.getAttribute("data-item");
+				var planQty = selectedOption.getAttribute("data-qty");
+				var planDate = selectedOption.getAttribute("data-date");
+
+				document.getElementById("edit_item_name").value = itemName ? itemName : "";
+				document.getElementById("edit_order_qty").value = planQty ? planQty : "";
+				document.getElementById("edit_work_date").value = planDate ? planDate : "";
+			} else {
+				document.getElementById("edit_item_name").value = "";
+				document.getElementById("edit_order_qty").value = qty;
+				document.getElementById("edit_work_date").value = date;
+			}
+
+			document.getElementById("edit_item_name").classList.add("no-border");
+			document.getElementById("edit_item_name").readOnly = true;
+			document.getElementById("edit_item_name").style.pointerEvents = "none";
 
 			document.getElementById("commonModal").classList.add("show");
 		}
@@ -562,9 +649,15 @@
 
 		    // 수정일 때
 		    if (formAction.includes("/workorder/update")) {
+		    	let planKey = document.getElementById("edit_plan_key").value;
 		        let workUserKey = document.getElementById("edit_work_user_key").value;
 		        let orderQty = document.getElementById("edit_order_qty").value;
 		        let workDate = document.getElementById("edit_work_date").value;
+		        
+		        if (!planKey) {
+		            document.getElementById("editPlanError").innerText = "계획 코드를 선택해주세요.";
+		            isValid = false;
+		        }
 
 		        if (!workUserKey) {
 		            document.getElementById("editWorkerError").innerText = "작업자를 선택해주세요.";
@@ -575,6 +668,8 @@
 		            document.getElementById("editQtyError").innerText = "지시수량은 1 이상 입력해주세요.";
 		            isValid = false;
 		        }
+		        
+		       
 
 		        if (!workDate) {
 		            document.getElementById("editDateError").innerText = "작업일을 입력해주세요.";
@@ -626,6 +721,24 @@
 		        document.getElementById("editDateError").innerText = "";
 		    }
 		});
+		
+		document.getElementById("edit_plan_key").addEventListener("change", function() {
+			var select = document.getElementById("edit_plan_key");
+			var selectedOption = select.options[select.selectedIndex];
+
+			var itemName = selectedOption.getAttribute("data-item");
+			var qty = selectedOption.getAttribute("data-qty");
+			var date = selectedOption.getAttribute("data-date");
+
+			document.getElementById("edit_item_name").value = itemName ? itemName : "";
+			document.getElementById("edit_order_qty").value = qty ? qty : "";
+			document.getElementById("edit_work_date").value = date ? date : "";
+
+			if (this.value) {
+				document.getElementById("editPlanError").innerText = "";
+			}
+		});
+		
 		
 		
 	</script>

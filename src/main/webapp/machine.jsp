@@ -85,6 +85,12 @@
 	font-size: 12px;
 	margin-top: 4px;
 }
+.no-border {
+	border: none !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	padding-left: 0 !important;
+}
 </style>
 <body>
 	<header class="header">
@@ -449,8 +455,14 @@
 
 			document.getElementById("machineKey").value = "";
 			document.getElementById("machineCode").value = "";
+			document.getElementById("machineCode").classList.remove("no-border");
+			document.getElementById("machineCode").readOnly = false;
+			document.getElementById("machineCode").style.pointerEvents = "auto";
 			document.getElementById("machineName").value = "";
 			document.getElementById("buyDate").value = ""
+			document.getElementById("buyDate").classList.remove("no-border");
+			document.getElementById("buyDate").readOnly = false;
+			document.getElementById("buyDate").style.pointerEvents = "auto"; 
 			document.getElementById("processKey").value = "";
 			document.getElementById("machineStatus").value = "";
 			document.getElementById("lastCheckDate").value = "";
@@ -469,11 +481,14 @@
 			clearMachineErrors();
 			document.getElementById("modalTitle").innerText = "설비 수정";
 			document.getElementById("machineForm").action = "${pageContext.request.contextPath}/machine/update";
-			document.getElementById("buydateField").style.display = "none";
+			document.getElementById("buydateField").style.display = "block";
 			document.getElementById("machineKey").value = machineKey;
 			document.getElementById("machineCode").value = machineCode;
+			document.getElementById("machineCode").classList.add("no-border");
+			document.getElementById("machineCode").readOnly = true;
+			document.getElementById("machineCode").style.pointerEvents = "none"; 
 			document.getElementById("machineCodeField").style.display = "block";
-			document.getElementById("processKey").style.pointerEvents = "none";
+			document.getElementById("processKey").style.pointerEvents = "block";
 
 			document.getElementById("machineStatus").value = machineStatus;
 			document.getElementById("machineName").value = machineName;
@@ -484,6 +499,9 @@
 			} else {
 				document.getElementById("buyDate").value = "";
 			}
+			document.getElementById("buyDate").classList.add("no-border");
+			document.getElementById("buyDate").readOnly = true;
+			document.getElementById("buyDate").style.pointerEvents = "none";
 
 			if (machineStatus != null && machineStatus !== '') {
 				document.getElementById("machineStatus").value = machineStatus;

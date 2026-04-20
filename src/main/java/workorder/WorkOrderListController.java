@@ -69,7 +69,9 @@ public class WorkOrderListController extends HttpServlet {
 		List<WorkOrderDTO> userList = service.selectWorkerList();
 		List<WorkOrderDTO> planList = service.selectPlanList();
 		List<WorkOrderDTO> itemList = service.selectItemList();
+		List editPlanList = service.selectAllPlanList(); // 수정용
 		
+		request.setAttribute("editPlanList", editPlanList);
 		request.setAttribute("itemList", itemList);
 		request.setAttribute("planList", planList);
 		request.setAttribute("list", list);

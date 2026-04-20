@@ -16,6 +16,15 @@ public class WorkOrderDTO {
 	private int plan_qty;
 	private Date plan_date;
 	private String item_name;
+	private int item_key;
+	
+	
+	public int getItem_key() {
+		return item_key;
+	}
+	public void setItem_key(int item_key) {
+		this.item_key = item_key;
+	}
 	public int getWork_order_key() {
 		return work_order_key;
 	}

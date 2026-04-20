@@ -77,14 +77,36 @@
 	box-shadow: none !important;
 	padding-left: 0 !important;
 }
+
 .link-item {
-    color: #0d6efd;
-    text-decoration: underline;
-    cursor: pointer;
+	color: #334155;
+	text-decoration: underline;
+	cursor: pointer;
+	display: inline-block;
 }
 
 .link-item:hover {
-    color: #0a58ca;
+	color: #0a58ca;
+}
+
+.btn-group {
+    display: flex;
+    gap: 6px;  /* 버튼 사이 간격 */
+}
+
+.btn-complete {
+    background-color: #4A90E2;
+    color: white;
+    border: none;
+}
+
+.btn-complete:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-delete {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
 }
 </style>
 <body>
@@ -207,7 +229,7 @@
 						</c:if>
 
 						<select class="select" name="itemName">
-							<option value="">전체</option>
+							<option value="">품목명 검색</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_name}"
 									<c:if test="${itemName == item.item_name}">selected</c:if>>
@@ -231,10 +253,19 @@
 					<form action="/slowstarter/workorder/delete" method="post">
 						<div class="section-title">
 							<h2>작업지시 목록</h2>
+
 							<c:if
 								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 								<span>작업코드를 클릭하면 수정할 수 있습니다.</span>
-								<button type="submit" class="btn">삭제</button>
+
+								<div class="btn-group">
+									<button type="submit" class="btn btn-complete"
+										formaction="/slowstarter/workorder/complete"
+										onclick="return confirm('선택한 작업지시를 완료 처리하시겠습니까?');">
+										완료</button>
+
+									<button type="submit" class="btn btn-delete">삭제</button>
+								</div>
 							</c:if>
 						</div>
 
@@ -300,28 +331,12 @@
 
 
 										<td>${w.plan_code}</td>
-										<td>
+										<td><span>${w.item_name}</span> <a
+											href="/slowstarter/bom/detail?item_key=${w.item_key}"
+											class="link-item">BOM 상세</a> <a
+											href="/slowstarter/process?keyword=${w.item_name}&process_name="
+											class="link-item">공정 상세</a></td>
 
-										<c:if test="${fn:contains(w.item_name, 'A형')}">
-									        <a href="/slowstarter/bom/detail?item_key=1" class="link-item">${w.item_name}</a>
-									    </c:if>
-									
-									    <c:if test="${fn:contains(w.item_name, 'B형')}">
-									        <a href="/slowstarter/bom/detail?item_key=2" class="link-item">${w.item_name}</a>
-									    </c:if>
-									
-									    <c:if test="${fn:contains(w.item_name, 'C형')}">
-									        <a href="/slowstarter/bom/detail?item_key=3" class="link-item">${w.item_name}</a>
-									    </c:if>
-									
-									    <c:if test="${fn:contains(w.item_name, 'D형')}">
-									        <a href="/slowstarter/bom/detail?item_key=4" class="link-item">${w.item_name}</a>
-									    </c:if>
-									
-									    <c:if test="${fn:contains(w.item_name, 'E형')}">
-									        <a href="/slowstarter/bom/detail?item_key=5" class="link-item">${w.item_name}</a>
-									    </c:if>
-								
 										<td>${w.work_date}</td>
 										<td>${w.order_qty}</td>
 										<td>${w.order_user_name}</td>

@@ -73,4 +73,11 @@ public class WorkOrderService {
 	    return dao.selectAllPlanList();
 	}
 	
+	public int completeWorkOrder(int workOrderKey) {
+		WorkOrderDAO dao = new WorkOrderDAO();
+		return dao.completeWorkOrder(workOrderKey);
+	}
+	
+	
+	
 }

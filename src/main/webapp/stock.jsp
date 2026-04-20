@@ -16,22 +16,22 @@
 <link rel="stylesheet" href="./asset/css/page.css" />
 
 <style>
-.content { font-size: 14px; }
-.page-head h1 { font-size: 22px; }
-.page-head p { font-size: 13px; }
-.section-title h2 { font-size: 18px; }
+.content { font-size: 12px; }
+.page-head h1 { font-size: 20px; }
+.page-head p { font-size: 12px; }
+.section-title h2 { font-size: 16px; }
 
-.btn { padding: 8px 14px; font-size: 13px; }
+.btn { padding: 7px 12px; font-size: 12px; }
 .input, .select {
-	font-size: 13px;
+	font-size: 12px;
 	padding: 0 10px;
-	height: 38px !important;
+	height: 34px !important;
 }
 
 .search-inline-wrap {
 	display: flex;
 	align-items: flex-end;
-	gap: 10px;
+	gap: 8px;
 	flex-wrap: nowrap;
 }
 .search-inline-item {
@@ -50,40 +50,24 @@
 }
 
 .table-wrap {
-	overflow-x: hidden;
+	overflow-x: hidden !important;
 }
 .table-wrap table {
 	width: 100%;
 	table-layout: fixed;
 }
+
 .table-wrap table td,
 .table-wrap table th {
 	text-align: center;
-	font-size: 13px;
-	padding: 12px 8px;
+	font-size: 11px;
+	padding: 9px 5px;
 	vertical-align: middle;
 	word-break: keep-all;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
-.table-wrap table th:nth-child(1),
-.table-wrap table td:nth-child(1) { width: 44px; }
-.table-wrap table th:nth-child(2),
-.table-wrap table td:nth-child(2) { width: 70px; }
-.table-wrap table th:nth-child(3),
-.table-wrap table td:nth-child(3) { width: 90px; }
-.table-wrap table th:nth-child(4),
-.table-wrap table td:nth-child(4) { width: 135px; }
-.table-wrap table th:nth-child(5),
-.table-wrap table td:nth-child(5) { width: 120px; }
-.table-wrap table th:nth-child(6),
-.table-wrap table td:nth-child(6),
-.table-wrap table th:nth-child(7),
-.table-wrap table td:nth-child(7),
-.table-wrap table th:nth-child(8),
-.table-wrap table td:nth-child(8),
-.table-wrap table th:nth-child(9),
-.table-wrap table td:nth-child(9) { width: 78px; }
-.table-wrap table th:last-child,
-.table-wrap table td:last-child { width: 120px; }
 
 .ellipsis-cell {
 	overflow: hidden;
@@ -107,7 +91,7 @@
 	text-decoration: none;
 	color: #495057;
 	border-radius: 5px;
-	font-size: 13px;
+	font-size: 12px;
 }
 .pagination a.active {
 	background: #0d6efd;
@@ -128,15 +112,96 @@
 	border: 1px solid #dc3545 !important;
 }
 
-/* 모달 스크롤 최소화 */
+.readonly-box {
+	width: 100%;
+	min-height: 34px;
+	padding: 8px 12px;
+	border: 1px solid #dee2e6;
+	border-radius: 6px;
+	background: #f8f9fa;
+	font-size: 12px;
+	line-height: 18px;
+	box-sizing: border-box;
+}
+
+/* 관리자/슈퍼바이저용 테이블 */
+.admin-table th:nth-child(1),
+.admin-table td:nth-child(1) { width: 40px; }
+.admin-table th:nth-child(2),
+.admin-table td:nth-child(2) { width: 70px; }
+.admin-table th:nth-child(3),
+.admin-table td:nth-child(3) { width: 85px; }
+.admin-table th:nth-child(4),
+.admin-table td:nth-child(4) { width: 140px; }
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) { width: 120px; }
+.admin-table th:nth-child(6),
+.admin-table td:nth-child(6) { width: 65px; }
+.admin-table th:nth-child(7),
+.admin-table td:nth-child(7) { width: 65px; }
+.admin-table th:nth-child(8),
+.admin-table td:nth-child(8) { width: 65px; }
+.admin-table th:nth-child(9),
+.admin-table td:nth-child(9) { width: 65px; }
+
+/* 작업자용 테이블 */
+.worker-table th:nth-child(1),
+.worker-table td:nth-child(1) { width: 70px; }
+.worker-table th:nth-child(2),
+.worker-table td:nth-child(2) { width: 95px; }
+.worker-table th:nth-child(3),
+.worker-table td:nth-child(3) { width: 170px; }
+.worker-table th:nth-child(4),
+.worker-table td:nth-child(4) { width: 125px; }
+.worker-table th:nth-child(5),
+.worker-table td:nth-child(5) { width: 70px; }
+.worker-table th:nth-child(6),
+.worker-table td:nth-child(6) { width: 70px; }
+.worker-table th:nth-child(7),
+.worker-table td:nth-child(7) { width: 70px; }
+.worker-table th:nth-child(8),
+.worker-table td:nth-child(8) { width: 70px; }
+
+/* 모달 크기 */
 #commonModal .modal-box {
-	width: 720px;
+	width: 660px;
 	max-height: none !important;
 	overflow: visible !important;
 }
+
 #commonModal .modal-body {
 	max-height: none !important;
 	overflow: visible !important;
+	padding-bottom: 0;
+}
+
+/* 모달 폼 */
+#commonModal .form-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 12px 12px;
+	align-items: end;
+}
+
+#commonModal .form-group {
+	min-width: 0;
+}
+
+#commonModal .form-group label {
+	font-size: 12px;
+	margin-bottom: 5px;
+	display: block;
+}
+
+#commonModal .form-group[style*="grid-column: span 2"] {
+	grid-column: span 2;
+}
+
+#commonModal .readonly-box,
+#commonModal .input,
+#commonModal .select {
+	width: 100%;
+	box-sizing: border-box;
 }
 </style>
 </head>
@@ -302,7 +367,14 @@
 						</div>
 
 						<div class="table-wrap">
-							<table>
+							<c:choose>
+								<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+									<table class="admin-table">
+								</c:when>
+								<c:otherwise>
+									<table class="worker-table">
+								</c:otherwise>
+							</c:choose>
 								<thead>
 									<tr>
 										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
@@ -316,13 +388,12 @@
 										<th>검사후 수량</th>
 										<th>현재고</th>
 										<th>안전재고</th>
-										<th>최근 업데이트</th>
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach var="s" items="${list}">
 										<c:set var="params"
-											value="'${s.stock_key}', '${s.lot}', '${s.current_qty}', '${s.safe_qty}', '${s.item_key}', '${s.item_code}', '${s.updated_at}'" />
+											value="'${s.stock_key}', '${s.lot}', '${s.current_qty}', '${s.safe_qty}', '${s.item_key}', '${s.item_code}', '${s.item_name}', '${s.item_type}', '${s.wait_qc}', '${s.done_qc}'" />
 										<tr>
 											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 												<td>
@@ -334,28 +405,22 @@
 												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_type}</td>
 													<td class="clickable-cell ellipsis-cell" onclick="openUpdateModal(${params})">${s.item_code}</td>
-													<td class="clickable-cell ellipsis-cell" onclick="openUpdateModal(${params})">${s.item_name}</td>
+													<td class="clickable-cell ellipsis-cell" onclick="openUpdateModal(${params})" title="${s.item_name}">${s.item_name}</td>
 													<td class="clickable-cell ellipsis-cell" onclick="openUpdateModal(${params})">${s.lot}</td>
 													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.wait_qc}</td>
 													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.done_qc}</td>
 													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.current_qty}</td>
 													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.safe_qty}</td>
-													<td class="clickable-cell ellipsis-cell" onclick="openUpdateModal(${params})">
-														<fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" />
-													</td>
 												</c:when>
 												<c:otherwise>
 													<td>${s.item_type}</td>
 													<td class="ellipsis-cell">${s.item_code}</td>
-													<td class="ellipsis-cell">${s.item_name}</td>
+													<td class="ellipsis-cell" title="${s.item_name}">${s.item_name}</td>
 													<td class="ellipsis-cell">${s.lot}</td>
 													<td>${s.wait_qc}</td>
 													<td>${s.done_qc}</td>
 													<td>${s.current_qty}</td>
 													<td>${s.safe_qty}</td>
-													<td class="ellipsis-cell">
-														<fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" />
-													</td>
 												</c:otherwise>
 											</c:choose>
 										</tr>
@@ -365,10 +430,10 @@
 										<tr>
 											<c:choose>
 												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-													<td colspan="10" style="padding:30px;color:#999;">데이터가 없습니다.</td>
+													<td colspan="9" style="padding:30px;color:#999;">데이터가 없습니다.</td>
 												</c:when>
 												<c:otherwise>
-													<td colspan="9" style="padding:30px;color:#999;">데이터가 없습니다.</td>
+													<td colspan="8" style="padding:30px;color:#999;">데이터가 없습니다.</td>
 												</c:otherwise>
 											</c:choose>
 										</tr>
@@ -394,10 +459,10 @@
 					<input type="hidden" name="cmd" id="modal_cmd" value="insert">
 					<input type="hidden" name="stock_key" id="modal_stock_key" value="0">
 
-					<!-- 실제 submit용 hidden -->
+					<!-- submit용 hidden -->
 					<input type="hidden" name="item_key" id="modal_item_key_hidden">
 					<input type="hidden" name="current_qty" id="modal_current_qty_hidden">
-					<input type="hidden" name="safe_qty" id="modal_safe_qty_hidden">
+					<input type="hidden" name="done_qc" id="modal_done_qc_hidden">
 
 					<div class="modal-header">
 						<h3 id="modalTitle">신규 재고 등록</h3>
@@ -410,30 +475,33 @@
 							<div class="form-grid">
 								<div class="form-group" style="grid-column: span 2;">
 									<label>품목 선택</label>
-									<select class="select" id="modal_item_key_insert">
+									<select class="select" id="modal_item_key_insert" onchange="fillInsertItemInfo()">
 										<option value="">선택</option>
-										<c:forEach var="item" items="${itemList}">
-											<option value="${item.item_key}">[${item.item_type}] ${item.item_code} / ${item.item_name}</option>
+										<c:forEach var="item" items="${insertItemList}">
+											<option value="${item.item_key}"
+											        data-item-code="${item.item_code}"
+											        data-item-name="${item.item_name}"
+											        data-item-type="${item.item_type}"
+											        data-safe-qty="${item.safe_qty}">
+												[${item.item_type}] ${item.item_code} / ${item.item_name}
+											</option>
 										</c:forEach>
 									</select>
 									<div class="field-error" id="item_key_insert_error"></div>
 								</div>
 
-								<div class="form-group">
-									<label>재고수량</label>
-									<input type="number" class="input" id="modal_current_qty_insert" value="0" />
-									<div class="field-error" id="current_qty_insert_error"></div>
+								<div class="form-group" style="grid-column: span 2;">
+									<label>구분</label>
+									<div class="readonly-box" id="modal_item_type_insert">자동 표시</div>
 								</div>
 
-								<div class="form-group">
-									<label>안전재고</label>
-									<input type="number" class="input" id="modal_safe_qty_insert" value="0" />
-									<div class="field-error" id="safe_qty_insert_error"></div>
-								</div>
+								<!-- [수정] 안전재고 제거 -->
+								<!-- [수정] LOT 번호 제거 -->
 
 								<div class="form-group" style="grid-column: span 2;">
-									<label>최근 업데이트</label>
-									<input type="text" class="input" id="modal_updated_at_insert" readonly placeholder="저장 시 자동 반영" />
+									<label>재고 수량</label>
+									<input type="number" class="input" id="modal_current_qty_insert" value="0" />
+									<div class="field-error" id="current_qty_insert_error"></div>
 								</div>
 							</div>
 						</div>
@@ -441,42 +509,46 @@
 						<!-- 수정 모달 -->
 						<div id="updateFormArea" style="display:none;">
 							<div class="form-grid">
-								<div class="form-group" style="grid-column: span 2;">
-									<label>품목 선택</label>
-									<select class="select" id="modal_item_key_update">
+								<!-- [수정] 구분 선택 가능 -->
+								<div class="form-group">
+									<label>구분</label>
+									<select class="select" id="modal_item_type_update" onchange="fillUpdateItemNamesByType()">
 										<option value="">선택</option>
-										<c:forEach var="item" items="${itemList}">
-											<option value="${item.item_key}">[${item.item_type}] ${item.item_code} / ${item.item_name}</option>
-										</c:forEach>
+										<option value="완제품">완제품</option>
+										<option value="자재">자재</option>
 									</select>
-									<div class="field-error" id="item_key_update_error"></div>
+									<div class="field-error" id="item_type_update_error"></div>
 								</div>
 
-								<div class="form-group" style="grid-column: span 2;">
-									<label>품목코드</label>
-									<input type="text" class="input" id="modal_item_code_update" readonly />
+								<!-- [수정] 품목명 선택 가능 -->
+								<div class="form-group">
+									<label>품목명</label>
+									<select class="select" id="modal_item_name_update" onchange="syncUpdateSelectedItemKey()">
+										<option value="">선택</option>
+									</select>
+									<div class="field-error" id="item_name_update_error"></div>
 								</div>
+
+								<!-- [수정] 품목코드 제거 -->
+								<!-- [수정] 안전재고 제거 -->
+								<!-- [수정] 검사전 수량 제거 -->
 
 								<div class="form-group" style="grid-column: span 2;">
 									<label>LOT 번호</label>
-									<input type="text" class="input" id="modal_lot_update" readonly />
+									<div class="readonly-box" id="modal_lot_update"></div>
 								</div>
 
-								<div class="form-group">
-									<label>현재고</label>
-									<input type="number" class="input" id="modal_current_qty_update" value="0" />
-									<div class="field-error" id="current_qty_update_error"></div>
-								</div>
-
-								<div class="form-group">
-									<label>안전재고</label>
-									<input type="number" class="input" id="modal_safe_qty_update" value="0" />
-									<div class="field-error" id="safe_qty_update_error"></div>
+								<!-- [수정] 검사후 수량 수정 가능 -->
+								<div class="form-group" style="grid-column: span 2;">
+									<label>검사후 수량</label>
+									<input type="number" class="input" id="modal_done_qc_update" value="0" />
+									<div class="field-error" id="done_qc_update_error"></div>
 								</div>
 
 								<div class="form-group" style="grid-column: span 2;">
-									<label>최근 업데이트</label>
-									<input type="text" class="input" id="modal_updated_at_update" readonly />
+									<label>현재고</label>
+									<input type="number" class="input" id="modal_current_qty_update" value="0" />
+									<div class="field-error" id="current_qty_update_error"></div>
 								</div>
 							</div>
 						</div>
@@ -547,6 +619,55 @@
 			});
 		}
 
+		function fillInsertItemInfo() {
+			const select = document.getElementById("modal_item_key_insert");
+			const option = select.options[select.selectedIndex];
+
+			if (!option || !option.value) {
+				document.getElementById("modal_item_type_insert").innerText = "자동 표시";
+				return;
+			}
+
+			document.getElementById("modal_item_type_insert").innerText = option.getAttribute("data-item-type") || "";
+		}
+
+		// =========================
+		// [수정] 수정 모달에서 구분 선택 시 품목명 목록 변경
+		// =========================
+		function fillUpdateItemNamesByType(selectedItemKey) {
+			const typeSelect = document.getElementById("modal_item_type_update");
+			const nameSelect = document.getElementById("modal_item_name_update");
+			const selectedType = typeSelect.value;
+
+			nameSelect.innerHTML = '<option value="">선택</option>';
+
+			allSearchItems.forEach(function(item) {
+				if (item.itemType === selectedType) {
+					const option = document.createElement("option");
+					option.value = item.itemKey;
+					option.textContent = item.itemName;
+					option.setAttribute("data-item-type", item.itemType);
+					option.setAttribute("data-item-code", item.itemCode);
+
+					if (selectedItemKey && selectedItemKey == item.itemKey) {
+						option.selected = true;
+					}
+
+					nameSelect.appendChild(option);
+				}
+			});
+
+			syncUpdateSelectedItemKey();
+		}
+
+		// =========================
+		// [수정] 수정 모달에서 품목명 선택 시 hidden item_key 맞춤
+		// =========================
+		function syncUpdateSelectedItemKey() {
+			const nameSelect = document.getElementById("modal_item_name_update");
+			document.getElementById("modal_item_key_hidden").value = nameSelect.value || "";
+		}
+
 		function openInsertModal() {
 			document.getElementById("modalTitle").innerText = "신규 재고 등록";
 			document.getElementById("modal_cmd").value = "insert";
@@ -557,14 +678,13 @@
 
 			document.getElementById("modal_item_key_insert").value = "";
 			document.getElementById("modal_current_qty_insert").value = "0";
-			document.getElementById("modal_safe_qty_insert").value = "0";
-			document.getElementById("modal_updated_at_insert").value = "저장 시 자동 반영";
+			document.getElementById("modal_item_type_insert").innerText = "자동 표시";
 
 			clearErrors();
 			document.getElementById("commonModal").classList.add("show");
 		}
 
-		function openUpdateModal(stockKey, lot, currentQty, safeQty, itemKey, itemCode, updatedAt) {
+		function openUpdateModal(stockKey, lot, currentQty, safeQty, itemKey, itemCode, itemName, itemType, waitQc, doneQc) {
 			document.getElementById("modalTitle").innerText = "재고 정보 수정";
 			document.getElementById("modal_cmd").value = "update";
 			document.getElementById("modal_stock_key").value = stockKey;
@@ -572,17 +692,24 @@
 			document.getElementById("insertFormArea").style.display = "none";
 			document.getElementById("updateFormArea").style.display = "";
 
-			document.getElementById("modal_item_key_update").value = itemKey;
-			document.getElementById("modal_item_code_update").value = itemCode;
-			document.getElementById("modal_lot_update").value = lot;
-			document.getElementById("modal_current_qty_update").value = currentQty;
-			document.getElementById("modal_safe_qty_update").value = safeQty;
+			// LOT 번호는 보기만
+			document.getElementById("modal_lot_update").innerText = lot;
 
-			if (updatedAt && updatedAt !== "null") {
-				document.getElementById("modal_updated_at_update").value = updatedAt;
-			} else {
-				document.getElementById("modal_updated_at_update").value = "저장 시 자동 갱신";
-			}
+			// 구분 선택
+			document.getElementById("modal_item_type_update").value = itemType;
+
+			// 구분에 맞는 품목명 목록 세팅 후 현재 품목 선택
+			fillUpdateItemNamesByType(itemKey);
+
+			// 검사후 수량 수정 가능
+			document.getElementById("modal_done_qc_update").value = doneQc;
+
+			// 현재고 수정 가능
+			document.getElementById("modal_current_qty_update").value = currentQty;
+
+			// hidden 기본 세팅
+			document.getElementById("modal_item_key_hidden").value = itemKey;
+			document.getElementById("modal_done_qc_hidden").value = doneQc;
 
 			clearErrors();
 			document.getElementById("commonModal").classList.add("show");
@@ -595,19 +722,17 @@
 		function clearErrors() {
 			document.getElementById("item_key_insert_error").innerText = "";
 			document.getElementById("current_qty_insert_error").innerText = "";
-			document.getElementById("safe_qty_insert_error").innerText = "";
+			document.getElementById("current_qty_update_error").innerText = "";
+			document.getElementById("done_qc_update_error").innerText = "";
+			document.getElementById("item_type_update_error").innerText = "";
+			document.getElementById("item_name_update_error").innerText = "";
 
 			document.getElementById("modal_item_key_insert").classList.remove("select-error");
 			document.getElementById("modal_current_qty_insert").classList.remove("input-error");
-			document.getElementById("modal_safe_qty_insert").classList.remove("input-error");
-
-			document.getElementById("item_key_update_error").innerText = "";
-			document.getElementById("current_qty_update_error").innerText = "";
-			document.getElementById("safe_qty_update_error").innerText = "";
-
-			document.getElementById("modal_item_key_update").classList.remove("select-error");
 			document.getElementById("modal_current_qty_update").classList.remove("input-error");
-			document.getElementById("modal_safe_qty_update").classList.remove("input-error");
+			document.getElementById("modal_done_qc_update").classList.remove("input-error");
+			document.getElementById("modal_item_type_update").classList.remove("select-error");
+			document.getElementById("modal_item_name_update").classList.remove("select-error");
 		}
 
 		function validateStockForm() {
@@ -619,11 +744,10 @@
 			if (cmd === "insert") {
 				const itemKey = document.getElementById("modal_item_key_insert").value;
 				const currentQty = document.getElementById("modal_current_qty_insert").value;
-				const safeQty = document.getElementById("modal_safe_qty_insert").value;
 
 				document.getElementById("modal_item_key_hidden").value = itemKey;
 				document.getElementById("modal_current_qty_hidden").value = currentQty;
-				document.getElementById("modal_safe_qty_hidden").value = safeQty;
+				document.getElementById("modal_done_qc_hidden").value = "";
 
 				if (!itemKey) {
 					document.getElementById("item_key_insert_error").innerText = "품목을 선택해주세요.";
@@ -632,40 +756,41 @@
 				}
 
 				if (currentQty === "" || parseInt(currentQty) < 0) {
-					document.getElementById("current_qty_insert_error").innerText = "재고수량은 0 이상 입력해주세요.";
+					document.getElementById("current_qty_insert_error").innerText = "재고 수량은 0 이상 입력해주세요.";
 					document.getElementById("modal_current_qty_insert").classList.add("input-error");
 					valid = false;
 				}
-
-				if (safeQty === "" || parseInt(safeQty) < 0) {
-					document.getElementById("safe_qty_insert_error").innerText = "안전재고는 0 이상 입력해주세요.";
-					document.getElementById("modal_safe_qty_insert").classList.add("input-error");
-					valid = false;
-				}
 			} else {
-				const itemKey = document.getElementById("modal_item_key_update").value;
+				const itemType = document.getElementById("modal_item_type_update").value;
+				const itemKey = document.getElementById("modal_item_name_update").value;
+				const doneQc = document.getElementById("modal_done_qc_update").value;
 				const currentQty = document.getElementById("modal_current_qty_update").value;
-				const safeQty = document.getElementById("modal_safe_qty_update").value;
 
 				document.getElementById("modal_item_key_hidden").value = itemKey;
 				document.getElementById("modal_current_qty_hidden").value = currentQty;
-				document.getElementById("modal_safe_qty_hidden").value = safeQty;
+				document.getElementById("modal_done_qc_hidden").value = doneQc;
+
+				if (!itemType) {
+					document.getElementById("item_type_update_error").innerText = "구분을 선택해주세요.";
+					document.getElementById("modal_item_type_update").classList.add("select-error");
+					valid = false;
+				}
 
 				if (!itemKey) {
-					document.getElementById("item_key_update_error").innerText = "품목을 선택해주세요.";
-					document.getElementById("modal_item_key_update").classList.add("select-error");
+					document.getElementById("item_name_update_error").innerText = "품목명을 선택해주세요.";
+					document.getElementById("modal_item_name_update").classList.add("select-error");
+					valid = false;
+				}
+
+				if (doneQc === "" || parseInt(doneQc) < 0) {
+					document.getElementById("done_qc_update_error").innerText = "검사후 수량은 0 이상 입력해주세요.";
+					document.getElementById("modal_done_qc_update").classList.add("input-error");
 					valid = false;
 				}
 
 				if (currentQty === "" || parseInt(currentQty) < 0) {
 					document.getElementById("current_qty_update_error").innerText = "현재고는 0 이상 입력해주세요.";
 					document.getElementById("modal_current_qty_update").classList.add("input-error");
-					valid = false;
-				}
-
-				if (safeQty === "" || parseInt(safeQty) < 0) {
-					document.getElementById("safe_qty_update_error").innerText = "안전재고는 0 이상 입력해주세요.";
-					document.getElementById("modal_safe_qty_update").classList.add("input-error");
 					valid = false;
 				}
 			}

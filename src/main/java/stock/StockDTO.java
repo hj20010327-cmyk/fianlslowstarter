@@ -21,7 +21,7 @@ public class StockDTO {
     // =========================
     private String item_code;       // 품목코드
     private String item_name;       // 품목명
-    private String item_type;       // 완제품 / 자재 / 재고
+    private String item_type;       // 완제품 / 자재
     private String spec;            // 규격
     private String unit;            // 단위
     private int price;              // 가격

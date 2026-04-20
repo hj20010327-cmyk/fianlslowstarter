@@ -211,7 +211,7 @@
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
 							<option value=""
-								<c:if test="${empty machineStatus}">selected</c:if>>전체</option>
+								<c:if test="${empty machineStatus}">selected</c:if>>설비 상태 검색</option>
 							<option value="가동중"
 								<c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
 							<option value="점검중"
@@ -241,7 +241,7 @@
 							<!--  안내 메시지용  -->
 							<c:if
 								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-								<span>설비 정보를 클릭하면 수정할 수 있습니다.</span>
+								<span>설비 코드를 클릭하면 수정할 수 있습니다.</span>
 								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
@@ -381,7 +381,7 @@
 						<input type="hidden" id="machineKey" name="machineKey" />
 
 						<div class="form-grid">
-							<div class="form-group" id=machineCodeField
+							<div class="form-group" id="machineCodeField"
 								style="display: none;">
 								<label>설비 코드</label> <input type="text" class="input"
 									id="machineCode" name="machineCode" placeholder="자동 생성"

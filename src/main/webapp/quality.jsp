@@ -219,7 +219,6 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>작업자는 조회만 가능, 관리자/슈퍼바이저만 등록/수정/삭제를 할수 있습니다.</span>
 				</div>
 
 				<form action="${pageContext.request.contextPath}/qualityList" method="get">
@@ -277,11 +276,10 @@
 							<table>
 								<thead>
 									<tr>
-										<th
-											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-												style="cursor:pointer;" onclick="toggleAllCheckboxes()"
-											</c:if>
-										>선택</th>
+										<%-- 작업자 로그인 시에는 선택 컬럼 자체를 안 보이게 처리 --%>
+										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<th style="cursor:pointer;" onclick="toggleAllCheckboxes()">선택</th>
+										</c:if>
 										<th>검사번호</th>
 										<th>품목명</th>
 										<th>생산명</th>
@@ -312,11 +310,14 @@
 											'${m.item_name}',
 											'${m.user_key}'
 											)">
-											<td onclick="event.stopPropagation();">
-												<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											
+											<%-- 작업자 로그인 시에는 체크박스 칸(td) 자체를 안 보이게 처리 --%>
+											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<td onclick="event.stopPropagation();">
 													<input type="checkbox" name="quality_key" value="${m.quality_key}">
-												</c:if>
-											</td>
+												</td>
+											</c:if>
+
 											<td>${m.quality_code}</td>
 											<td>${m.item_name}</td>
 											<td>${m.prod_name}</td>
@@ -345,7 +346,15 @@
 
 									<c:if test="${empty list}">
 										<tr>
-											<td colspan="12" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
+											<%-- 선택 컬럼 유무에 따라 colspan 맞춤 처리 --%>
+											<c:choose>
+												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<td colspan="12" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
+												</c:when>
+												<c:otherwise>
+													<td colspan="11" style="text-align:center; padding:30px;">데이터가 없습니다.</td>
+												</c:otherwise>
+											</c:choose>
 										</tr>
 									</c:if>
 								</tbody>

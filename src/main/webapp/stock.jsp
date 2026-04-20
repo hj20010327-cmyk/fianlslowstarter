@@ -151,16 +151,17 @@
 <body>
 	<header class="header">
 		<div class="header-left">
-			<a href="./index" class="logo"> <span class="logo-mark">AM</span><span>AUTO
-					MES</span>
+			<a href="./index" class="logo"> 
+				<span class="logo-mark">AM</span>
+				<span>AUTO MES</span>
 			</a>
 			<div class="header-title">자동차 콤프레셔 제조 MES</div>
 		</div>
 
 		<script>
-        const contextPath = '${pageContext.request.contextPath}';
-        const userRole = '${dto.user_role}';
-    </script>
+			const contextPath = '${pageContext.request.contextPath}';
+			const userRole = '${dto.user_role}';
+		</script>
 
 		<div class="header-right">
 			<div class="header-chip date"></div>
@@ -233,8 +234,7 @@
 				</div>
 				<div class="page-actions">
 					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-						<button class="btn primary" type="button"
-							onclick="openInsertModal()">신규 재고 등록</button>
+						<button class="btn primary" type="button" onclick="openInsertModal()">신규 재고 등록</button>
 					</c:if>
 				</div>
 			</div>
@@ -243,7 +243,6 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>작업자는 조회만 가능, 관리자/슈퍼바이저만 등록/수정/삭제를 할수 있습니다.</span>
 				</div>
 
 				<form action="${pageContext.request.contextPath}/stock" method="get">
@@ -252,8 +251,7 @@
 						<div class="search-inline-item">
 							<select class="select" name="itemType">
 								<option value="all" ${itemType eq 'all' ? 'selected' : ''}>전체</option>
-								<option value="product"
-									${itemType eq 'product' ? 'selected' : ''}>완제품</option>
+								<option value="product" ${itemType eq 'product' ? 'selected' : ''}>완제품</option>
 								<option value="item" ${itemType eq 'item' ? 'selected' : ''}>자재</option>
 							</select>
 						</div>
@@ -272,8 +270,7 @@
 							<select class="select" name="itemCodeKeyword">
 								<option value="">품목코드 선택</option>
 								<c:forEach var="code" items="${itemCodeList}">
-									<option value="${code}"
-										${itemCodeKeyword eq code ? 'selected' : ''}>${code}</option>
+									<option value="${code}" ${itemCodeKeyword eq code ? 'selected' : ''}>${code}</option>
 								</c:forEach>
 							</select>
 						</div>
@@ -282,8 +279,7 @@
 							<select class="select" name="itemNameKeyword">
 								<option value="">품목명 선택</option>
 								<c:forEach var="name" items="${itemNameList}">
-									<option value="${name}"
-										${itemNameKeyword eq name ? 'selected' : ''}>${name}</option>
+									<option value="${name}" ${itemNameKeyword eq name ? 'selected' : ''}>${name}</option>
 								</c:forEach>
 							</select>
 						</div>
@@ -296,7 +292,7 @@
 				</form>
 			</section>
 
-			<!-- ===== 목록 (기존 유지) ===== -->
+			<!-- ===== 목록 ===== -->
 			<section class="panel-grid">
 				<div class="card">
 					<form id="deleteForm"
@@ -306,8 +302,7 @@
 
 						<div class="section-title">
 							<h2>재고 목록</h2>
-							<c:if
-								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+							<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>
@@ -316,7 +311,10 @@
 							<table>
 								<thead>
 									<tr>
-										<th onclick="toggleAllCheckboxes()" style="cursor: pointer;">선택</th>
+										<%-- 작업자는 선택 컬럼 자체를 안 보이게 처리 --%>
+										<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<th onclick="toggleAllCheckboxes()" style="cursor: pointer;">선택</th>
+										</c:if>
 										<th>구분</th>
 										<th>품목코드</th>
 										<th>품목명</th>
@@ -333,33 +331,26 @@
 										<c:set var="params"
 											value="'${s.stock_key}', '${s.lot}', '${s.current_qty}', '${s.safe_qty}', '${s.item_key}', '${s.item_code}'" />
 										<tr>
-											<td><input type="checkbox" name="codes"
-												value="${s.stock_key}" class="stock-checkbox"
-												<c:if test="${not (dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">disabled</c:if>>
-											</td>
+											<%-- 작업자는 체크박스 칸(td)도 아예 안 보이게 처리 --%>
+											<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+												<td>
+													<input type="checkbox" name="codes" value="${s.stock_key}" class="stock-checkbox">
+												</td>
+											</c:if>
 
 											<c:choose>
-												<c:when
-													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.item_type}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.item_code}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.item_name}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.lot}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.wait_qc}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.done_qc}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.current_qty}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})">${s.safe_qty}</td>
-													<td class="clickable-cell"
-														onclick="openUpdateModal(${params})"><fmt:formatDate
-															value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" /></td>
+												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_type}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_code}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.item_name}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.lot}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.wait_qc}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.done_qc}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.current_qty}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">${s.safe_qty}</td>
+													<td class="clickable-cell" onclick="openUpdateModal(${params})">
+														<fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" />
+													</td>
 												</c:when>
 												<c:otherwise>
 													<td>${s.item_type}</td>
@@ -370,8 +361,7 @@
 													<td>${s.done_qc}</td>
 													<td>${s.current_qty}</td>
 													<td>${s.safe_qty}</td>
-													<td><fmt:formatDate value="${s.updated_at}"
-															pattern="yyyy-MM-dd HH:mm" /></td>
+													<td><fmt:formatDate value="${s.updated_at}" pattern="yyyy-MM-dd HH:mm" /></td>
 												</c:otherwise>
 											</c:choose>
 										</tr>
@@ -379,16 +369,22 @@
 
 									<c:if test="${empty list}">
 										<tr>
-											<td colspan="10" style="padding: 40px; color: #999;">데이터가
-												없습니다.</td>
+											<%-- 선택 컬럼 유무에 따라 colspan 맞춤 --%>
+											<c:choose>
+												<c:when test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+													<td colspan="10" style="padding: 40px; color: #999;">데이터가 없습니다.</td>
+												</c:when>
+												<c:otherwise>
+													<td colspan="9" style="padding: 40px; color: #999;">데이터가 없습니다.</td>
+												</c:otherwise>
+											</c:choose>
 										</tr>
 									</c:if>
 								</tbody>
 							</table>
 
 							<div class="pagination">
-								<c:forEach var="i" begin="1"
-									end="${totalPage > 0 ? totalPage : 1}">
+								<c:forEach var="i" begin="1" end="${totalPage > 0 ? totalPage : 1}">
 									<a
 										href="${pageContext.request.contextPath}/stock?p=${i}&lotKeyword=${lotKeyword}&itemType=${itemType}&itemCodeKeyword=${itemCodeKeyword}&itemNameKeyword=${itemNameKeyword}"
 										class="${currentPage == i ? 'active' : ''}">${i}</a>
@@ -407,8 +403,7 @@
 					action="${pageContext.request.contextPath}/stock" method="post"
 					onsubmit="return validateStockForm();">
 					<input type="hidden" name="cmd" id="modal_cmd" value="insert">
-					<input type="hidden" name="stock_key" id="modal_stock_key"
-						value="0">
+					<input type="hidden" name="stock_key" id="modal_stock_key" value="0">
 
 					<div class="modal-header">
 						<h3 id="modalTitle">신규 재고 등록</h3>
@@ -418,23 +413,21 @@
 					<div class="modal-body">
 						<div class="form-grid">
 							<div class="form-group" style="grid-column: span 2;">
-								<label>품목 선택</label> <select class="select" name="item_key"
-									id="modal_item_key">
+								<label>품목 선택</label>
+								<select class="select" name="item_key" id="modal_item_key">
 									<option value="">선택</option>
 									<c:forEach var="item" items="${itemList}">
-										<option value="${item.item_key}">[${item.item_type}]
-											${item.item_code} / ${item.item_name}</option>
+										<option value="${item.item_key}">[${item.item_type}] ${item.item_code} / ${item.item_name}</option>
 									</c:forEach>
 								</select>
 								<div class="field-error" id="item_key_error"></div>
 							</div>
 
-							<!-- 🔥 품목코드 커스텀 드롭다운 -->
+							<!-- 품목코드 커스텀 드롭다운 -->
 							<div class="form-group" style="grid-column: span 2;">
 								<label>품목코드</label>
 								<div class="code-dropdown" id="codeDropdown">
-									<input type="text" id="modal_item_code_select"
-										class="code-dropdown-input" placeholder="품목코드 선택" readonly />
+									<input type="text" id="modal_item_code_select" class="code-dropdown-input" placeholder="품목코드 선택" readonly />
 									<span class="code-dropdown-arrow">▼</span>
 									<div class="code-dropdown-list">
 										<c:forEach var="code" items="${itemCodeList}">
@@ -446,28 +439,27 @@
 							</div>
 
 							<!-- 수정 모달에서만 직접입력 -->
-							<div class="form-group" style="grid-column: span 2;"
-								id="itemCodeInputGroup">
-								<label>품목코드 직접입력</label> <input type="text" class="input"
-									id="modal_item_code_input" />
+							<div class="form-group" style="grid-column: span 2;" id="itemCodeInputGroup">
+								<label>품목코드 직접입력</label>
+								<input type="text" class="input" id="modal_item_code_input" />
 								<div class="field-error" id="item_code_input_error"></div>
 							</div>
 
 							<div class="form-group" style="grid-column: span 2;">
-								<label>LOT 번호</label> <input type="text" class="input"
-									name="lot" id="modal_lot" />
+								<label>LOT 번호</label>
+								<input type="text" class="input" name="lot" id="modal_lot" />
 								<div class="field-error" id="lot_error"></div>
 							</div>
 
 							<div class="form-group" id="currentQtyGroup">
-								<label>현재고</label> <input type="number" class="input"
-									name="current_qty" id="modal_current_qty" value="0" />
+								<label>현재고</label>
+								<input type="number" class="input" name="current_qty" id="modal_current_qty" value="0" />
 								<div class="field-error" id="current_qty_error"></div>
 							</div>
 
 							<div class="form-group" id="safeQtyGroup">
-								<label>안전재고</label> <input type="number" class="input"
-									name="safe_qty" id="modal_safe_qty" value="0" />
+								<label>안전재고</label>
+								<input type="number" class="input" name="safe_qty" id="modal_safe_qty" value="0" />
 								<div class="field-error" id="safe_qty_error"></div>
 							</div>
 						</div>
@@ -483,97 +475,119 @@
 	</div>
 
 	<script>
-    function toggleAllCheckboxes(){
-        if(!(userRole==='관리자'||userRole==='슈퍼바이저'))return;
-        const cbs=document.querySelectorAll('.stock-checkbox');
-        const en=Array.from(cbs).filter(cb=>!cb.disabled);
-        const all=en.every(cb=>cb.checked);
-        en.forEach(cb=>cb.checked=!all);
-    }
+		function toggleAllCheckboxes() {
+			// 관리자/슈퍼바이저만 전체선택 가능
+			if (!(userRole === '관리자' || userRole === '슈퍼바이저')) return;
 
-    function validateDelete(){
-        if(!(userRole==='관리자'||userRole==='슈퍼바이저')){ alert("작업자는 삭제 불가"); return false; }
-        const cnt=document.querySelectorAll('.stock-checkbox:checked').length;
-        if(cnt===0){ alert("선택 필요"); return false; }
-        return confirm(cnt+"개 삭제?");
-    }
+			const cbs = document.querySelectorAll('.stock-checkbox');
+			const all = Array.from(cbs).every(cb => cb.checked);
+			cbs.forEach(cb => cb.checked = !all);
+		}
 
-    function clearFieldErrors(){
-        ["item_key_error","item_code_select_error","item_code_input_error","lot_error","current_qty_error","safe_qty_error"]
-        .forEach(id=>{const el=document.getElementById(id); if(el) el.innerText="";});
-    }
+		function validateDelete() {
+			// 작업자는 삭제 불가
+			if (!(userRole === '관리자' || userRole === '슈퍼바이저')) {
+				alert("작업자는 삭제할 수 없습니다.");
+				return false;
+			}
 
-    function openInsertModal(){
-        if(!(userRole==='관리자'||userRole==='슈퍼바이저'))return;
-        document.getElementById("modal_cmd").value="insert";
-        document.getElementById("modalTitle").innerText="신규 재고 등록";
-        document.getElementById("modal_item_key").value="";
-        document.getElementById("modal_item_code_select").value="";
-        document.getElementById("modal_item_code_input").value="";
-        document.getElementById("modal_lot").value="";
-        document.getElementById("currentQtyGroup").style.display="none";
-        document.getElementById("safeQtyGroup").style.display="none";
-        document.getElementById("itemCodeInputGroup").style.display="none";
-        closeCodeDropdown();
-        document.getElementById("commonModal").classList.add("show");
-    }
+			const cnt = document.querySelectorAll('.stock-checkbox:checked').length;
+			if (cnt === 0) {
+				alert("선택된 항목이 없습니다.");
+				return false;
+			}
 
-    function openUpdateModal(key,lot,currentQty,safeQty,itemKey,itemCode){
-        if(!(userRole==='관리자'||userRole==='슈퍼바이저'))return;
-        document.getElementById("modal_cmd").value="update";
-        document.getElementById("modalTitle").innerText="재고 정보 수정";
-        document.getElementById("modal_stock_key").value=key;
-        document.getElementById("modal_lot").value=lot;
-        document.getElementById("modal_current_qty").value=currentQty;
-        document.getElementById("modal_safe_qty").value=safeQty;
-        document.getElementById("modal_item_key").value=itemKey;
-        document.getElementById("modal_item_code_select").value=itemCode;
-        document.getElementById("modal_item_code_input").value=itemCode;
-        document.getElementById("currentQtyGroup").style.display="";
-        document.getElementById("safeQtyGroup").style.display="";
-        document.getElementById("itemCodeInputGroup").style.display="";
-        closeCodeDropdown();
-        document.getElementById("commonModal").classList.add("show");
-    }
+			return confirm(cnt + "개 삭제하시겠습니까?");
+		}
 
-    function closeModal(){
-        document.getElementById("commonModal").classList.remove("show");
-        closeCodeDropdown();
-    }
+		function clearFieldErrors() {
+			["item_key_error", "item_code_select_error", "item_code_input_error", "lot_error", "current_qty_error", "safe_qty_error"]
+				.forEach(id => {
+					const el = document.getElementById(id);
+					if (el) el.innerText = "";
+				});
+		}
 
-    function validateStockForm(){ return true; }
+		function openInsertModal() {
+			if (!(userRole === '관리자' || userRole === '슈퍼바이저')) return;
 
-    // ===== 커스텀 드롭다운 =====
-    function closeCodeDropdown(){
-        const d=document.getElementById("codeDropdown");
-        if(d) d.classList.remove("open");
-    }
+			document.getElementById("modal_cmd").value = "insert";
+			document.getElementById("modalTitle").innerText = "신규 재고 등록";
+			document.getElementById("modal_item_key").value = "";
+			document.getElementById("modal_item_code_select").value = "";
+			document.getElementById("modal_item_code_input").value = "";
+			document.getElementById("modal_lot").value = "";
+			document.getElementById("currentQtyGroup").style.display = "none";
+			document.getElementById("safeQtyGroup").style.display = "none";
+			document.getElementById("itemCodeInputGroup").style.display = "none";
+			closeCodeDropdown();
+			document.getElementById("commonModal").classList.add("show");
+		}
 
-    document.addEventListener("DOMContentLoaded",function(){
-        const dropdown=document.getElementById("codeDropdown");
-        const input=document.getElementById("modal_item_code_select");
-        const items=dropdown?dropdown.querySelectorAll(".code-dropdown-item"):[];
-        if(input){
-            input.addEventListener("click",function(e){
-                e.stopPropagation();
-                dropdown.classList.toggle("open");
-            });
-        }
-        items.forEach(it=>{
-            it.addEventListener("click",function(){
-                const code=this.dataset.code;
-                input.value=code;
-                const inp=document.getElementById("modal_item_code_input");
-                if(inp) inp.value=code;
-                closeCodeDropdown();
-            });
-        });
-        document.addEventListener("click",function(e){
-            if(dropdown && !dropdown.contains(e.target)) closeCodeDropdown();
-        });
-    });
+		function openUpdateModal(key, lot, currentQty, safeQty, itemKey, itemCode) {
+			if (!(userRole === '관리자' || userRole === '슈퍼바이저')) return;
 
-    function logout(){ location.href='./logout'; }
-</script>
+			document.getElementById("modal_cmd").value = "update";
+			document.getElementById("modalTitle").innerText = "재고 정보 수정";
+			document.getElementById("modal_stock_key").value = key;
+			document.getElementById("modal_lot").value = lot;
+			document.getElementById("modal_current_qty").value = currentQty;
+			document.getElementById("modal_safe_qty").value = safeQty;
+			document.getElementById("modal_item_key").value = itemKey;
+			document.getElementById("modal_item_code_select").value = itemCode;
+			document.getElementById("modal_item_code_input").value = itemCode;
+			document.getElementById("currentQtyGroup").style.display = "";
+			document.getElementById("safeQtyGroup").style.display = "";
+			document.getElementById("itemCodeInputGroup").style.display = "";
+			closeCodeDropdown();
+			document.getElementById("commonModal").classList.add("show");
+		}
+
+		function closeModal() {
+			document.getElementById("commonModal").classList.remove("show");
+			closeCodeDropdown();
+		}
+
+		function validateStockForm() {
+			return true;
+		}
+
+		// ===== 커스텀 드롭다운 =====
+		function closeCodeDropdown() {
+			const d = document.getElementById("codeDropdown");
+			if (d) d.classList.remove("open");
+		}
+
+		document.addEventListener("DOMContentLoaded", function() {
+			const dropdown = document.getElementById("codeDropdown");
+			const input = document.getElementById("modal_item_code_select");
+			const items = dropdown ? dropdown.querySelectorAll(".code-dropdown-item") : [];
+
+			if (input) {
+				input.addEventListener("click", function(e) {
+					e.stopPropagation();
+					dropdown.classList.toggle("open");
+				});
+			}
+
+			items.forEach(it => {
+				it.addEventListener("click", function() {
+					const code = this.dataset.code;
+					input.value = code;
+					const inp = document.getElementById("modal_item_code_input");
+					if (inp) inp.value = code;
+					closeCodeDropdown();
+				});
+			});
+
+			document.addEventListener("click", function(e) {
+				if (dropdown && !dropdown.contains(e.target)) closeCodeDropdown();
+			});
+		});
+
+		function logout() {
+			location.href = './logout';
+		}
+	</script>
 </body>
 </html>

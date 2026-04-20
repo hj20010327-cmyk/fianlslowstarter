@@ -57,18 +57,19 @@
 	color: #666;
 	margin-bottom: 4px;
 }
-@media (max-width: 770px) {
+
+@media ( max-width : 770px) {
 	.search-row {
 		flex-direction: column;
 		align-items: stretch;
 	}
 }
-.error-msg {
-    color: red;
-    font-size: 12px;
-    margin-top: 4px;
-}
 
+.error-msg {
+	color: red;
+	font-size: 12px;
+	margin-top: 4px;
+}
 </style>
 <body>
 	<header class="header">
@@ -172,16 +173,17 @@
 				<form id="workOrderSearchForm" action="/slowstarter/workorder"
 					method="get">
 					<div class="search-row">
-						<input class="input" type="text" name="workOrderCode" value="${workOrderCode}"
-							placeholder="작업지시 코드 입력" /> 
+						<input class="input" type="text" name="workOrderCode"
+							value="${workOrderCode}" placeholder="작업지시 코드 입력" />
+							
 						
-						<select class="select" name="itemName">
+							
+						 <select class="select" name="itemName">
 							<option value="">전체</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_name}"
 									<c:if test="${itemName == item.item_name}">selected</c:if>>
-									${item.item_name}
-								</option>
+									${item.item_name}</option>
 							</c:forEach>
 						</select>
 
@@ -211,7 +213,10 @@
 						<div class="table-wrap">
 							<table>
 								<tr>
-									<th>선택</th>
+									<c:if
+										test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										<th>선택</th>
+									</c:if>
 									<th>작업코드</th>
 									<th>계획코드</th>
 									<th>제품명</th>
@@ -221,10 +226,28 @@
 									<th>작업자</th>
 								</tr>
 
+								<c:if test="${empty list}">
+									<tr>
+										<c:if
+											test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<td colspan="8">${dto.user_name}님은 작업지시가 없습니다.</td>
+										</c:if>
+
+										<c:if test="${dto.user_role eq '작업자'}">
+											<td colspan="7">${dto.user_name}님은 작업지시가 없습니다.</td>
+										</c:if>
+									</tr>
+								</c:if>
+
+
+
 								<c:forEach var="w" items="${list}">
 									<tr>
-										<td><input type="checkbox" name="work_order_key"
-											value="${w.work_order_key}"></td>
+										<c:if
+											test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<td><input type="checkbox" name="work_order_key"
+												value="${w.work_order_key}"></td>
+										</c:if>
 										<td>
 											<!--  관리자/슈퍼바이저는 클릭하면 수정모달 열리게 --> <c:if
 												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
@@ -259,47 +282,50 @@
 							</table>
 							<div class="pagination">
 								<c:forEach var="i" begin="1" end="${totalPage}">
-		
+
 									<c:if test="${page == i}">
-										<a href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}" class="active">${i}</a>
+										<a
+											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}"
+											class="active">${i}</a>
 									</c:if>
-									
+
 									<c:if test="${page != i}">
-										<a href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}">${i}</a>
+										<a
+											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}">${i}</a>
 									</c:if>
-		
+
 								</c:forEach>
 							</div>
 						</div>
 					</form>
 				</div>
 
-<!-- 				<div class="card"> -->
-<!-- 					<div class="section-title"> -->
-<!-- 						<h2>요약 / 상태</h2> -->
-<!-- 						<span>오늘 기준</span> -->
-<!-- 					</div> -->
-<!-- 					<ul class="summary-list"> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>진행중 작업</strong> -->
-<!-- 								<p>현재 8건의 작업이 진행 중입니다.</p> -->
-<!-- 							</div> <span class="badge ok">8건</span> -->
-<!-- 						</li> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>금일 마감</strong> -->
-<!-- 								<p>오늘 납기 작업이 3건 남았습니다.</p> -->
-<!-- 							</div> <span class="badge warn">3건</span> -->
-<!-- 						</li> -->
-<!-- 						<li> -->
-<!-- 							<div> -->
-<!-- 								<strong>지연 작업</strong> -->
-<!-- 								<p>현재 지연 작업은 없습니다.</p> -->
-<!-- 							</div> <span class="badge ok">정상</span> -->
-<!-- 						</li> -->
-<!-- 					</ul> -->
-<!-- 				</div> -->
+				<!-- 				<div class="card"> -->
+				<!-- 					<div class="section-title"> -->
+				<!-- 						<h2>요약 / 상태</h2> -->
+				<!-- 						<span>오늘 기준</span> -->
+				<!-- 					</div> -->
+				<!-- 					<ul class="summary-list"> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>진행중 작업</strong> -->
+				<!-- 								<p>현재 8건의 작업이 진행 중입니다.</p> -->
+				<!-- 							</div> <span class="badge ok">8건</span> -->
+				<!-- 						</li> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>금일 마감</strong> -->
+				<!-- 								<p>오늘 납기 작업이 3건 남았습니다.</p> -->
+				<!-- 							</div> <span class="badge warn">3건</span> -->
+				<!-- 						</li> -->
+				<!-- 						<li> -->
+				<!-- 							<div> -->
+				<!-- 								<strong>지연 작업</strong> -->
+				<!-- 								<p>현재 지연 작업은 없습니다.</p> -->
+				<!-- 							</div> <span class="badge ok">정상</span> -->
+				<!-- 						</li> -->
+				<!-- 					</ul> -->
+				<!-- 				</div> -->
 			</section>
 		</main>
 	</div>
@@ -332,13 +358,12 @@
 									<c:forEach var="u" items="${userList}">
 										<option value="${u.work_user_key}">${u.work_user_name}</option>
 									</c:forEach>
-								</select>
-								<span class="error-msg" id="workerError"></span>
+								</select> <span class="error-msg" id="workerError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="order_qty" name="order_qty" placeholder="지시 수량 입력" min="1"/>
+									id="order_qty" name="order_qty" placeholder="지시 수량 입력" min="1" />
 							</div>
 
 							<div class="form-group">
@@ -348,8 +373,8 @@
 
 							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
-									id="work_date" name="work_date" />
-								<span class="error-msg" id="dateError"></span>
+									id="work_date" name="work_date" /> <span class="error-msg"
+									id="dateError"></span>
 							</div>
 
 							<div class="form-group">
@@ -357,14 +382,11 @@
 									name="plan_key">
 									<option value="">생산계획 선택</option>
 									<c:forEach var="p" items="${planList}">
-										<option value="${p.plan_key}" 
-										data-qty="${p.plan_qty}"
-										data-date="${p.plan_date}" 
-										data-item="${p.item_name}">
-										${p.plan_code}</option>
+										<option value="${p.plan_key}" data-qty="${p.plan_qty}"
+											data-date="${p.plan_date}" data-item="${p.item_name}">
+											${p.plan_code}</option>
 									</c:forEach>
-								</select>
-								<span class="error-msg" id="planError"></span>
+								</select> <span class="error-msg" id="planError"></span>
 							</div>
 
 						</div>
@@ -391,20 +413,19 @@
 									<c:forEach var="u" items="${userList}">
 										<option value="${u.work_user_key}">${u.work_user_name}</option>
 									</c:forEach>
-								</select>
-								<span class="error-msg" id="editWorkerError"></span>
+								</select> <span class="error-msg" id="editWorkerError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>지시 수량</label> <input type="number" class="input"
-									id="edit_order_qty" name="edit_order_qty" min="1"/>
-									<span class="error-msg" id="editQtyError"></span>
+									id="edit_order_qty" name="edit_order_qty" min="1" /> <span
+									class="error-msg" id="editQtyError"></span>
 							</div>
 
 							<div class="form-group">
 								<label>작업일</label> <input type="date" class="input"
-									id="edit_work_date" name="edit_work_date"/>
-								<span class="error-msg" id="editDateError"></span>
+									id="edit_work_date" name="edit_work_date" /> <span
+									class="error-msg" id="editDateError"></span>
 							</div>
 
 							<div class="form-group">

@@ -79,6 +79,7 @@
 		align-items: stretch;
 	}
 }
+
 .error {
 	color: red;
 	font-size: 12px;
@@ -239,7 +240,10 @@
 						<div class="table-wrap">
 							<table>
 								<tr>
-									<th>선택</th>
+									<c:if
+										test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+										<th>선택</th>
+									</c:if>
 									<th>설비 코드</th>
 									<th>설비 명</th>
 									<th>공정</th>
@@ -250,8 +254,11 @@
 
 								<c:forEach var="m" items="${list}">
 									<tr>
-										<td><input type="checkbox" name="machineKey"
-											value="${m.machineKey}"></td>
+										<c:if
+											test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+											<td><input type="checkbox" name="machine_key"
+												value="${m.machine_key}"></td>
+										</c:if>
 
 										<td><c:if
 												test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
@@ -365,7 +372,8 @@
 						<input type="hidden" id="machineKey" name="machineKey" />
 
 						<div class="form-grid">
-							<div class="form-group" id=machineCodeField style="display: none;">
+							<div class="form-group" id=machineCodeField
+								style="display: none;">
 								<label>설비 코드</label> <input type="text" class="input"
 									id="machineCode" name="machineCode" placeholder="자동 생성"
 									readonly />
@@ -464,12 +472,13 @@
 			document.getElementById("machineCode").value = machineCode;
 			document.getElementById("machineCodeField").style.display = "block";
 			document.getElementById("processKey").style.pointerEvents = "none";
-			
+
 			document.getElementById("machineStatus").value = machineStatus;
 			document.getElementById("machineName").value = machineName;
 
 			if (buyDate != null && buyDate !== '') {
-				document.getElementById("buyDate").value = buyDate.substring(0,10);
+				document.getElementById("buyDate").value = buyDate.substring(0,
+						10);
 			} else {
 				document.getElementById("buyDate").value = "";
 			}
@@ -516,7 +525,7 @@
 			document.getElementById("machineStatusError").innerText = "";
 			document.getElementById("lastCheckDateError").innerText = "";
 		}
-		
+
 		function validateMachineForm() {
 			clearMachineErrors();
 
@@ -562,33 +571,42 @@
 
 			return isValid;
 		}
-		
+
 		// 설비명
-		document.getElementById("machineName").addEventListener("input", function() {
-		    document.getElementById("machineNameError").innerText = "";
-		});
+		document.getElementById("machineName").addEventListener("input",
+				function() {
+					document.getElementById("machineNameError").innerText = "";
+				});
 
 		// 공정
-		document.getElementById("processKey").addEventListener("change", function() {
-		    document.getElementById("processKeyError").innerText = "";
-		});
+		document.getElementById("processKey").addEventListener("change",
+				function() {
+					document.getElementById("processKeyError").innerText = "";
+				});
 
 		// 구매일
-		document.getElementById("buyDate").addEventListener("input", function() {
-		    document.getElementById("buyDateError").innerText = "";
-		});
+		document.getElementById("buyDate").addEventListener("input",
+				function() {
+					document.getElementById("buyDateError").innerText = "";
+				});
 
 		// 상태
-		document.getElementById("machineStatus").addEventListener("change", function() {
-		    document.getElementById("machineStatusError").innerText = "";
-		});
+		document
+				.getElementById("machineStatus")
+				.addEventListener(
+						"change",
+						function() {
+							document.getElementById("machineStatusError").innerText = "";
+						});
 
 		// 점검일
-		document.getElementById("lastCheckDate").addEventListener("input", function() {
-		    document.getElementById("lastCheckDateError").innerText = "";
-		});
-		
-		
+		document
+				.getElementById("lastCheckDate")
+				.addEventListener(
+						"input",
+						function() {
+							document.getElementById("lastCheckDateError").innerText = "";
+						});
 	</script>
 </body>
 </html>

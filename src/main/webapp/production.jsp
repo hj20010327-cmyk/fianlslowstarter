@@ -161,6 +161,7 @@
 										<td>${p.good_qty}</td>
 										<td>${p.defect_qty}</td>
 										<td>${p.achievement_rate}%</td>
+										<c:if test="${p.work_user_key eq dto.user_key}">
 										<td>
 											<button type="button" class="btn small prod-edit-link"
 												data-prod-key="${p.prod_key}"
@@ -181,6 +182,7 @@
 												data-qc-status="${p.qc_status}"
 												data-defect-reason="${p.defect_reason}">수정</button>
 										</td>
+										</c:if>
 									</tr>
 								</c:forEach>
 							</tbody>
@@ -188,60 +190,6 @@
 					</div>
 				</div>
 
-				<div class="card">
-					<div class="section-title">
-						<h2>요약 / 상태</h2>
-						<span>조회 기간 기준</span>
-					</div>
-					<ul class="summary-list">
-						<li>
-							<div>
-								<strong>전체 달성률</strong>
-								<p>조회 기간 평균 생산 달성률입니다.</p>
-							</div> <span class="badge ok"> <fmt:formatNumber
-									value="${summary.avg_achievement_rate}" pattern="0.00" />%
-						</span>
-						</li>
-						<li>
-							<div>
-								<strong>최고 실적 품목</strong>
-								<p>
-									<c:choose>
-										<c:when test="${not empty summary.best_item_name}">
-                                            ${summary.best_item_name}
-                                        </c:when>
-										<c:otherwise>데이터 없음</c:otherwise>
-									</c:choose>
-								</p>
-							</div> <span class="badge ok"> <fmt:formatNumber
-									value="${summary.best_rate}" pattern="0.00" />%
-						</span>
-						</li>
-						<li>
-							<div>
-								<strong>저조 품목</strong>
-								<p>
-									<c:choose>
-										<c:when test="${not empty summary.low_item_name}">
-                                            ${summary.low_item_name}
-                                        </c:when>
-										<c:otherwise>데이터 없음</c:otherwise>
-									</c:choose>
-								</p>
-							</div> <span class="badge warn"> <fmt:formatNumber
-									value="${summary.low_rate}" pattern="0.00" />%
-						</span>
-						</li>
-						<li>
-							<div>
-								<strong>총 불량수량</strong>
-								<p>조회 기간 누적 불량입니다.</p>
-							</div> <span class="badge danger"> <fmt:formatNumber
-									value="${summary.total_defect_qty}" pattern="#,##0" />
-						</span>
-						</li>
-					</ul>
-				</div>
 			</section>
 		</main>
 	</div>

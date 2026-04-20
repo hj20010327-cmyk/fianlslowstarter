@@ -11,7 +11,7 @@
 <script src="./asset/js/common.js" defer></script>
 <link rel="stylesheet" href="./asset/css/common.css" />
 <link rel="stylesheet" href="./asset/css/page.css" />
-<link rel="stylesheet" href="./asset/css/comment.css"/>
+<link rel="stylesheet" href="./asset/css/comment.css" />
 <style>
 .content {
 	flex: 1;
@@ -199,18 +199,22 @@
 
 				<div class="detail-actions">
 					<a href="${pageContext.request.contextPath}/board?action=list"
-						class="btn-line">목록</a> <a
-						href="${pageContext.request.contextPath}/board?action=editForm&board_key=${board.board_key}"
-						class="btn-primary2">수정</a>
+						class="btn-line">목록</a>
+					<c:if
+						test="${dto.user_key eq board.user_key or dto.user_role eq '슈퍼바이저'}">
+						<a
+							href="${pageContext.request.contextPath}/board?action=editForm&board_key=${board.board_key}"
+							class="btn-primary2">수정</a>
 
-					<form method="post"
-						action="${pageContext.request.contextPath}/board"
-						style="display: inline;">
-						<input type="hidden" name="action" value="delete"> <input
-							type="hidden" name="board_key" value="${board.board_key}">
-						<button type="submit" class="btn-danger2"
-							onclick="return confirm('삭제하시겠습니까?');">삭제</button>
-					</form>
+						<form method="post"
+							action="${pageContext.request.contextPath}/board"
+							style="display: inline;">
+							<input type="hidden" name="action" value="delete"> <input
+								type="hidden" name="board_key" value="${board.board_key}">
+							<button type="submit" class="btn-danger2"
+								onclick="return confirm('삭제하시겠습니까?');">삭제</button>
+						</form>
+					</c:if>
 				</div>
 			</section>
 			<section class="comment-wrap">

@@ -159,7 +159,9 @@
 				<div class="snb-title">시스템</div>
 				<ul class="snb-menu">
 					<li class="active"><a href="./board">게시판</a></li>
-					<li><a href="./user">사용자관리</a></li>
+					<c:if test='${dto.user_role eq "슈퍼바이저"}'>
+						<li><a href="./user">사용자관리</a></li>
+					</c:if>
 					<li><a href="./mypage">마이페이지</a></li>
 				</ul>
 			</div>

@@ -52,12 +52,13 @@
 	background: #f8f9fa;
 }
 
+/* ===== 검색조건 크기 수정 시작 ===== */
 .search-inline-wrap {
 	display: flex;
 	align-items: flex-end;
 	gap: 12px;
 	flex-wrap: nowrap;
-	margin-bottom: 12px;
+	margin-bottom: 0;
 }
 
 .search-inline-item {
@@ -72,9 +73,15 @@
 	flex: 0 0 auto;
 }
 
-.search-inline-item .input, .search-inline-item .select {
+.search-inline-item .input,
+.search-inline-item .select {
 	width: 100%;
+	height: 40px;
+	font-size: 14px;
+	padding: 0 12px;
+	box-sizing: border-box;
 }
+/* ===== 검색조건 크기 수정 끝 ===== */
 
 .field-error {
 	margin-top: 6px;
@@ -241,7 +248,7 @@
 				</div>
 			</div>
 
-			<!-- ===== 검색조건 (기존 유지) ===== -->
+			<!-- ===== 검색조건 수정 ===== -->
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
@@ -249,6 +256,8 @@
 
 				<form action="${pageContext.request.contextPath}/stock" method="get">
 					<input type="hidden" name="p" value="1">
+
+					<!-- 기존 2줄 -> 1줄로 변경 -->
 					<div class="search-inline-wrap">
 						<div class="search-inline-item">
 							<select class="select" name="itemType">
@@ -257,6 +266,7 @@
 								<option value="item" ${itemType eq 'item' ? 'selected' : ''}>자재</option>
 							</select>
 						</div>
+
 						<div class="search-inline-item">
 							<select class="select" name="lotKeyword">
 								<option value="">LOT 번호 선택</option>
@@ -265,9 +275,7 @@
 								</c:forEach>
 							</select>
 						</div>
-					</div>
 
-					<div class="search-inline-wrap">
 						<div class="search-inline-item">
 							<select class="select" name="itemCodeKeyword">
 								<option value="">품목코드 선택</option>

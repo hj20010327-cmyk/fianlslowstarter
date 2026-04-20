@@ -522,7 +522,7 @@ public class WorkOrderDAO {
 		return list;
 	}
 	
-	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate, int startRow, int endRow) {
+	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate, String workUserKey, int startRow, int endRow) {
 		List<WorkOrderDTO> list = new ArrayList<WorkOrderDTO>();
 
 		try {
@@ -562,6 +562,10 @@ public class WorkOrderDAO {
 			if (workDate != null && !workDate.trim().equals("")) {
 				query += " AND w.work_date < TO_DATE(?, 'YYYY-MM-DD') + 1 ";
 			}
+			
+			if (workUserKey != null && !workUserKey.trim().equals("")) {
+			    query += " AND w.work_user_key = ? ";
+			}
 
 			query += "    ORDER BY w.work_order_key "
 					+ "  ) A WHERE ROWNUM <= ? "
@@ -582,6 +586,11 @@ public class WorkOrderDAO {
 			if (workDate != null && !workDate.trim().equals("")) {
 				ps.setString(idx++, workDate);
 			}
+			
+			if (workUserKey != null && !workUserKey.trim().equals("")) {
+			    ps.setInt(idx++, Integer.parseInt(workUserKey));
+			}
+			
 
 			ps.setInt(idx++, endRow);
 			ps.setInt(idx++, startRow);
@@ -615,7 +624,7 @@ public class WorkOrderDAO {
 		return list;
 	}
 	
-	public int getSearchCount(String workOrderCode, String itemName, String workDate) {
+	public int getSearchCount(String workOrderCode, String itemName, String workDate, String workUserKey) {
 		int count = 0;
 
 		try {
@@ -640,6 +649,10 @@ public class WorkOrderDAO {
 			if (workDate != null && !workDate.trim().equals("")) {
 				query += " AND w.work_date < TO_DATE(?, 'YYYY-MM-DD') + 1 ";
 			}
+			
+			if (workUserKey != null && !workUserKey.trim().equals("")) {
+			    query += " AND w.work_user_key = ? ";
+			}
 
 			ps = conn.prepareStatement(query);
 
@@ -655,6 +668,10 @@ public class WorkOrderDAO {
 
 			if (workDate != null && !workDate.trim().equals("")) {
 				ps.setString(idx++, workDate);
+			}
+			
+			if (workUserKey != null && !workUserKey.trim().equals("")) {
+			    ps.setInt(idx++, Integer.parseInt(workUserKey));
 			}
 
 			rs = ps.executeQuery();

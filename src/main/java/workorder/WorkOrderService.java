@@ -58,14 +58,14 @@ public class WorkOrderService {
 		return dao.selectItemList();
 	}
 	
-	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate, int startRow, int endRow) {
+	public List<WorkOrderDTO> searchPage(String workOrderCode, String itemName, String workDate,String workUserKey, int startRow, int endRow) {
 		WorkOrderDAO dao = new WorkOrderDAO();
-		return dao.searchPage(workOrderCode, itemName, workDate, startRow, endRow);
+		return dao.searchPage(workOrderCode, itemName, workDate, workUserKey, startRow, endRow);
 	}
 
-	public int getSearchCount(String workOrderCode, String itemName, String workDate) {
+	public int getSearchCount(String workOrderCode, String itemName, String workDate, String workUserKey) {
 		WorkOrderDAO dao = new WorkOrderDAO();
-		return dao.getSearchCount(workOrderCode, itemName, workDate);
+		return dao.getSearchCount(workOrderCode, itemName, workDate, workUserKey);
 	}
 	
 }

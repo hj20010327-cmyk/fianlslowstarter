@@ -170,7 +170,7 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>※ 작업지시 목록은 오늘 이후 작업만 표시됩니다. 이전 작업은 검색을 이용하세요.</span>
+					<span>※이전 작업은 검색을 이용하세요.</span>
 				</div>
 				<form id="workOrderSearchForm" action="/slowstarter/workorder"
 					method="get">
@@ -178,7 +178,17 @@
 						<input class="input" type="text" name="workOrderCode"
 							value="${workOrderCode}" placeholder="작업지시 코드 입력" />
 							
-						
+					<c:if test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
+						<select class="select" name="workUserKey">
+						    <option value="">전체 작업자</option>
+						    <c:forEach var="u" items="${userList}">
+						        <option value="${u.work_user_key}"
+						            <c:if test="${workUserKey == u.work_user_key}">selected</c:if>>
+						            ${u.work_user_name}
+						        </option>
+						    </c:forEach>
+						</select>
+					</c:if>
 							
 						 <select class="select" name="itemName">
 							<option value="">전체</option>
@@ -287,13 +297,13 @@
 
 									<c:if test="${page == i}">
 										<a
-											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}"
+											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}&workUserKey=${workUserKey}"
 											class="active">${i}</a>
 									</c:if>
 
 									<c:if test="${page != i}">
 										<a
-											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}">${i}</a>
+											href="workorder?page=${i}&workOrderCode=${workOrderCode}&itemName=${itemName}&workDate=${workDate}&workUserKey=${workUserKey}">${i}</a>
 									</c:if>
 
 								</c:forEach>

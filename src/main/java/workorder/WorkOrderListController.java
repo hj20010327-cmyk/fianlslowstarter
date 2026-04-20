@@ -26,6 +26,7 @@ public class WorkOrderListController extends HttpServlet {
 		String planKey = request.getParameter("planKey");
 		String workDate = request.getParameter("workDate");
 		String itemName = request.getParameter("itemName");
+		String workUserKey = request.getParameter("workUserKey");
 
 		String pageStr = request.getParameter("page");
 		
@@ -52,9 +53,10 @@ public class WorkOrderListController extends HttpServlet {
 		} else {
 			if ((workOrderCode != null && !workOrderCode.isEmpty()) ||
 				    (itemName != null && !itemName.isEmpty()) ||
-				    (workDate != null && !workDate.isEmpty())) {
-				list = service.searchPage(workOrderCode, itemName, workDate, startRow, endRow);
-				totalCount = service.getSearchCount(workOrderCode, itemName, workDate);
+				    (workDate != null && !workDate.isEmpty()) ||
+				    (workUserKey != null && !workUserKey.isEmpty())) {
+				list = service.searchPage(workOrderCode, itemName, workDate,workUserKey, startRow, endRow);
+				totalCount = service.getSearchCount(workOrderCode, itemName, workDate,workUserKey);
 			} else {
 				list = service.selectPage(startRow, endRow);
 				totalCount = service.getTotalCount();
@@ -78,6 +80,7 @@ public class WorkOrderListController extends HttpServlet {
 		request.setAttribute("itemName", itemName);
 		request.setAttribute("workDate", workDate);
 		request.setAttribute("totalPage", totalPage);
+		request.setAttribute("workUserKey", workUserKey);
 		
 	
 

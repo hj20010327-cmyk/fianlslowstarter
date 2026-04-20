@@ -170,7 +170,7 @@
 			<section class="card" style="margin-bottom: 20px">
 				<div class="section-title">
 					<h2>검색 조건</h2>
-					<span>※생산계획 목록은 오늘 이후 계획만 표시됩니다. 이전 계획은 검색을 이용하세요.</span>
+					<span>※이전 계획은 검색을 이용하세요.</span>
 				</div>
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">

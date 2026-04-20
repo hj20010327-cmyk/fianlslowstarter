@@ -366,9 +366,13 @@
 						</div>
 
 						<div class="form-group">
-							<label>계획 상태</label> <select class="select" id="status"
+							<label>계획 상태</label> 
+							<select class="select" id="status"
 								name="status">
 								<option value="계획">계획</option>
+								<option value="진행중">진행중</option>
+								<option value="완료">완료</option>
+								
 							</select>
 						</div>
 

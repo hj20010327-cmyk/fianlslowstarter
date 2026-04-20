@@ -183,7 +183,7 @@
 						    <option value="">전체 작업자</option>
 						    <c:forEach var="u" items="${userList}">
 						        <option value="${u.work_user_key}"
-						            <c:if test="${workUserKey == u.work_user_key}">selected</c:if>>
+						            <c:if test="${workUserKey eq u.work_user_key}">selected</c:if>>
 						            ${u.work_user_name}
 						        </option>
 						    </c:forEach>

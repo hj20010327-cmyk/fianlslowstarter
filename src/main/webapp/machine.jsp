@@ -259,7 +259,7 @@
 										<c:if
 											test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 											<td><input type="checkbox" name="machine_key"
-												value="${m.machine_key}"></td>
+												value="${m.machineKey}"></td>
 										</c:if>
 
 										<td><c:if

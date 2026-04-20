@@ -142,18 +142,18 @@
 					<div class="card">
 						<div class="section-title">
 							<h2>BOM관리 목록</h2>
-							<c:if
-								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 								<span>
 									<button type="button" class="btn"
 										style="background: #4a90e2; color: white;"
 										onclick="location.href='${pageContext.request.contextPath}/bom/detail'">
 										BOM 상세페이지</button>
+							<c:if
+								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
 									<button type="submit" class="btn" value="삭제"
 										style="background: #4a90e2; color: white;">삭제</button> <input
 									type="hidden" name="cmd" value="delete">
-								</span>
 							</c:if>
+								</span>
 						</div>
 
 						<div class="table-wrap">
@@ -197,15 +197,9 @@
 													${bom.bom_code}
 											</c:if></td>
 
-											<td><c:if
-													test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-													<a
-														href="/slowstarter/bom/detail?item_key=${bom.parent_item_key}">
-														${bom.parent_item_name} </a>
-												</c:if> <c:if
-													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">
-													${bom.parent_item_name}
-													</c:if></td>
+											<td>
+											<a href="/slowstarter/bom/detail?item_key=${bom.parent_item_key}">
+											${bom.parent_item_name} </a>
 											<td>${bom.item_name}</td>
 											<td>${bom.qty}</td>
 											<td>${bom.remark}</td>

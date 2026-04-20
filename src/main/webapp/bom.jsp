@@ -193,7 +193,7 @@
 											'${bom.remark}',
 											'${bom.item_key}',
 											'${bom.parent_item_key}'
-											)">
+											)" style="text-decoration:underline; cursor:pointer;">
 														${bom.bom_code} </a>
 												</c:if> <c:if
 													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">

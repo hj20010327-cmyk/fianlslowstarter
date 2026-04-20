@@ -222,7 +222,7 @@
 												'${process.process_desc}',		
 												'${process.status}',		
 												'${process.item_key}'		
-												)">
+												)" style="text-decoration:underline; pointer:cursor;">
 														${ process.process_code }</a>
 												</c:if> <c:if
 													test="${not(dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저')}">

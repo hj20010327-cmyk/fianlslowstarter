@@ -21,6 +21,8 @@
 	defer></script>
 <script src="${pageContext.request.contextPath}/asset/js/bom_detail.js"
 	defer></script>
+	
+	
 
 
 
@@ -131,6 +133,14 @@
 	margin-left: auto;
 	font-size: 12px;
 	color: #64748b;
+}
+
+.qty-input {
+    width: 70px;
+    padding: 4px 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    text-align: right;
 }
 </style>
 
@@ -277,7 +287,7 @@
 
 
 							<!-- 자재 테이블 -->
-							
+
 
 							<table class="bom-table">
 								<thead>
@@ -300,9 +310,7 @@
 											<tr>
 												<td>${m.item_code}</td>
 												<td>${m.item_name}</td>
-												<td>
-												${m.qty}
-												</td>
+												<td>${m.qty}</td>
 												<td>${m.price}</td>
 												<td>${m.unit}</td>
 											</tr>
@@ -316,7 +324,7 @@
 
 								</tbody>
 							</table>
-							
+								
 							<br />
 						</div>
 

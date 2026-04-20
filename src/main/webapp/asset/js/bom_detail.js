@@ -128,5 +128,4 @@ console.log("select value:", document.getElementById("item_key").value);
 	});
 
 	
-	
 

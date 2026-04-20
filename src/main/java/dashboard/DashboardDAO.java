@@ -88,7 +88,7 @@ public class DashboardDAO {
             	    "NVL((SELECT SUM(GOOD_QTY) " +
             	    "     FROM TB_PRODUCTION " +
             	    "     WHERE TRUNC(PROD_DATE)=DT), 0) AS PROD_QTY " +
-            	    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+            	    "FROM (SELECT TRUNC(SYSDATE)-7+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
             	    "ORDER BY DT"
             	);
 
@@ -105,7 +105,7 @@ public class DashboardDAO {
             	    "NVL((SELECT SUM(DEFECT_QTY) " +
             	    "     FROM TB_QUALITY " +
             	    "     WHERE TRUNC(INSPECT_DATE)=DT), 0) AS DEFECT_QTY " +
-            	    "FROM (SELECT TRUNC(SYSDATE)-6+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
+            	    "FROM (SELECT TRUNC(SYSDATE)-7+LEVEL-1 AS DT FROM DUAL CONNECT BY LEVEL<=7) " +
             	    "ORDER BY DT"
             	);
 

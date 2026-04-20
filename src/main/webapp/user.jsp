@@ -282,15 +282,6 @@
 							</form>
 							<hr
 								style="margin: 18px 0; border: 0; border-top: 1px solid #e5e7eb;">
-							<form method="post"
-								action="${pageContext.request.contextPath}/user"
-								onsubmit="return confirm('정말 퇴사 처리하시겠습니까?');">
-								<input type="hidden" name="action" value="delete"> <input
-									type="hidden" name="user_key" value="${userOne.user_key}">
-								<div class="detail-actions">
-									<button type="submit" class="btn btn-danger">퇴사 처리</button>
-								</div>
-							</form>
 						</c:when>
 						<c:otherwise>
 							<div class="detail-empty">위의 목록에서 사용자를 선택하면 상세 정보가 표시됩니다.</div>

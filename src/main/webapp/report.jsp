@@ -209,44 +209,6 @@
 						</table>
 					</div>
 				</div>
-
-				<div class="card">
-					<div class="section-title">
-						<h2>불량 사유별 집계</h2>
-					</div>
-
-					<div class="table-wrap">
-						<table>
-							<thead>
-								<tr>
-									<th>불량사유</th>
-									<th>건수</th>
-									<th>불량수량</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:choose>
-									<c:when test="${not empty defectList}">
-										<c:forEach var="d" items="${defectList}">
-											<tr>
-												<td>${d.defectReason}</td>
-												<td><fmt:formatNumber value="${d.defectCount}"
-														pattern="#,##0" /></td>
-												<td><fmt:formatNumber value="${d.totalDefectQty}"
-														pattern="#,##0" /></td>
-											</tr>
-										</c:forEach>
-									</c:when>
-									<c:otherwise>
-										<tr>
-											<td colspan="3">조회 결과가 없습니다.</td>
-										</tr>
-									</c:otherwise>
-								</c:choose>
-							</tbody>
-						</table>
-					</div>
-				</div>
 			</div>
 
 			<div class="card" style="margin-top: 20px;">

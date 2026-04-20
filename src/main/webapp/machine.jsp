@@ -241,7 +241,7 @@
 							<!--  안내 메시지용  -->
 							<c:if
 								test="${dto.user_role eq '관리자' or dto.user_role eq '슈퍼바이저'}">
-								<span>설비 정보를 클릭하면 수정할 수 있습니다.</span>
+								<span>설비 코드를 클릭하면 수정할 수 있습니다.</span>
 								<button type="submit" class="btn">삭제</button>
 							</c:if>
 						</div>

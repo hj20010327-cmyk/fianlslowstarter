@@ -229,7 +229,7 @@
 						</c:if>
 
 						<select class="select" name="itemName">
-							<option value="">전체</option>
+							<option value="">품목명 검색</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_name}"
 									<c:if test="${itemName == item.item_name}">selected</c:if>>

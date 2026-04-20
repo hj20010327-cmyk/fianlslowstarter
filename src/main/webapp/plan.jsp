@@ -176,14 +176,14 @@
 				<form id="planSearchForm" action="/slowstarter/plan" method="get">
 					<div class="search-row">
 						<select class="select" name="item_key">
-							<option value="" <c:if test="${empty item_key}">selected</c:if>>전체</option>
+							<option value="" <c:if test="${empty item_key}">selected</c:if>>품목명 검색</option>
 							<c:forEach var="item" items="${itemList}">
 								<option value="${item.item_key}"
 									<c:if test="${item_key == item.item_key}">selected</c:if>>
 									${item.item_name}</option>
 							</c:forEach>
 						</select> <select class="select" name="status">
-							<option value="" <c:if test="${empty status}">selected</c:if>>전체</option>
+							<option value="" <c:if test="${empty status}">selected</c:if>>상태 검색</option>
 							<option value="계획" <c:if test="${status == '계획'}">selected</c:if>>계획</option>
 							<option value="진행중"
 								<c:if test="${status == '진행중'}">selected</c:if>>진행중</option>

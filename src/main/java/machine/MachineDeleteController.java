@@ -39,7 +39,8 @@ public class MachineDeleteController extends HttpServlet {
 		}
 		
 		// 체크된 key 배열 받기 
-		String[] machineKeys = request.getParameterValues("machineKey");
+		String[] machineKeys = request.getParameterValues("machine_key");
+		System.out.println("machineKeys = " + java.util.Arrays.toString(machineKeys));
 
 		// 삭제 처리 
 		if (machineKeys != null) {

@@ -211,7 +211,7 @@
 						<!--  상태 검색 -->
 						<select class="select" name="machineStatus">
 							<option value=""
-								<c:if test="${empty machineStatus}">selected</c:if>>전체</option>
+								<c:if test="${empty machineStatus}">selected</c:if>>설비 상태 검색</option>
 							<option value="가동중"
 								<c:if test="${machineStatus == '가동중'}">selected</c:if>>가동중</option>
 							<option value="점검중"
@@ -381,7 +381,7 @@
 						<input type="hidden" id="machineKey" name="machineKey" />
 
 						<div class="form-grid">
-							<div class="form-group" id=machineCodeField
+							<div class="form-group" id="machineCodeField"
 								style="display: none;">
 								<label>설비 코드</label> <input type="text" class="input"
 									id="machineCode" name="machineCode" placeholder="자동 생성"

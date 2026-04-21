@@ -330,32 +330,7 @@ window.addEventListener("load", () => {
 
 
 </script>
-				<div class="card">
-					<div class="section-title">
-						<h2>요약 / 상태</h2>
-						<span>오늘 기준</span>
-					</div>
-					<ul class="summary-list">
-						<li>
-							<div>
-								<strong>최신 버전</strong>
-								<p>B210 제품이 V2로 운영 중입니다.</p>
-							</div> <span class="badge ok">적용</span>
-						</li>
-						<li>
-							<div>
-								<strong>변경 요청</strong>
-								<p>설계 변경 요청이 1건 있습니다.</p>
-							</div> <span class="badge warn">1건</span>
-						</li>
-						<li>
-							<div>
-								<strong>미연결 품목</strong>
-								<p>BOM 미연결 자재가 없습니다.</p>
-							</div> <span class="badge ok">정상</span>
-						</li>
-					</ul>
-				</div>
+				
 
 			</section>
 		</main>

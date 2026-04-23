@@ -55,6 +55,7 @@
 			<div class="snb-section">
 				<div class="snb-title">기준관리</div>
 				<ul class="snb-menu">
+					<li><a href="./item">품목관리</a></li>
 					<li><a href="./bom">BOM</a></li>
 					<li class="active"><a href="./process">공정</a></li>
 					<li><a href="/slowstarter/machine">설비</a></li>
@@ -330,7 +331,10 @@ window.addEventListener("load", () => {
 
 
 </script>
+<<<<<<< HEAD
 				
+=======
+>>>>>>> 719c34d (fds)
 
 			</section>
 		</main>

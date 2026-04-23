@@ -43,13 +43,13 @@
 			<form class="auth-form" method="post" action="login">
 				<div class="auth-row">
 					<label>아이디</label><input name="id" class="auth-input" type="text"
-						placeholder="아이디 입력" value="william" />
+						placeholder="아이디 입력"/>
 				</div>
 				<div class="auth-row">
 					<label>비밀번호</label>
 					<div class="input-wrap">
 						<input name="pw" class="auth-input" type="password"
-							placeholder="비밀번호 입력" value="Qwer1234@" id="pw"/> 
+							placeholder="비밀번호 입력" id="pw"/> 
 							<span class="eye-toggle" data-target="pw">
 							<i class="fa-solid fa-eye"></i>
 						</span>
